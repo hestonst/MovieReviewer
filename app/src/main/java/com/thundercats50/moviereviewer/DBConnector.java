@@ -2,12 +2,6 @@ package com.thundercats50.moviereviewer;
 
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-//to access the user/pass stored in db.properties
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,8 +9,10 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 /**
+ * TODO: Remove SQL injection potential
+ * TODO: Encrypt passwords
  * @author Scott Heston
- * @version 0.0.1
+ * @version 1.0.1
  * Documentation:
  * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
@@ -26,48 +22,40 @@ public class DBConnector {
     Statement statement;
 
 
-    public DBConnector() throws IOException, ClassNotFoundException, SQLException {
+    public DBConnector() throws ClassNotFoundException, SQLException {
         connect();
     }
 
     /**
      * Creates connection to mySQL database on connection.
      * @return Connection
-     * @throws IOException reads user/pass from file db.properties
      * @throws ClassNotFoundException if Driver lib dependency not found
      * @throws SQLException if authentication issues with DB
      */
-    private void connect() throws IOException, ClassNotFoundException, SQLException {
+    private void connect() throws ClassNotFoundException, SQLException {
         //the implementation should notify the user of these errors if there is no internet access
         //i.e if the database cannot be reached
         try {
-            FileInputStream fis = new FileInputStream("app/src/main/java/com/thundercats50/moviereviewer/db.properties");
-            Properties props = new Properties();
-            props.load(fis);
-            Class.forName(props.getProperty("MYSQL_DB_DRIVER_CLASS")).newInstance();
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
             // If this line throws an error, make sure gradle is including the java/mySQL connector
             // jar in the class folder. If "bad class file magic", bug with gradle and android:
             // https://github.com/windy1/google-places-api-java/issues/18
             // fix by including lib, not downloading it from Maven
-            String url = props.getProperty("MYSQL_DB_URL");
-            String user = props.getProperty("MYSQL_DB_USERNAME");
-            String pass = props.getProperty("MYSQL_DB_PASSWORD");
+            String url = "jdbc:mysql://sql5.freemysqlhosting.net";
+            String user = "sql5104262";
+            String pass = "dZsfuN5gwm";
             connection = DriverManager.getConnection(url, user, pass);
-        } catch (IOException ioe) {
-            Log.e("IOError", "db.properties not read. Cannot connect to database.");
-            throw new IOException("Could not access database username/password. "
-                    + "Check db.properties.", ioe);
         } catch (ClassNotFoundException drivExc) {
             Log.e("DBError", "The database driver has failed.");
             throw new ClassNotFoundException("Could not access database username/password. "
-                    + "Check db.properties.", drivExc);
+                    + "Check DB Driver.", drivExc);
         } catch (IllegalAccessException iae) {
             throw new ClassNotFoundException("Could not access database username/password. "
-                    + "Check db.properties.", iae);
+                    + "Check DB Driver.", iae);
         }
         catch (InstantiationException ie) {
             throw new ClassNotFoundException("Could not access database username/password. "
-                    + "Check db.properties.", ie);
+                    + "Check DB Driver.", ie);
         }
         catch (SQLException sqle) {
             throw new SQLException("The user database cannot be reached. Check your internet.");
@@ -93,7 +81,7 @@ public class DBConnector {
             int didSucceed = statement.executeUpdate(request);
             return true;
         } catch (Exception e) {
-            Log.d("BD Write error", e.getMessage());
+            Log.d("DB Write error", e.getMessage());
             return false;
         }
     }
@@ -105,8 +93,7 @@ public class DBConnector {
      * @return isValid
      * @throws SQLException
      */
-    public boolean checkIfUser(String user)
-            throws ClassNotFoundException, SQLException, IOException {
+    public boolean checkIfUser(String user) throws ClassNotFoundException, SQLException {
         ResultSet resultSet = getUserData(user);
         if (resultSet.next()) {
             resultSet.close();
@@ -122,14 +109,14 @@ public class DBConnector {
      * @return boolean true if valid
      * @throws ClassNotFoundException
      * @throws SQLException
-     * @throws IOException
      */
     public boolean verifyUser(String user, String pass)
-            throws ClassNotFoundException, SQLException, IOException {
+            throws ClassNotFoundException, SQLException {
         ResultSet resultSet = getUserData(user);
         if (resultSet.next()) {
             if (resultSet.getString(2).equals(pass)) {
-                //there is only 1 row because there is only one username selected from DB at a time
+                //there is only 1 entry because there is only one username selected from DB at
+                // a time; 2 because resultSet contains user, pass
                 return true;
             }
             resultSet.close();
@@ -143,16 +130,15 @@ public class DBConnector {
      * @return ResultSet
      * @throws ClassNotFoundException
      * @throws SQLException
-     * @throws IOException
      */
     private ResultSet getUserData(String user)
-            throws ClassNotFoundException, SQLException, IOException {
+            throws ClassNotFoundException, SQLException {
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT Username, Data1 FROM sql5104262.UserInfo WHERE Username="
+            String request = "SELECT Username, Data1, LoginAttempts FROM sql5104262.UserInfo WHERE Username="
                     + "'" + user +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
@@ -161,6 +147,45 @@ public class DBConnector {
             Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
         }
         return resultSet;
+    }
+
+    /**
+     * Method to be run on incorrect login. Updates the username's incorrect login number on the DB.
+     * @param user username to be incremented
+     */
+    public boolean incrementLoginAttempts(String user) {
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            int newVal = 1 + getLoginAttempts(user);
+            String request = "UPDATE sql5104262.UserInfo SET LoginAttempts ="
+                    + Integer.toString(newVal) + " WHERE Username = '" + user + "'";
+            int didSucceed = statement.executeUpdate(request);
+            return true;
+        } catch (Exception e) {
+            Log.d("DB Write error", e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Returns 1000 if user not found.
+     * @param user
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public int getLoginAttempts(String user) throws ClassNotFoundException, SQLException {
+        int retVal = 1000;
+        ResultSet resultSet = null;
+        resultSet = getUserData(user);
+        if (resultSet.next()) {
+            retVal = resultSet.getInt(3);
+                //there is only 1 entry because there is only one username selected from DB at
+                // a time; 3 because resultSet contains user, pass, attempts
+        }
+        resultSet.close();
+        return retVal;
     }
 
     /**
