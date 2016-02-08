@@ -1,8 +1,15 @@
 *.iml
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-/captures
+
+# remove android studio generated files
+/.idea*
+
+# Remove gradle generated build info
+/app/build/
+
+# remove java class files
+*.class
+
+# bat files
+gradlew.bat
