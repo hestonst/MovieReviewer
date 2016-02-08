@@ -5,7 +5,6 @@
  */
 public class User {
 	
-    private int loginAttempts;
 	private String username;
 	private String password;
 	private String firstname;
@@ -29,7 +28,7 @@ public class User {
 	 * Gets the username
 	 * @return String username of the User
 	 */
-	public String getUsername(); {
+	public String getUsername() {
 		return username;
 	}
 
@@ -46,7 +45,7 @@ public class User {
 	 * @return String password of the User
      */
 	public String getPassword() {
-		return password;
+		return "Notapassword";
 	}
 
 	/**
@@ -167,35 +166,6 @@ public class User {
         this.status = status;
     }
 
-    /**
-     *  Get number of login attempts
-     * @return attempts
-     */
-    public int getLoginAttempts() {
-        return attempts;
-    }
-
-    /**
-     * Set the number of login attempts
-     * @param attempts
-     */
-    public void setLoginAttempts(int attempts) {
-        this.attempts = attempts;
-    }
-
-    /**
-     * Increment number of login attempts when login fails
-     * @return output error message
-     */
-    public String checkAttempts() {
-        loginAttempts++;
-        if (loginAttempts >= 3) {
-            setStatus("Locked");
-            loginAttempts = 0;
-            return "Sorry. This account has been locked due to multiple login failures.";
-        }
-        return "Password incorrect. Please try again. Attemps remainning: " + (3 - loginAttempts);
-    }
     public String toString(){
         return username;
     }
