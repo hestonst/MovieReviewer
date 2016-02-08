@@ -11,3 +11,5 @@
 # remove java class files
 *.class
 
+# bat files
+gradlew.bat
