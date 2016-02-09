@@ -7,6 +7,7 @@
 
 # Remove gradle generated build info
 /app/build/
+/build/
 
 # remove java class files
 *.class
