@@ -3,16 +3,14 @@
  *
  * @author Neil Barooah
  */
-public class User {
+public class User extends Member {
 	
-	private String username;
-	private String password;
 	private String firstname;
 	private String lastname;
 	private String major;
 	private String gender;
 	private String status;
-	private int userType;
+	private boolean locked = false;
 
 	/**
 	 *
@@ -20,41 +18,9 @@ public class User {
 	 * @param password
 	 */
 	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
+		super(username, password);
 	}
 
-	/**
-	 * Gets the username
-	 * @return String username of the User
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
-	 * Set username of the user
-	 * @param username  
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	/**
-	 * Get the password
-	 * @return String password of the User
-     */
-	public String getPassword() {
-		return "Notapassword";
-	}
-
-	/**
-	 * Set the password of the user
-	 * @param password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	/**
 	 * Get the first name of the user
@@ -119,19 +85,29 @@ public class User {
     }
 
     /**
-     * Get the user type
-     * @return int type of user
+     * determines whether the user is locked or not
+     * @return boolean locked
      */
-    public int getUserType() {
-    	return userType;
+    @Override
+    public boolean isLocked() {
+    	return locked;
     }
 
     /**
-     * Set the user type: 1 for admin and 2 otherwise
-     * @return int type of user
+     * locks or unlocks a user account
+     * @param boolean whether account should be locked
      */
-    public void setUserType(int userType) {
-    	this.userType = userType;
+    public void setLock(boolean lockStatus) {
+    	locked = lockStatus;
+    }
+
+    /**
+     * determines whether the user is an admin
+     * @return always false for users
+     */
+    @Override
+    public boolean isAdmin() {
+    	return false;
     }
 
 	/**
@@ -164,10 +140,6 @@ public class User {
      */
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String toString(){
-        return username;
     }
 
 }
