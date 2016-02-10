@@ -54,12 +54,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="password"
-                    android:imeActionId="@+id/login"
+                    android:imeActionId="@+id/login_password"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    tools:ignore="HardcodedText" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -70,7 +71,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Sign In"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:onClick="attemptLogin"
+                />
 
             <Button
                 android:id="@+id/cancel_button"
@@ -79,7 +82,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Cancel"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="cancel"/>
 
 
         </LinearLayout>

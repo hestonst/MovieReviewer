@@ -1,3 +1,5 @@
+package com.thundercats50.moviereviewer.models;
+
 /**
  * The user class contains all the information of the user
  *
@@ -48,7 +50,7 @@ public class User extends Member {
 
 	/**
 	 * Set the last name of the user
-	 * @param firstname
+	 * @param lastname
 	 */
 	public void setLastname(String lastname) {
 		this.lastname = lastname;

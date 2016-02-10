@@ -1,3 +1,4 @@
+package com.thundercats50.moviereviewer.models;
 /**
  * class for an Admin object
  *

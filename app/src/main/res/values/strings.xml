@@ -14,12 +14,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-
     <string name="title_activity_logged_in">LoggedInActivity</string>
-
     <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="welcome_screen">Welcome to Team Thundercats App</string>
 </resources>

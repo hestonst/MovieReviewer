@@ -1,3 +1,4 @@
+package com.thundercats50.moviereviewer.models;
 /**
  * Abstract class that specifies features of members of the app
  *
