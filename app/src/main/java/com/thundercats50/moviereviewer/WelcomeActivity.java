@@ -1,12 +1,14 @@
 package com.thundercats50.moviereviewer;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -23,7 +25,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
      * user interaction before hiding the system UI.
      */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+    private static final int AUTO_HIDE_DELAY_MILLIS = 1000;
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -159,5 +161,13 @@ public class WelcomeActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    /**
+     * Handles login button presses. Starts the LoginActivity activity.
+     * @param view not currently used, but required
+     */
+    public void login(View view) {
+        startActivity(new Intent(this, LoginActivity.class));
     }
 }

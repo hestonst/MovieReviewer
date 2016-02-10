@@ -1,3 +1,5 @@
+package com.thundercats50.moviereviewer.models;
+
 /**
  * The user class contains all the information of the user
  *
@@ -26,7 +28,7 @@ public class User {
 
 	/**
 	 * Gets the username
-	 * @return String username of the User
+	 * @return String username of the com.thundercats50.moviereviewer.models.User
 	 */
 	public String getUsername() {
 		return username;
@@ -42,7 +44,7 @@ public class User {
 
 	/**
 	 * Get the password
-	 * @return String password of the User
+	 * @return String password of the com.thundercats50.moviereviewer.models.User
      */
 	public String getPassword() {
 		return "Notapassword";
