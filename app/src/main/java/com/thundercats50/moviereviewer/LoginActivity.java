@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +33,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import java.sql.SQLException;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -127,10 +130,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!isEmailValid(email, password)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
+        }
+
+        showProgress(true);
+        mAuthTask = new UserLoginTask(email, password);
+        mAuthTask.execute();
+
+        try {
+            if (!mAuthTask.get()) {
+                cancel = true;
+            }
+        } catch (Exception e) {
+            Log.d("REPLACE ME ", "REPLACE ME");
         }
 
         if (cancel) {
@@ -140,10 +155,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-            startActivity(new Intent(this, LoggedInActivity.class));
+
+           startActivity(new Intent(this, LoggedInActivity.class));
         }
     }
 
@@ -151,14 +164,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         startActivity(new Intent(this, WelcomeActivity.class));
     }
 
-    private boolean isEmailValid(String email) {
+    private boolean isEmailValid(String email, String password) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        //return email.equals("user@test.ing");
+        return true;
+
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 3;
+        return true;
     }
 
     /**
@@ -266,26 +281,37 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+        protected Boolean doInBackground(Void...params) {
 
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                DBConnector dbc = new DBConnector();
+                Log.d("DB verifyUser Called", "doInBackground method returned: "
+                        + Boolean.toString(dbc.verifyUser(mEmail, mPassword)));
+                return dbc.verifyUser(mEmail, mPassword);
+            } catch (ClassNotFoundException cnfe) {
+                Log.d("Dependency Error", "Check if MySQL library is present.");
+                return false;
+            } catch (SQLException sqle) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 return false;
             }
+//            try {
+//                // Simulate network access.
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                return false;
+//            }
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mEmail)) {
+//                    // Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }
+////
+////            // TODO: register the new account here.
+//             return true;
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
         }
 
         @Override
