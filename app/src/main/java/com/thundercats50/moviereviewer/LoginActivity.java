@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private boolean b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,23 +123,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
-            cancel = true;
+            //cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
-            cancel = true;
+            //cancel = true;
         } else if (!isEmailValid(email, password)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
-            cancel = true;
+            //cancel = true;
         }
 
         showProgress(true);
         mAuthTask = new UserLoginTask(email, password);
         mAuthTask.execute();
+        b = mAuthTask.doInBackground();
 
         try {
             if (!mAuthTask.get()) {
@@ -167,13 +169,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private boolean isEmailValid(String email, String password) {
         //TODO: Replace this with your own logic
         //return email.equals("user@test.ing");
-        return true;
+        return b;
 
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return true;
+        return b;
     }
 
     /**
