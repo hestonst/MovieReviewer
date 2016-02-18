@@ -8,11 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
+import java.util.InputMismatchException;
+
 /**
  * TODO: Remove SQL injection potential
  * TODO: Encrypt passwords
  * @author Scott Heston
- * @version 1.0.1
+ * @version 1.0.2
  * Documentation:
  * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
@@ -72,18 +74,23 @@ public class DBConnector {
      * @return boolean true if succesfully created
      * @throws SQLException
      */
-    public boolean setNewUser(String userName, String password) throws SQLException {
-        ResultSet resultSet = null;
+    public boolean setNewUser(String userName, String password) throws SQLException, InputMismatchException {
+        ResultSet resultSet = null;;
         try {
+            if (!userName.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+                || !password.matches("^.*[^a-zA-Z0-9 ].*$") || password.length() < 6) {
+                throw new InputMismatchException();
+            }
             statement = connection.createStatement();
-            String request = "INSERT INTO sql5104262.UserInfo (Username, Data1) VALUES ('" +
-                    userName + "','" + password + "')";
+            String request = "INSERT INTO sql5104262.UserInfo (Username, Data1) VALUES ('"
+                    + userName + "','" + password + "')";
             int didSucceed = statement.executeUpdate(request);
-            return true;
-        } catch (Exception e) {
-            Log.d("DB Write error", e.getMessage());
-            return false;
         }
+        catch (SQLException e) {
+            Log.d("DB Write error", e.getMessage());
+            throw e;
+        }
+        return true;
     }
 
     /**
