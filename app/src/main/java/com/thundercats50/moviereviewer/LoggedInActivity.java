@@ -33,7 +33,7 @@ public class LoggedInActivity extends AppCompatActivity {
         MemberManager manager = (MemberManager) getApplicationContext();
         User user = (User) manager.getCurrentMember();
         name.setText(user.getFirstname());
-        email.setText(manager.getCurrentEmail());
+        email.setText(user.getEmail());
         gender.setText(user.getGender());
         major.setText(user.getMajor());
 
