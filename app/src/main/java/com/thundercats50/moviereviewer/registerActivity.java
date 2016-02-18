@@ -62,7 +62,7 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private UserRegisterTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -193,6 +193,19 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
             cancel = true;
         }
 
+        showProgress(true);
+        mAuthTask = new UserRegisterTask(email, password);
+        mAuthTask.execute();
+        Boolean b = mAuthTask.doInBackground();
+
+        try {
+            if (!mAuthTask.get()) {
+                cancel = true;
+            }
+        } catch (Exception e) {
+            Log.d("Task Error", "Cannot create logged in view.");
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -203,13 +216,12 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+                && email.length() > 6);
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return (password.matches("^.*[^a-zA-Z0-9 ].*$") && password.length() > 6);
     }
 
     /**
@@ -346,36 +358,53 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
+        UserRegisterTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
             try {
                 DBConnector dbc = new DBConnector();
-                Log.d("DB verifyUser Called", "doInBackground method returned: "
-                        + Boolean.toString(dbc.setNewUser(mEmail, mPassword)));
-                return dbc.setNewUser(mEmail, mPassword);
+                boolean retVal = dbc.setNewUser(mEmail, mPassword);
+                Log.d("DB setNewUser Finished", "doInBackground method returned: "
+                        + Boolean.toString(retVal));
+                dbc.disconnect();
+                return retVal;
+            } catch (InputMismatchException imee) {
+                Log.d("Invalid reg", "Possible SQL injection attempt.");
+                return false;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
                 return false;
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
+                for (Throwable e : sqle) {
+                            e.printStackTrace(System.err);
+                    Log.d("Connection Error", "SQLState: " +
+                                    ((SQLException) e).getSQLState());
+
+                    Log.d("Connection Error", "Error Code: " +
+                                    ((SQLException) e).getErrorCode());
+
+                    Log.d("Connection Error", "Message: " + e.getMessage());
+
+                            Throwable t = sqle.getCause();
+                            while(t != null) {
+                                Log.d("Connection Error", "Cause: " + t);
+                                t = t.getCause();
+                            }
+                        }
+
                 return false;
-            } //catch (InputMismatchException bad) {
-            //Log.d("Validation Error", "Invalid Input for registration");
-            // return false;
-            //}
-            //            tr
+            }
         }
 
         @Override

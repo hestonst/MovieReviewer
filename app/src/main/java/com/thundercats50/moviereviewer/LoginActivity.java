@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             //cancel = true;
-        } else if (!isEmailValid(email, password)) {
+        } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             //cancel = true;
@@ -147,7 +147,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 cancel = true;
             }
         } catch (Exception e) {
-            Log.d("REPLACE ME ", "REPLACE ME");
+            Log.d("Task Error", "Cannot create logged in view.");
         }
 
         if (cancel) {
@@ -166,16 +166,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         startActivity(new Intent(this, WelcomeActivity.class));
     }
 
-    private boolean isEmailValid(String email, String password) {
-        //TODO: Replace this with your own logic
-        //return email.equals("user@test.ing");
-        return b;
-
+    private boolean isEmailValid(String email) {
+        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+                && email.length() > 6);
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return b;
+        return (password.matches("^.*[^a-zA-Z0-9 ].*$") && password.length() > 6);
     }
 
     /**
@@ -287,9 +284,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
                 DBConnector dbc = new DBConnector();
+                boolean retVal = dbc.verifyUser(mEmail, mPassword);
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
-                        + Boolean.toString(dbc.verifyUser(mEmail, mPassword)));
-                return dbc.verifyUser(mEmail, mPassword);
+                        + Boolean.toString(retVal));
+                dbc.disconnect();
+                return retVal;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
                 return false;
@@ -297,23 +296,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 return false;
             }
-//            try {
-//                // Simulate network access.
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                return false;
-//            }
-//            for (String credential : DUMMY_CREDENTIALS) {
-//                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(mEmail)) {
-//                    // Account exists, return true if the password matches.
-//                    return pieces[1].equals(mPassword);
-//                }
-//            }
-////
-////            // TODO: register the new account here.
-//             return true;
-
         }
 
         @Override
