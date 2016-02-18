@@ -22,10 +22,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        name = (EditText) findViewById(R.id.editName);
-        email = (EditText) findViewById(R.id.editEmail);
-        gender = (EditText) findViewById(R.id.editGender);
-        major = (EditText) findViewById(R.id.editMajor);
+
         setContentView(R.layout.activity_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -34,7 +31,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void updateProfile(View view) {
         MemberManager manager = (MemberManager) getApplicationContext();
-        User member = (User) manager.getMember(email.getText().toString());
+        User member = (User) manager.getCurrentMember();
+        name = (EditText) findViewById(R.id.editName);
+        email = (EditText) findViewById(R.id.editEmail);
+        gender = (EditText) findViewById(R.id.editGender);
+        major = (EditText) findViewById(R.id.editMajor);
         member.setUsername(name.getText().toString());
         member.setGender(gender.getText().toString());
         member.setMajor(major.getText().toString());

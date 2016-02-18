@@ -175,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isPasswordValid(String password) {
-        return (password.matches("^.*[^a-zA-Z0-9 ].*$") && password.length() > 6);
+        return (password.matches("^.*[^a-zA-Z0-9].*$") && password.length() > 6);
     }
 
     /**
