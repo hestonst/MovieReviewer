@@ -70,7 +70,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Register"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="register"/>
 
             <Button
                 android:id="@+id/registration_cancel_button"

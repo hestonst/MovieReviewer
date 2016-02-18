@@ -8,15 +8,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
+import java.util.InputMismatchException;
+
 /**
  * TODO: Remove SQL injection potential
  * TODO: Encrypt passwords
  * @author Scott Heston
- * @version 1.0.1
+ * @version 1.0.2
  * Documentation:
  * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
-public class DBConnector {
+public class DBConnector  {
 
     Connection connection;
     Statement statement;
@@ -57,9 +59,9 @@ public class DBConnector {
             throw new ClassNotFoundException("Could not access database username/password. "
                     + "Check DB Driver.", ie);
         }
-        catch (SQLException sqle) {
-            throw new SQLException("The user database cannot be reached. Check your internet.");
-        }
+//        catch (SQLException sqle) {
+//            throw new SQLException("The user database cannot be reached. Check your internet.", sqle);
+//        }
     }
 
 
@@ -72,18 +74,25 @@ public class DBConnector {
      * @return boolean true if succesfully created
      * @throws SQLException
      */
-    public boolean setNewUser(String userName, String password) throws SQLException {
-        ResultSet resultSet = null;
+    public boolean setNewUser(String userName, String password) throws SQLException, InputMismatchException {
+        ResultSet resultSet = null;;
         try {
+//            if (!userName.matches("[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+//                || !password.matches("[^a-zA-Z0-9 ]{0,6}") || password.length() < 6) {
+//                throw new InputMismatchException("DBC rejected pass or user");
+//            }
             statement = connection.createStatement();
-            String request = "INSERT INTO sql5104262.UserInfo (Username, Data1) VALUES ('" +
-                    userName + "','" + password + "')";
+            String request = "INSERT INTO sql5104262.UserInfo (Username, Data1) VALUES ('"
+                    + userName + "','" + password + "')";
+
             int didSucceed = statement.executeUpdate(request);
-            return true;
-        } catch (Exception e) {
-            Log.d("DB Write error", e.getMessage());
-            return false;
+
         }
+        catch (SQLException e) {
+            Log.d("DB Write error", e.getMessage());
+            throw e;
+        }
+        return true;
     }
 
     /**
@@ -192,16 +201,21 @@ public class DBConnector {
      * Must be run to disconnect connection when finished with DB.
      */
     public void disconnect() {
+        Log.d("DBC Logout", "entered");
         if (statement != null) {
             try {
                 statement.close();
-            } catch (SQLException sqlEx) { }
+            } catch (SQLException sqlEx) {
+                Log.d("DBC Logout", sqlEx.getMessage() + sqlEx.getErrorCode() + sqlEx.toString());
+            }
             // ignore, means connection was already closed
         }
         if (connection != null) {
             try {
                 connection.close();
-            } catch (SQLException sqlEx) { }
+            } catch (SQLException sqlEx) {
+                Log.d("DBC Logout", sqlEx.getMessage() + sqlEx.getErrorCode() + sqlEx.toString());
+            }
             // ignore, means connection was already closed
         }
     }
