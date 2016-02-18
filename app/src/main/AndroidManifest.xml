@@ -29,7 +29,7 @@
             android:label="@string/title_activity_welcome"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".registerActivity"
+            android:name=".RegisterActivity"
             android:label="@string/title_activity_register"></activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
