@@ -36,7 +36,8 @@ public class ProfileActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.editEmail);
         gender = (EditText) findViewById(R.id.editGender);
         major = (EditText) findViewById(R.id.editMajor);
-        member.setUsername(name.getText().toString());
+        member.setFirstname(name.getText().toString());
+        member.setEmail(email.getText().toString());
         member.setGender(gender.getText().toString());
         member.setMajor(major.getText().toString());
         manager.updateMember(email.getText().toString(), member);
