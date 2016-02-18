@@ -45,20 +45,13 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class registerActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -118,6 +111,10 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
         getLoaderManager().initLoader(0, null, this);
     }
 
+    /**
+     * Part of autocomplete implementation
+     * @return
+     */
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -175,13 +172,6 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
@@ -193,35 +183,57 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
             cancel = true;
         }
 
-        showProgress(true);
-        mAuthTask = new UserRegisterTask(email, password);
-        mAuthTask.execute();
-        Boolean b = mAuthTask.doInBackground();
-
-        try {
-            if (!mAuthTask.get()) {
-                cancel = true;
-            }
-        } catch (Exception e) {
-            Log.d("Task Error", "Cannot create logged in view.");
+        // Check for a valid password, if the user entered one.
+        if (!isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
         }
-
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            Log.d("RegisterActivity", "3.5 Reached");
         } else {
-            startActivity(new Intent(this, LoggedInActivity.class));
+            showProgress(true);
+            Log.d("RegisterActivity", "1 Reached");
+            mAuthTask = new UserRegisterTask(email, password);
+            mAuthTask.execute();
+            try {
+                if (!mAuthTask.get()) {
+                    Log.d("RegisterActivity", "4 Reached");
+                    cancel = true;
+                } else {
+                    Log.d("RegisterActivity", "5 Reached");
+                    startActivity(new Intent(this, LoggedInActivity.class));
+                    setContentView(R.layout.activity_loggedin);
+                }
+            } catch (Exception e) {
+                Log.d("Task Error", "Cannot create logged in view.");
+            }
+            Log.d("RegisterActivity", "6 Reached");
+//            Boolean b = mAuthTask.doInBackground();
+
         }
     }
 
+    /**
+     * Uses RegEx to verify emails
+     * @param email
+     * @return ifValid
+     */
     private boolean isEmailValid(String email) {
         return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-                && email.length() > 6);
+                && email.length() >= 6);
     }
 
+    /**
+     * Uses RegEx to verify pass; must be more than 6 chars and alphnumeric
+     * @param password
+     * @return ifValid
+     */
     private boolean isPasswordValid(String password) {
-        return (password.matches("^.*[^a-zA-Z0-9 ].*$") && password.length() > 6);
+        return (password.matches("[a-zA-Z0-9]{6,30}") && password.length() > 6);
     }
 
     /**
@@ -294,10 +306,14 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
 
     }
 
+    /**
+     * Generated autocomplete
+     * @param emailAddressCollection
+     */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(registerActivity.this,
+                new ArrayAdapter<>(RegisterActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -306,41 +322,11 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "register Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.thundercats50.moviereviewer/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "register Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.thundercats50.moviereviewer/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
     }
 
 
@@ -355,7 +341,16 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
     }
 
     /**
-     * Represents an asynchronous login/registration task used to authenticate
+     * Return to previous view
+     * @param view
+     */
+    public void cancel(View view) {
+        startActivity(new Intent(this, WelcomeActivity.class));
+    }
+
+
+    /**
+     * Represents an asynchronous registration task used to authenticate
      * the user.
      */
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
@@ -415,7 +410,7 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
             if (success) {
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.setError(getString(R.string.error_invalid_password));
                 mPasswordView.requestFocus();
             }
         }
@@ -427,18 +422,7 @@ public class registerActivity extends AppCompatActivity implements LoaderCallbac
         }
     }
 
-    public void cancel(View view) {
-        startActivity(new Intent(this, WelcomeActivity.class));
-    }
 
-    /**
-     * Handles passing the email and password of a user who wants to register
-     * to the DBConnector for processing
-     *
-     * @param view
-     */
-    public void register(View view) {
 
-    }
 }
 
