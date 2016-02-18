@@ -1,11 +1,16 @@
 package com.thundercats50.moviereviewer.models;
 
+import android.app.Application;
+
 import java.util.HashMap;
 
 /**
  * @author Forester Vosburgh
  */
-public class MemberManager {
+public class MemberManager extends Application {
+
+    private Member currentMember;
+    private String currentEmail;
 
     // backing hashMap to store member models
     private static HashMap<String, Member> members = new HashMap<>();
@@ -14,8 +19,10 @@ public class MemberManager {
      * adds a member to the backing hashMap
      * @param member the ember to add
      */
-    public void addMember(Member member) {
-        members.put(member.getPassword(), member);
+    public void addMember(String email, Member member) {
+        members.put(email, member);
+        currentMember = member;
+        currentEmail = email;
     }
 
     /**
@@ -35,5 +42,32 @@ public class MemberManager {
      */
     public void updateMember(String email, Member member) {
         members.put(email, member);
+    }
+
+    /**
+     * sets the current logged in member
+     * @param email the key to identify the current member
+     */
+    public void setCurrentMember(String email) {
+        if (members.size() == 0) {
+            User user = new User();
+            user.setEmail(email);
+            currentMember = new User();
+        } else {
+            currentMember = getMember(email);
+            currentEmail = email;
+        }
+    }
+
+    /**
+     * gets the current logged in member
+     * @return the current logged in member
+     */
+    public Member getCurrentMember() {
+        return currentMember;
+    }
+
+    public String getCurrentEmail() {
+        return currentEmail;
     }
 }

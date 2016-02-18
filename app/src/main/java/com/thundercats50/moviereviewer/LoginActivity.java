@@ -31,6 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.thundercats50.moviereviewer.models.MemberManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,8 +159,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-
-           startActivity(new Intent(this, LoggedInActivity.class));
+            MemberManager manager = (MemberManager) getApplicationContext();
+            manager.setCurrentMember(mEmailView.getText().toString());
+            startActivity(new Intent(this, LoggedInActivity.class));
         }
     }
 

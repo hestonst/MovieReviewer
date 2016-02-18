@@ -12,4 +12,62 @@
     tools:context="com.thundercats50.moviereviewer.ProfileActivity"
     tools:showIn="@layout/activity_profile">
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/editName"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:editable="false" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/editEmail"
+        android:layout_below="@+id/editName"
+        android:layout_alignParentStart="true"
+        android:editable="false"
+        android:text="Email" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editGender"
+        android:layout_below="@+id/editEmail"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/editEmail"
+        android:text="Gender" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editMajor"
+        android:layout_below="@+id/editGender"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/editGender"
+        android:text="Major" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Profile"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="50dp"
+        android:onClick="updateProfile" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/button2"
+        android:layout_alignTop="@+id/button"
+        android:layout_alignParentEnd="true"
+        android:onClick="cancel" />
 </RelativeLayout>

@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
+
+import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.User;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -84,6 +88,10 @@ public class LoggedInActivity extends AppCompatActivity {
         }
     };
 
+    private EditText name = (EditText) findViewById(R.id.profileName);
+    private EditText email = (EditText) findViewById(R.id.profileEmail);
+    private EditText gender = (EditText) findViewById(R.id.profileGender);
+    private EditText major = (EditText) findViewById(R.id.profileMajor);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +114,19 @@ public class LoggedInActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.logout_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.Logout).setOnTouchListener(mDelayHideTouchListener);
+
+        MemberManager manager = (MemberManager) getApplicationContext();
+        User user = (User) manager.getCurrentMember();
+        name.setText(user.getFirstname());
+        email.setText(manager.getCurrentEmail());
+        gender.setText(user.getGender());
+        major.setText(user.getMajor());
+
+        name.setKeyListener(null);
+        email.setKeyListener(null);
+        gender.setKeyListener(null);
+        major.setKeyListener(null);
     }
 
     @Override
@@ -163,5 +183,9 @@ public class LoggedInActivity extends AppCompatActivity {
     }
     public void logout(View view) {
         startActivity(new Intent(this, WelcomeActivity.class));
+    }
+
+    public void editProfile(View view) {
+        startActivity(new Intent(this, ProfileActivity.class));
     }
 }
