@@ -168,11 +168,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-                && email.length() > 6);
+                && email.length() >= 6);
     }
 
     private boolean isPasswordValid(String password) {
-        return (password.matches("^.*[^a-zA-Z0-9 ].*$") && password.length() > 6);
+        return (password.matches("[a-zA-Z0-9]{3,6}") && password.length() >= 6);
     }
 
     /**
