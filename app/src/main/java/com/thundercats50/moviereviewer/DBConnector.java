@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -103,9 +104,14 @@ public class DBConnector  {
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
-            String request = "UPDATE sql5104262.UserInfo SET Data1 ="
-                    + pass + " WHERE Username = '" + user + "'";
-            int didSucceed = statement.executeUpdate(request);
+//            String request = "UPDATE sql5104262.UserInfo SET Data1 ="
+//                    + pass + " WHERE Username = '" + user + "'";
+            //PreparedStatement aStatement = connection.prepareStatement(request);
+            //aStatement.executeUpdate();
+            //int didSucceed = statement.executeUpdate(request);
+            String sql = "SET PASSWORD FOR sql5104262 = PASSWORD('123456')";
+            Statement smt = connection.createStatement();
+            smt.executeQuery(sql);
             return true;
         } catch (Exception e) {
             Log.d("DB Write error", e.getMessage());

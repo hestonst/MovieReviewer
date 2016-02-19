@@ -1,5 +1,6 @@
 package com.thundercats50.moviereviewer;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,8 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText gender;
     private EditText major;
     private EditText password;
+    private UpdatePassword mUpdateTask = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +52,8 @@ public class ProfileActivity extends AppCompatActivity {
         String passwordInput = password.getText().toString();
         if (passwordInput.equals("")) {
             startActivity(new Intent(this, LoggedInActivity.class));
-        } else  {
-            View focusView =  null;
+        } else {
+            View focusView = null;
             boolean cancel = false;
             if (!isPasswordValid(passwordInput)) {
                 password.setError("Please input a 6 character alphanumeric password");
@@ -60,41 +63,47 @@ public class ProfileActivity extends AppCompatActivity {
             if (cancel) {
                 focusView.requestFocus();
             } else {
-                try {
-                    DBConnector dbc = new DBConnector();
-                    boolean retVal = dbc.changePass(member.getUsername(), passwordInput);
-                    Log.d("DB changePass Finished", "updateProfile method returned: "
-                            + Boolean.toString(retVal));
-                    dbc.disconnect();
-                    member.setPassword(passwordInput);
-                } catch (ClassNotFoundException cnfe) {
-                    Log.d("Dependency Error", "Check if MySQL library is present.");
-                } catch (SQLException sqle) {
-                    Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                    for (Throwable e : sqle) {
-                        e.printStackTrace(System.err);
-                        Log.d("Connection Error", "SQLState: " +
-                                ((SQLException) e).getSQLState());
-
-                        Log.d("Connection Error", "Error Code: " +
-                                ((SQLException) e).getErrorCode());
-
-                        Log.d("Connection Error", "Message: " + e.getMessage());
-
-                        Throwable t = sqle.getCause();
-                        while(t != null) {
-                            Log.d("Connection Error", "Cause: " + t);
-                            t = t.getCause();
-                        }
-                    }
-                }
+                mUpdateTask = new UpdatePassword(member.getUsername(), passwordInput);
+                mUpdateTask.execute();
+                Log.d("The method is working", "The method is working");
+                boolean b = mUpdateTask.doInBackground();
+//                try {
+//                    DBConnector dbc = new DBConnector();
+//                    boolean retVal = dbc.changePass(member.getUsername(), passwordInput);
+//                    Log.d("DB changePass Finished", "updateProfile method returned: "
+//                            + Boolean.toString(retVal));
+//                    dbc.disconnect();
+//                    member.setPassword(passwordInput);
+//                } catch (ClassNotFoundException cnfe) {
+//                    Log.d("Dependency Error", "Check if MySQL library is present.");
+//                } catch (SQLException sqle) {
+//                    Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
+//                    for (Throwable e : sqle) {
+//                        e.printStackTrace(System.err);
+//                        Log.d("Connection Error", "SQLState: " +
+//                                ((SQLException) e).getSQLState());
+//
+//                        Log.d("Connection Error", "Error Code: " +
+//                                ((SQLException) e).getErrorCode());
+//
+//                        Log.d("Connection Error", "Message: " + e.getMessage());
+//
+//                        Throwable t = sqle.getCause();
+//                        while (t != null) {
+//                            Log.d("Connection Error", "Cause: " + t);
+//                            t = t.getCause();
+//                        }
+//                    }
+//                }
                 startActivity(new Intent(this, LoggedInActivity.class));
-            }
+        }
+            //startActivity(new Intent(this, LoggedInActivity.class));
         }
     }
 
     /**
      * Uses RegEx to verify pass; must be more than 6 chars and alphnumeric
+     *
      * @param password
      * @return ifValid
      */
@@ -106,4 +115,47 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(new Intent(this, LoggedInActivity.class));
     }
 
+    public class UpdatePassword extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mEmail;
+        private final String mPassword;
+        private final MemberManager manager = (MemberManager) getApplicationContext();
+
+        UpdatePassword(String email, String password) {
+            mEmail = email;
+            mPassword = password;
+        }
+        protected Boolean doInBackground(Void...params) {
+            try {
+                DBConnector dbc = new DBConnector();
+                boolean retVal = dbc.changePass(mEmail, mPassword);
+                Log.d("DB changePass Finished", "updateProfile method returned: "
+                        + Boolean.toString(retVal));
+                dbc.disconnect();
+                //member.setPassword(passwordInput);
+            } catch (ClassNotFoundException cnfe) {
+                Log.d("Dependency Error", "Check if MySQL library is present.");
+            } catch (SQLException sqle) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
+                for (Throwable e : sqle) {
+                    e.printStackTrace(System.err);
+                    Log.d("Connection Error", "SQLState: " +
+                            ((SQLException) e).getSQLState());
+
+                    Log.d("Connection Error", "Error Code: " +
+                            ((SQLException) e).getErrorCode());
+
+                    Log.d("Connection Error", "Message: " + e.getMessage());
+
+                    Throwable t = sqle.getCause();
+                    while (t != null) {
+                        Log.d("Connection Error", "Cause: " + t);
+                        t = t.getCause();
+                    }
+                }
+            }
+            return true;
+        }
+
+    }
 }
