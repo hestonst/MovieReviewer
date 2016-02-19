@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.thundercats50.moviereviewer.models.MemberManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -357,6 +358,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         private final String mEmail;
         private final String mPassword;
+        private final MemberManager manager = (MemberManager) getApplicationContext();
 
         UserRegisterTask(String email, String password) {
             mEmail = email;
@@ -372,6 +374,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 Log.d("DB setNewUser Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 dbc.disconnect();
+                manager.setCurrentMember(mEmail);
                 return retVal;
             } catch (InputMismatchException imee) {
                 Log.d("Invalid reg", "Possible SQL injection attempt.");
