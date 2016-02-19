@@ -8,63 +8,44 @@
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="You are logged in"
+        android:textColor="#0a0a0b"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top">
+        android:fitsSystemWindows="true">
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+            style="?metaButtonBarStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Edit Profile"
-            android:id="@+id/editProfile"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:onClick="editProfile" />
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Logout"
-            android:id="@+id/Logout"
-            android:layout_alignBottom="@+id/editProfile"
-            android:layout_alignParentEnd="true"
-            android:onClick="logout" />
+            <Button
+                android:id="@+id/logout_button"
+                style="?metaButtonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Logout"
+                android:onClick="logout" />
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/profileName"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="37dp" />
+        </LinearLayout>
+    </FrameLayout>
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/profileEmail"
-            android:layout_below="@+id/profileName"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="50dp" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/profileGender"
-            android:layout_below="@+id/profileEmail"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="39dp" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/profileMajor"
-            android:layout_below="@+id/profileGender"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="56dp" />
-    </RelativeLayout>
 </FrameLayout>

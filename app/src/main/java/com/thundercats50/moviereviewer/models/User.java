@@ -12,7 +12,6 @@ public class User extends Member {
 	private String major;
 	private String gender;
 	private String status;
-    private String email;
 	private boolean locked = false;
 
 	/**
@@ -24,17 +23,6 @@ public class User extends Member {
 		super(username, password);
 	}
 
-    public User() {
-        super();
-    }
-
-    public void setEmail(String newEmail) {
-        email = newEmail;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 
 	/**
 	 * Get the first name of the user
