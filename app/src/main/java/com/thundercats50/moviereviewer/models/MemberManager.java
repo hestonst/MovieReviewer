@@ -13,7 +13,7 @@ public class MemberManager extends Application {
     private String currentEmail;
 
     // backing hashMap to store member models
-    private static HashMap<String, Member> members = new HashMap<>();
+    public HashMap<String, Member> members = new HashMap<>();
 
     /**
      * adds a member to the backing hashMap
@@ -49,10 +49,11 @@ public class MemberManager extends Application {
      * @param email the key to identify the current member
      */
     public void setCurrentMember(String email) {
-        if (getCurrentMember() == null) {
+        if (getMember(email) == null) {
             User user = new User();
             user.setEmail(email);
             currentMember = new User();
+            currentEmail = email;
         } else {
             currentMember = getMember(email);
             currentEmail = email;

@@ -40,7 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
         member.setEmail(email.getText().toString());
         member.setGender(gender.getText().toString());
         member.setMajor(major.getText().toString());
-        manager.updateMember(email.getText().toString(), member);
+        manager.updateMember(manager.getCurrentEmail(), member);
         startActivity(new Intent(this, LoggedInActivity.class));
     }
 

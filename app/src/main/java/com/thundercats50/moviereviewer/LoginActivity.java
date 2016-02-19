@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -292,6 +293,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 dbc.disconnect();
+                if (manager.getMember(mEmail) == null) {
+                    manager.addMember(mEmail, new User(mEmail, mPassword));
+                }
                 manager.setCurrentMember(mEmail);
                 return retVal;
             } catch (ClassNotFoundException cnfe) {
