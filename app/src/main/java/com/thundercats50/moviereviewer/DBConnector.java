@@ -14,7 +14,7 @@ import java.util.InputMismatchException;
  * TODO: Remove SQL injection potential
  * TODO: Encrypt passwords
  * @author Scott Heston
- * @version 1.0.2
+ * @version 1.1.0
  * Documentation:
  * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
@@ -93,6 +93,24 @@ public class DBConnector  {
             throw e;
         }
         return true;
+    }
+
+    /**
+     * Method to be run on incorrect login. Updates the username's incorrect login number on the DB.
+     * @param user username to be incremented
+     */
+    public boolean changePass(String user, String pass) {
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            String request = "UPDATE sql5104262.UserInfo SET Data1 ="
+                    + pass + " WHERE Username = '" + user + "'";
+            int didSucceed = statement.executeUpdate(request);
+            return true;
+        } catch (Exception e) {
+            Log.d("DB Write error", e.getMessage());
+            return false;
+        }
     }
 
     /**

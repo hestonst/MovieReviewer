@@ -171,6 +171,6 @@ public class WelcomeActivity extends AppCompatActivity {
         startActivity(new Intent(this, LoginActivity.class));
     }
     public void register(View view) {
-        startActivity(new Intent(this, registerActivity.class));
+        startActivity(new Intent(this, RegisterActivity.class));
     }
 }

@@ -19,6 +19,11 @@ public abstract class Member {
 		this.password = password;
 	}
 
+	public Member() {
+		this.username = null;
+		this.password = null;
+	}
+
     /**
 	 * Gets the username
 	 * @return String username of the User
