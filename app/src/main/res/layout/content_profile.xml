@@ -70,4 +70,16 @@
         android:layout_alignTop="@+id/button"
         android:layout_alignParentEnd="true"
         android:onClick="cancel" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/editPassword"
+        android:layout_below="@+id/editMajor"
+        android:layout_alignParentStart="true"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:hint="password" />
+
 </RelativeLayout>
