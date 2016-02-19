@@ -13,7 +13,7 @@ public class MemberManager extends Application {
     private String currentEmail;
 
     // backing hashMap to store member models
-    public HashMap<String, Member> members = new HashMap<>();
+    private static HashMap<String, Member> members = new HashMap<>();
 
     /**
      * adds a member to the backing hashMap
