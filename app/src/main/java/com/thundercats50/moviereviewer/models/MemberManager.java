@@ -49,7 +49,7 @@ public class MemberManager extends Application {
      * @param email the key to identify the current member
      */
     public void setCurrentMember(String email) {
-        if (members.size() == 0) {
+        if (getCurrentMember() == null) {
             User user = new User();
             user.setEmail(email);
             currentMember = new User();
