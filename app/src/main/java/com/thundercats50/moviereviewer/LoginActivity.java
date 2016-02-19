@@ -31,6 +31,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,8 +160,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-
-           startActivity(new Intent(this, LoggedInActivity.class));
+            MemberManager manager = (MemberManager) getApplicationContext();
+            manager.setCurrentMember(mEmailView.getText().toString());
+            startActivity(new Intent(this, LoggedInActivity.class));
         }
     }
 
@@ -168,11 +172,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-                && email.length() > 6);
+                && email.length() >= 6);
     }
 
     private boolean isPasswordValid(String password) {
-        return (password.matches("^.*[^a-zA-Z0-9 ].*$") && password.length() > 6);
+        return (password.matches("[a-zA-Z0-9]{3,6}") && password.length() >= 6);
     }
 
     /**
@@ -273,6 +277,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private final MemberManager manager = (MemberManager) getApplicationContext();
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -288,6 +293,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 dbc.disconnect();
+                if (manager.getMember(mEmail) == null) {
+                    manager.addMember(mEmail, new User(mEmail, mPassword));
+                }
+                manager.setCurrentMember(mEmail);
                 return retVal;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
