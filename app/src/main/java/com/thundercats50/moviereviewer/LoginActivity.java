@@ -276,6 +276,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private final MemberManager manager = (MemberManager) getApplicationContext();
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -291,6 +292,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 dbc.disconnect();
+                manager.setCurrentMember(mEmail);
                 return retVal;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
