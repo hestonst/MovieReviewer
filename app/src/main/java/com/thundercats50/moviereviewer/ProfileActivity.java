@@ -63,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (cancel) {
                 focusView.requestFocus();
             } else {
-                mUpdateTask = new UpdatePassword(member.getUsername(), passwordInput);
+                mUpdateTask = new UpdatePassword(manager.getCurrentEmail(), passwordInput);
                 mUpdateTask.execute();
                 Log.d("The method is working", "The method is working");
                 boolean b = mUpdateTask.doInBackground();
