@@ -23,4 +23,6 @@
     <string name="title_activity_register">Register</string>
     <string name="title_activity_profile">Edit Profile</string>
     <string name="edit_profile">Edit Profile</string>
+    <!-- Strings related to searching -->
+    <string name="search_hint">Search for Movies</string>
 </resources>
