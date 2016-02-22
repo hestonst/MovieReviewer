@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -44,8 +45,8 @@ public class DBConnector  {
             // https://github.com/windy1/google-places-api-java/issues/18
             // fix by including lib, not downloading it from Maven
             String url = "jdbc:mysql://sql5.freemysqlhosting.net";
-            String user = "sql5104262";
-            String pass = "dZsfuN5gwm";
+            String user = "sql5107476";
+            String pass = "YMVSuA8eWm";
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException drivExc) {
             Log.e("DBError", "The database driver has failed.");
@@ -82,7 +83,7 @@ public class DBConnector  {
 //                throw new InputMismatchException("DBC rejected pass or user");
 //            }
             statement = connection.createStatement();
-            String request = "INSERT INTO sql5104262.UserInfo (Username, Data1) VALUES ('"
+            String request = "INSERT INTO sql5107476.UserInfo (Username, Data1) VALUES ('"
                     + userName + "','" + password + "')";
 
             int didSucceed = statement.executeUpdate(request);
@@ -103,9 +104,12 @@ public class DBConnector  {
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
-            String request = "UPDATE sql5104262.UserInfo SET Data1 ="
-                    + pass + " WHERE Username = '" + user + "'";
+            String request = "UPDATE sql5107476.UserInfo SET Data1 ='"
+                    + pass + "' WHERE Username = '" + user + "'";
+            PreparedStatement aStatement = connection.prepareStatement(request);
+            aStatement.executeUpdate();
             int didSucceed = statement.executeUpdate(request);
+           
             return true;
         } catch (Exception e) {
             Log.d("DB Write error", e.getMessage());
@@ -165,7 +169,7 @@ public class DBConnector  {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT Username, Data1, LoginAttempts FROM sql5104262.UserInfo WHERE Username="
+            String request = "SELECT Username, Data1, LoginAttempts FROM sql5107476.UserInfo WHERE Username="
                     + "'" + user +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
@@ -185,7 +189,7 @@ public class DBConnector  {
         try {
             statement = connection.createStatement();
             int newVal = 1 + getLoginAttempts(user);
-            String request = "UPDATE sql5104262.UserInfo SET LoginAttempts ="
+            String request = "UPDATE sql5107476.UserInfo SET LoginAttempts ="
                     + Integer.toString(newVal) + " WHERE Username = '" + user + "'";
             int didSucceed = statement.executeUpdate(request);
             return true;
