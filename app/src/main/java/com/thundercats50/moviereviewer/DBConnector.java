@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 import java.util.InputMismatchException;
+import java.util.InvalidPropertiesFormatException;
 
 /**
  * TODO: Remove SQL injection potential
@@ -66,7 +67,24 @@ public class DBConnector  {
     }
 
 
+    /**
+     * Uses RegEx to verify emails
+     * @param email
+     * @return ifValid
+     */
+    private boolean isEmailValid(String email) {
+        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+                && email.length() >= 6);
+    }
 
+    /**
+     * Uses RegEx to verify pass; must be more than 6 chars and alphnumeric
+     * @param password
+     * @return ifValid
+     */
+    private boolean isPasswordValid(String password) {
+        return (password.matches("[a-zA-Z0-9]{6,30}") && password.length() > 6);
+    }
 
     /**
      * Method to add user to database. Screens info to prevent duplicates.
@@ -75,19 +93,32 @@ public class DBConnector  {
      * @return boolean true if succesfully created
      * @throws SQLException
      */
-    public boolean setNewUser(String userName, String password) throws SQLException, InputMismatchException {
+    public boolean setNewUser(String userName, String password) throws SQLException,
+            InputMismatchException {
         ResultSet resultSet = null;;
         try {
-//            if (!userName.matches("[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-//                || !password.matches("[^a-zA-Z0-9 ]{0,6}") || password.length() < 6) {
-//                throw new InputMismatchException("DBC rejected pass or user");
-//            }
+            if (!isEmailValid(userName)) {
+                throw new InputMismatchException("Incorrectly formatted email.");
+                //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
+            }
+            if (checkIfUser(userName)) {
+                throw new InputMismatchException("User email is already registered.");
+                //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
+            }
+            if (!isPasswordValid(password)) {
+                throw new InputMismatchException("Password must be alphanumeric and longer than six"
+                        + "characters.");
+                //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
+            }
             statement = connection.createStatement();
             String request = "INSERT INTO sql5107476.UserInfo (Username, Data1) VALUES ('"
                     + userName + "','" + password + "')";
 
             int didSucceed = statement.executeUpdate(request);
 
+        }
+        catch (ClassNotFoundException cnfe) {
+            Log.d("DB Driver Error", cnfe.getMessage());
         }
         catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());

@@ -194,27 +194,32 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-            Log.d("RegisterActivity", "3.5 Reached");
         } else {
             showProgress(true);
-            Log.d("RegisterActivity", "1 Reached");
-            mAuthTask = new UserRegisterTask(email, password);
-            mAuthTask.execute();
             try {
+                mAuthTask = new UserRegisterTask(email, password);
+                mAuthTask.execute();
                 if (!mAuthTask.get()) {
-                    Log.d("RegisterActivity", "4 Reached");
                     cancel = true;
-                } else {
-                    Log.d("RegisterActivity", "5 Reached");
+                }
+                Exception error = mAuthTask.getError();
+                if (error != null) {
+                    if (error.getMessage().contains("already registered")) {
+                        mEmailView.setError(getString(R.string.user_already_exists));
+                    } else if (error.getMessage().contains("formatted email")) {
+                        mEmailView.setError(getString(R.string.error_invalid_email));
+                    } else if (error.getMessage().contains("Password")){
+                        mEmailView.setError(getString(R.string.error_invalid_password));
+                    }
+                    cancel = true;
+                }
+                if (!cancel) {
                     startActivity(new Intent(this, LoggedInActivity.class));
                     setContentView(R.layout.activity_loggedin);
                 }
             } catch (Exception e) {
-                Log.d("Task Error", "Cannot create logged in view.");
+                Log.d("RegisterActivity", "Thread Error");
             }
-            Log.d("RegisterActivity", "6 Reached");
-//            Boolean b = mAuthTask.doInBackground();
-
         }
     }
 
@@ -359,6 +364,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         private final String mEmail;
         private final String mPassword;
         private final MemberManager manager = (MemberManager) getApplicationContext();
+        private Exception error;
 
         UserRegisterTask(String email, String password) {
             mEmail = email;
@@ -376,8 +382,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 dbc.disconnect();
                 manager.setCurrentMember(mEmail);
                 return retVal;
-            } catch (InputMismatchException imee) {
-                Log.d("Invalid reg", "Possible SQL injection attempt.");
+            } catch(InputMismatchException imee) {
+                error = imee;
                 return false;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
@@ -405,6 +411,10 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             }
         }
 
+        public Exception getError() {
+            return error;
+        }
+
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
@@ -412,9 +422,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
             if (success) {
                 finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_invalid_password));
-                mPasswordView.requestFocus();
             }
         }
 
