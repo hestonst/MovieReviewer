@@ -45,7 +45,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
+    //TODO: add profile permanence, change password form to DB
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -130,32 +130,39 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
+            Log.d("Debug", "Reached 0.1");
             cancel = true;
         }
 
-        showProgress(true);
-        mAuthTask = new UserLoginTask(email, password);
-        mAuthTask.execute();
-        b = mAuthTask.doInBackground();
-
-        try {
-            if (!mAuthTask.get()) {
-                cancel = true;
-            }
-        } catch (Exception e) {
-            Log.d("Task Error", "Cannot create logged in view.");
-        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            Log.d("Debug", "Reached 2");
+
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            MemberManager manager = (MemberManager) getApplicationContext();
-            manager.setCurrentMember(mEmailView.getText().toString());
-            startActivity(new Intent(this, LoggedInActivity.class));
+            showProgress(true);
+            Log.d("Debug", "Reached -3");
+            mAuthTask = new UserLoginTask(email, password);
+            Log.d("Debug", "Reached -2");
+            mAuthTask.execute();
+
+
+            try {
+                if (!mAuthTask.get()) {
+                    cancel = true;
+                    Log.d("Debug", "Reached 0.5");
+                }
+            } catch (Exception e) {
+                Log.d("Task Error", "Cannot create logged in view.");
+            }
+
+            if (!cancel) {
+                MemberManager manager = (MemberManager) getApplicationContext();
+                manager.setCurrentMember(mEmailView.getText().toString());
+                startActivity(new Intent(this, LoggedInActivity.class));
+            }
         }
     }
 
@@ -169,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isPasswordValid(String password) {
-        return (password.matches("[a-zA-Z0-9]{3,6}") && password.length() >= 6);
+        return (password.matches("[a-zA-Z0-9]+") && password.length() >= 6);
     }
 
     /**
@@ -279,25 +286,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void...params) {
-
+            DBConnector dbc = null;
             try {
-                DBConnector dbc = new DBConnector();
+                dbc = new DBConnector();
                 boolean retVal = dbc.verifyUser(mEmail, mPassword);
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
                         + Boolean.toString(retVal));
-                dbc.disconnect();
                 if (manager.getMember(mEmail) == null) {
                     manager.addMember(mEmail, new User(mEmail, mPassword));
                 }
                 manager.setCurrentMember(mEmail);
+                dbc.disconnect();
                 return retVal;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
-                return false;
+                cancel(false);
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                return false;
+                cancel(false);
+            } finally {
+                dbc.disconnect();
             }
+            return false;
         }
 
         @Override
@@ -306,8 +316,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                Log.d("Debug", "Reached 6");
                 finish();
             } else {
+                Log.d("Debug", "Reached 7");
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }

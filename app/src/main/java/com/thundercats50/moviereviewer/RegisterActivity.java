@@ -190,6 +190,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             focusView = mPasswordView;
             cancel = true;
         }
+
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
