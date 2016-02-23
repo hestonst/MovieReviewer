@@ -14,6 +14,7 @@ import java.util.InvalidPropertiesFormatException;
 
 /**
  * TODO: Remove SQL injection potential
+ * TODO: Split class into Repo and Blackboard classes
  * TODO: Encrypt passwords
  * @author Scott Heston
  * @version 1.1.0
@@ -36,7 +37,7 @@ public class DBConnector  {
      * @throws ClassNotFoundException if Driver lib dependency not found
      * @throws SQLException if authentication issues with DB
      */
-    private void connect() throws ClassNotFoundException, SQLException {
+    private void connect() {
         //the implementation should notify the user of these errors if there is no internet access
         //i.e if the database cannot be reached
         try {
@@ -51,15 +52,33 @@ public class DBConnector  {
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException drivExc) {
             Log.e("DBError", "The database driver has failed.");
-            throw new ClassNotFoundException("Could not access database username/password. "
-                    + "Check DB Driver.", drivExc);
+            Log.d("DBC ClassNtFndException",
+                    "Could not access database username/password. Check DB Driver.");
         } catch (IllegalAccessException iae) {
-            throw new ClassNotFoundException("Could not access database username/password. "
-                    + "Check DB Driver.", iae);
+            Log.d("ClassNotFoundException", "Could not access database username/password. "
+                    + "Check DB Driver.");
+        } catch (SQLException sqle) {
+            Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
+            for (Throwable e : sqle) {
+                e.printStackTrace(System.err);
+                Log.d("Connection Error", "SQLState: " +
+                        ((SQLException) e).getSQLState());
+
+                Log.d("Connection Error", "Error Code: " +
+                        ((SQLException) e).getErrorCode());
+
+                Log.d("Connection Error", "Message: " + e.getMessage());
+
+                Throwable t = sqle.getCause();
+                while(t != null) {
+                    Log.d("Connection Error", "Cause: " + t);
+                    t = t.getCause();
+                }
+            }
         }
         catch (InstantiationException ie) {
-            throw new ClassNotFoundException("Could not access database username/password. "
-                    + "Check DB Driver.", ie);
+            Log.d("DBC InstantException",
+                    "No access database user/pass. Check Driver.");
         }
 //        catch (SQLException sqle) {
 //            throw new SQLException("The user database cannot be reached. Check your internet.", sqle);
@@ -197,6 +216,7 @@ public class DBConnector  {
             throws ClassNotFoundException, SQLException {
         ResultSet resultSet = null;
         try {
+            if (connection == null) connect();
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
