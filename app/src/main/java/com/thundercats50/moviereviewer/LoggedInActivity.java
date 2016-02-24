@@ -51,4 +51,8 @@ public class LoggedInActivity extends AppCompatActivity {
     public void editProfile(View view) {
         startActivity(new Intent(this, ProfileActivity.class));
     }
+
+    public void goToSearch(View view) {
+        startActivity(new Intent(this, SearchActivity.class));
+    }
 }

@@ -9,4 +9,41 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.thundercats50.moviereviewer.SearchActivity">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Home"
+        android:id="@+id/homeButton"
+        android:layout_below="@+id/searchPrompt"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/searchPrompt"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="52dp"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/homeButton"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="New DVDs"
+        android:id="@+id/new_dvds"
+        android:layout_alignTop="@+id/homeButton"
+        android:layout_toEndOf="@+id/homeButton"
+        android:onClick="searchNewDVD"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="New Releases"
+        android:id="@+id/new_releases"
+        android:layout_alignTop="@+id/homeButton"
+        android:layout_toEndOf="@+id/new_dvds"
+        android:onClick="searchNewReleases"/>
 </RelativeLayout>
