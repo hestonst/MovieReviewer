@@ -20,6 +20,7 @@ public class SearchActivity extends AppCompatActivity {
         searchDialogue.setText(getString(R.string.search_hint));
         setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
         // Get the intent, verify the action and get the query
+        // TODO Have the query show up dynamically in the searchDialogue rather than widget
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
