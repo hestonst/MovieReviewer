@@ -24,10 +24,7 @@
         android:text=""
         android:id="@+id/searchPrompt"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="52dp"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/homeButton"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -46,4 +43,14 @@
         android:layout_alignTop="@+id/homeButton"
         android:layout_toEndOf="@+id/new_dvds"
         android:onClick="searchNewReleases"/>
+
+    <fragment
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:name="com.thundercats50.moviereviewer.listview.MovieFragment"
+        android:id="@+id/fragment2"
+        android:layout_below="@+id/homeButton"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
