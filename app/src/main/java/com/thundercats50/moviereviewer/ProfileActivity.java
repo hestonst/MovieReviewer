@@ -67,37 +67,13 @@ public class ProfileActivity extends AppCompatActivity {
                 mUpdateTask.execute();
                 Log.d("The method is working", "The method is working");
                 boolean b = mUpdateTask.doInBackground();
-//                try {
-//                    DBConnector dbc = new DBConnector();
-//                    boolean retVal = dbc.changePass(member.getUsername(), passwordInput);
-//                    Log.d("DB changePass Finished", "updateProfile method returned: "
-//                            + Boolean.toString(retVal));
-//                    dbc.disconnect();
-//                    member.setPassword(passwordInput);
-//                } catch (ClassNotFoundException cnfe) {
-//                    Log.d("Dependency Error", "Check if MySQL library is present.");
-//                } catch (SQLException sqle) {
-//                    Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-//                    for (Throwable e : sqle) {
-//                        e.printStackTrace(System.err);
-//                        Log.d("Connection Error", "SQLState: " +
-//                                ((SQLException) e).getSQLState());
-//
-//                        Log.d("Connection Error", "Error Code: " +
-//                                ((SQLException) e).getErrorCode());
-//
-//                        Log.d("Connection Error", "Message: " + e.getMessage());
-//
-//                        Throwable t = sqle.getCause();
-//                        while (t != null) {
-//                            Log.d("Connection Error", "Cause: " + t);
-//                            t = t.getCause();
-//                        }
-//                    }
-//                }
-                startActivity(new Intent(this, LoggedInActivity.class));
-        }
-            //startActivity(new Intent(this, LoggedInActivity.class));
+                if (b) {
+                    startActivity(new Intent(this, LoggedInActivity.class));
+                } else {
+                    email.setError("An error occured. Please check the log");
+                    email.requestFocus();
+                }
+            }
         }
     }
 
@@ -119,20 +95,19 @@ public class ProfileActivity extends AppCompatActivity {
 
         private final String mEmail;
         private final String mPassword;
-        private final MemberManager manager = (MemberManager) getApplicationContext();
 
         UpdatePassword(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
         protected Boolean doInBackground(Void...params) {
+            boolean retVal = false;
             try {
                 DBConnector dbc = new DBConnector();
-                boolean retVal = dbc.changePass(mEmail, mPassword);
+                retVal = dbc.changePass(mEmail, mPassword);
                 Log.d("DB changePass Finished", "updateProfile method returned: "
                         + Boolean.toString(retVal));
                 dbc.disconnect();
-                //member.setPassword(passwordInput);
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
             } catch (SQLException sqle) {
@@ -154,7 +129,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 }
             }
-            return true;
+            return retVal;
         }
 
     }

@@ -25,4 +25,7 @@
     <string name="title_activity_register">Register</string>
     <string name="title_activity_profile">Edit Profile</string>
     <string name="edit_profile">Edit Profile</string>
+    <!-- Strings related to searching -->
+    <string name="search_hint">Start typing your search..</string>
+    <string name="search_return" formatted="false">Displaying 10 of %d results for %s</string>
 </resources>
