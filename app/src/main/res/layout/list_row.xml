@@ -32,7 +32,7 @@
         android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
         android:scaleType="fitXY"
-        android:src="@drawable/rottenTomato"
+        android:src="@drawable/rotten_tomato"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

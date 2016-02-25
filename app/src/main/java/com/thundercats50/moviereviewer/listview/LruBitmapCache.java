@@ -9,7 +9,7 @@ import com.android.volley.toolbox.ImageLoader.ImageCache;
 
 
 /**
- * Boilderplate code from https://developer.android.com/training/volley/request.html
+ * Boilerplate code from https://developer.android.com/training/volley/request.html
  * This is a direct copy and paste from the developers website
  */
 
