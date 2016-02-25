@@ -33,7 +33,7 @@ import static com.thundercats50.moviereviewer.json.Keys.KEY_THUMBNAIL;
 import static com.thundercats50.moviereviewer.json.Keys.KEY_TITLE;
 public class Parser {
     public static ArrayList<SingleMovie> parseMoviesJSON(JSONObject response) {
-        DateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         ArrayList<SingleMovie> listMovies = new ArrayList<>();
         if (response != null && response.length() > 0) {
             try {
