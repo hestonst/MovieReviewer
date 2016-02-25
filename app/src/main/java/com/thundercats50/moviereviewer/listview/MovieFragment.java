@@ -139,6 +139,7 @@ public class MovieFragment extends Fragment {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
+
         // Clear the adapter because new data is being added from a new subkey
         adapter.clearAdapter();
 
@@ -170,11 +171,9 @@ public class MovieFragment extends Fragment {
                         item.setUrl(post.getString("url"));
                         item.setSubreddit(post.getString("subkey"));
                         item.setAuthor(post.getString("author"));
-
                         jsonTomatoes = post.getString("subkey");
 
                         movieList.add(item);
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -208,7 +207,7 @@ public class MovieFragment extends Fragment {
         // Create the reddit json url for parsing
         subkey = baseURL + subkey + jsonEnd + qCount + count + after + after_id;
 
-        // Declare the adapter and attach it to the recyclerview
+        // Declare the adapter and attach it to the recycler-view
         adapter = new MovieListAdapter(getActivity(), movieList);
         mRecyclerView.setAdapter(adapter);
 

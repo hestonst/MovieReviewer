@@ -44,6 +44,8 @@
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SearchResultsActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
