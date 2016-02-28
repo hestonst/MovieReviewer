@@ -48,11 +48,9 @@ public class MovieFragment extends Fragment {
     private String after_id;
 
     //Possibly useful for JSON query: (Originally reddit JSON queries)
-    private static final String gaming = "gaming";
-    private static final String aww = "aww";
-    private static final String pics = "pics";
-    private static final String baseURL = "http://www.reddit.com/r/";
-    private static final String jsonEnd = "/.json";
+    private static final String key = "?apikey=yedukp76ffytfuy24zsfqk75&";
+    private static final String baseURL = "http://api.rottentomatoes.com/api/public/v1.0/";
+    private static final String jsonEnd = "&page_limit=10";
 
     //Possibly useful for JSON query:
     private static final String qCount = "?count=";
@@ -82,9 +80,6 @@ public class MovieFragment extends Fragment {
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-
-        //again, Reddit keyword to be updated
-        updateList("aww");
 
         mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
@@ -123,15 +118,19 @@ public class MovieFragment extends Fragment {
         return rootView;
     }
 
-    public void updateList(String subkey) {
+    public void updateList(int type, String subkey) {
 
         // Set the counter to 0. This counter will be used to create new json urls
         // In the loadMore function we will increase this integer by 25
         counter = 0;
 
-        // Create the reddit json url for parsing
-        //subkey = baseURL + subkey + jsonEnd;
-        subkey = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=yedukp76ffytfuy24zsqk7f5&q=Superman&page_limit=10";
+        if (type == 0) {
+            subkey = baseURL + "movies.json" + subkey + key + jsonEnd;
+        } else {
+            subkey = baseURL + subkey + key + jsonEnd;
+        }
+
+        // "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=yedukp76ffytfuy24zsfqk75&q=Superman&page_limit=10";
 
         //declare the adapter and attach it to the recyclerview
         adapter = new MovieListAdapter(getActivity(), movieList);
