@@ -130,7 +130,8 @@ public class MovieFragment extends Fragment {
         counter = 0;
 
         // Create the reddit json url for parsing
-        subkey = baseURL + subkey + jsonEnd;
+        //subkey = baseURL + subkey + jsonEnd;
+        subkey = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=yedukp76ffytfuy24zsqk7f5&q=Superman&page_limit=10";
 
         //declare the adapter and attach it to the recyclerview
         adapter = new MovieListAdapter(getActivity(), movieList);
@@ -146,7 +147,7 @@ public class MovieFragment extends Fragment {
         showPD();
 
         // Request a string response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, subkey, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=yedukp76ffytfuy24zsqk7f5&q=Superman&page_limit=10", null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -158,20 +159,20 @@ public class MovieFragment extends Fragment {
                 // Declare the json objects that we need and then for loop through the children array.
                 // Do the json parse in a try catch block to catch the exceptions
                 try {
-                    JSONObject data = response.getJSONObject("data");
-                    after_id = data.getString("after");
-                    JSONArray children = data.getJSONArray("children");
+                    //JSONObject data = response.getJSONObject();
+                    //after_id = data.getString("after");
+                    JSONArray arrayMovies = response.getJSONArray("movies");
 
-                    for (int i = 0; i < children.length(); i++) {
+                    for (int i = 0; i < arrayMovies.length(); i++) {
 
-                        JSONObject post = children.getJSONObject(i).getJSONObject("data");
+                        JSONObject currentMovie = arrayMovies.getJSONObject(i);
                         SingleMovie item = new SingleMovie();
-                        item.setTitle(post.getString("title"));
-                        item.setThumbnail(post.getString("thumbnail"));
-                        item.setUrl(post.getString("url"));
-                        item.setSubreddit(post.getString("subkey"));
-                        item.setAuthor(post.getString("author"));
-                        jsonTomatoes = post.getString("subkey");
+                        item.setTitle(currentMovie.getString("title"));
+//                        item.setThumbnail(currentMovie.getString("thumbnail"));
+//                        item.setUrl(currentMovie.getString("url"));
+//                        item.setSubreddit(currentMovie.getString("subkey"));
+//                        item.setAuthor(currentMovie.getString("author"));
+//                        jsonTomatoes = currentMovie.getString("subkey");
 
                         movieList.add(item);
                     }
