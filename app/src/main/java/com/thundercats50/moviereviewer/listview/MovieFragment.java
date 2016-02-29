@@ -48,7 +48,7 @@ public class MovieFragment extends Fragment {
     private String after_id;
 
     //Possibly useful for JSON query: (Originally reddit JSON queries)
-    private static final String key = "?apikey=yedukp76ffytfuy24zsfqk75&";
+    private static final String key = "?apikey=yedukp76ffytfuy24zsqk7f5";
     private static final String baseURL = "http://api.rottentomatoes.com/api/public/v1.0/";
     private static final String jsonEnd = "&page_limit=10";
 
@@ -125,7 +125,7 @@ public class MovieFragment extends Fragment {
         counter = 0;
 
         if (type == 0) {
-            subkey = baseURL + "movies.json" + subkey + key + jsonEnd;
+            subkey = baseURL + "movies.json" + key + "&q=" + subkey + jsonEnd;
         } else {
             subkey = baseURL + subkey + key + jsonEnd;
         }
@@ -146,7 +146,7 @@ public class MovieFragment extends Fragment {
         showPD();
 
         // Request a string response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=yedukp76ffytfuy24zsqk7f5&q=Superman&page_limit=10", null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, subkey, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
