@@ -1,108 +1,19 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.database;
 
 import android.util.Log;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.ResultSet;
-
+import java.sql.SQLException;
 import java.util.InputMismatchException;
-import java.util.InvalidPropertiesFormatException;
 
 /**
- * TODO: Remove SQL injection potential
- * TODO: Split class into Repo and Blackboard classes
- * TODO: Encrypt passwords
- * @author Scott Heston
- * @version 1.1.0
- * Documentation:
- * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
+ * Created by scottheston on 28/02/16.
  */
-public class DBConnector  {
+public class BlackBoardConnector extends DBConnector {
 
-    Connection connection;
-    Statement statement;
-
-
-    public DBConnector() throws ClassNotFoundException, SQLException {
-        connect();
-    }
-
-    /**
-     * Creates connection to mySQL database on connection.
-     * @return Connection
-     * @throws ClassNotFoundException if Driver lib dependency not found
-     * @throws SQLException if authentication issues with DB
-     */
-    private void connect() {
-        //the implementation should notify the user of these errors if there is no internet access
-        //i.e if the database cannot be reached
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            // If this line throws an error, make sure gradle is including the java/mySQL connector
-            // jar in the class folder. If "bad class file magic", bug with gradle and android:
-            // https://github.com/windy1/google-places-api-java/issues/18
-            // fix by including lib, not downloading it from Maven
-            String url = "jdbc:mysql://sql5.freemysqlhosting.net";
-            String user = "sql5107476";
-            String pass = "YMVSuA8eWm";
-            connection = DriverManager.getConnection(url, user, pass);
-        } catch (ClassNotFoundException drivExc) {
-            Log.e("DBError", "The database driver has failed.");
-            Log.d("DBC ClassNtFndException",
-                    "Could not access database username/password. Check DB Driver.");
-        } catch (IllegalAccessException iae) {
-            Log.d("ClassNotFoundException", "Could not access database username/password. "
-                    + "Check DB Driver.");
-        } catch (SQLException sqle) {
-            Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-            for (Throwable e : sqle) {
-                e.printStackTrace(System.err);
-                Log.d("Connection Error", "SQLState: " +
-                        ((SQLException) e).getSQLState());
-
-                Log.d("Connection Error", "Error Code: " +
-                        ((SQLException) e).getErrorCode());
-
-                Log.d("Connection Error", "Message: " + e.getMessage());
-
-                Throwable t = sqle.getCause();
-                while(t != null) {
-                    Log.d("Connection Error", "Cause: " + t);
-                    t = t.getCause();
-                }
-            }
-        }
-        catch (InstantiationException ie) {
-            Log.d("DBC InstantException",
-                    "No access database user/pass. Check Driver.");
-        }
-//        catch (SQLException sqle) {
-//            throw new SQLException("The user database cannot be reached. Check your internet.", sqle);
-//        }
-    }
-
-
-    /**
-     * Uses RegEx to verify emails
-     * @param email
-     * @return ifValid
-     */
-    private boolean isEmailValid(String email) {
-        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-                && email.length() >= 6);
-    }
-
-    /**
-     * Uses RegEx to verify pass; must be more than 6 chars and alphnumeric
-     * @param password
-     * @return ifValid
-     */
-    private boolean isPasswordValid(String password) {
-        return (password.matches("[a-zA-Z0-9]{6,30}") && password.length() > 6);
+    public BlackBoardConnector() throws ClassNotFoundException, SQLException {
+        super();
     }
 
     /**
@@ -114,7 +25,7 @@ public class DBConnector  {
      */
     public boolean setNewUser(String userName, String password) throws SQLException,
             InputMismatchException {
-        ResultSet resultSet = null;;
+        ResultSet resultSet = null;
         try {
             if (!isEmailValid(userName)) {
                 throw new InputMismatchException("Incorrectly formatted email.");
@@ -138,6 +49,7 @@ public class DBConnector  {
         }
         catch (ClassNotFoundException cnfe) {
             Log.d("DB Driver Error", cnfe.getMessage());
+            return false;
         }
         catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());
@@ -145,6 +57,26 @@ public class DBConnector  {
         }
         return true;
     }
+
+    /**
+     * Uses RegEx to verify emails
+     * @param email
+     * @return ifValid
+     */
+    private boolean isEmailValid(String email) {
+        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+                && email.length() >= 6);
+    }
+
+    /**
+     * Uses RegEx to verify pass; must be more than 6 chars and alphnumeric
+     * @param password
+     * @return ifValid
+     */
+    private boolean isPasswordValid(String password) {
+        return (password.matches("[a-zA-Z0-9]{6,30}") && password.length() > 6);
+    }
+
 
     /**
      * Method to be run on incorrect login. Updates the username's incorrect login number on the DB.
@@ -159,7 +91,7 @@ public class DBConnector  {
             PreparedStatement aStatement = connection.prepareStatement(request);
             aStatement.executeUpdate();
             int didSucceed = statement.executeUpdate(request);
-           
+
             return true;
         } catch (Exception e) {
             Log.d("DB Write error", e.getMessage());
@@ -188,11 +120,10 @@ public class DBConnector  {
      * @param user
      * @param pass
      * @return boolean true if valid
-     * @throws ClassNotFoundException
      * @throws SQLException
      */
     public boolean verifyUser(String user, String pass)
-            throws ClassNotFoundException, SQLException {
+            throws SQLException {
         ResultSet resultSet = getUserData(user);
         if (resultSet.next()) {
             if (resultSet.getString(2).equals(pass)) {
@@ -209,11 +140,10 @@ public class DBConnector  {
      * private method to query DB for user information matching username
      * @param user
      * @return ResultSet
-     * @throws ClassNotFoundException
      * @throws SQLException
      */
     private ResultSet getUserData(String user)
-            throws ClassNotFoundException, SQLException {
+            throws SQLException {
         ResultSet resultSet = null;
         try {
             if (connection == null) connect();
@@ -227,6 +157,7 @@ public class DBConnector  {
             Log.e("Database SQLException", sqle.getMessage());
             Log.e("Database SQLState", sqle.getSQLState());
             Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+            throw sqle;
         }
         return resultSet;
     }
@@ -263,34 +194,11 @@ public class DBConnector  {
         resultSet = getUserData(user);
         if (resultSet.next()) {
             retVal = resultSet.getInt(3);
-                //there is only 1 entry because there is only one username selected from DB at
-                // a time; 3 because resultSet contains user, pass, attempts
+            //there is only 1 entry because there is only one username selected from DB at
+            // a time; 3 because resultSet contains user, pass, attempts
         }
         resultSet.close();
         return retVal;
-    }
-
-    /**
-     * Must be run to disconnect connection when finished with DB.
-     */
-    public void disconnect() {
-        Log.d("DBC Logout", "entered");
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException sqlEx) {
-                Log.d("DBC Logout", sqlEx.getMessage() + sqlEx.getErrorCode() + sqlEx.toString());
-            }
-            // ignore, means connection was already closed
-        }
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException sqlEx) {
-                Log.d("DBC Logout", sqlEx.getMessage() + sqlEx.getErrorCode() + sqlEx.toString());
-            }
-            // ignore, means connection was already closed
-        }
     }
 
 }

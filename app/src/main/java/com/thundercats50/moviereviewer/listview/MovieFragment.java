@@ -218,7 +218,8 @@ public class MovieFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
         // Request a string response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, subkey, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, subkey, null,
+                new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -277,18 +278,18 @@ public class MovieFragment extends Fragment {
     private void showPD() {
         if(progressDialog == null) {
             progressDialog  = new ProgressDialog(getActivity());
-            progressDialog .setMessage("Loading...");
-            progressDialog .setCancelable(false);
-            progressDialog .setCanceledOnTouchOutside(false);
-            progressDialog .show();
+            progressDialog.setMessage("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
         }
     }
 
     // function to hide the loading dialog box
     private void hidePD() {
-        if (progressDialog  != null) {
-            progressDialog .dismiss();
-            progressDialog  = null;
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog= null;
         }
     }
 

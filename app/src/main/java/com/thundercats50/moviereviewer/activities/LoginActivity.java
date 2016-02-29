@@ -1,17 +1,14 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -31,23 +28,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.User;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.InputMismatchException;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import java.sql.SQLException;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+    //TODO: add profile permanence, change password form to DB
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -56,32 +51,27 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserRegisterTask mAuthTask = null;
+    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+    private boolean b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                if (id == R.id.login_password || id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
                 }
@@ -99,65 +89,14 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
-
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
-
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    /**
-     * Part of autocomplete implementation
-     * @return
-     */
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
-    }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    public void attemptLogin() {
         if (mAuthTask != null) {
             return;
         }
@@ -173,6 +112,13 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         boolean cancel = false;
         View focusView = null;
 
+        // Check for a valid password, if the user entered one.
+        if (!isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
@@ -181,13 +127,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
-            cancel = true;
-        }
-
-        // Check for a valid password, if the user entered one.
-        if (!isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+            Log.d("Debug", "Reached 0.1");
             cancel = true;
         }
 
@@ -196,52 +136,44 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            Log.d("Debug", "Reached 2");
+
         } else {
             showProgress(true);
+            Log.d("Debug", "Reached -3");
+            mAuthTask = new UserLoginTask(email, password);
+            Log.d("Debug", "Reached -2");
+            mAuthTask.execute();
+
+
             try {
-                mAuthTask = new UserRegisterTask(email, password);
-                mAuthTask.execute();
                 if (!mAuthTask.get()) {
                     cancel = true;
-                }
-                Exception error = mAuthTask.getError();
-                if (error != null) {
-                    if (error.getMessage().contains("already registered")) {
-                        mEmailView.setError(getString(R.string.user_already_exists));
-                    } else if (error.getMessage().contains("formatted email")) {
-                        mEmailView.setError(getString(R.string.error_invalid_email));
-                    } else if (error.getMessage().contains("Password")){
-                        mEmailView.setError(getString(R.string.error_invalid_password));
-                    }
-                    cancel = true;
-                }
-                if (!cancel) {
-                    startActivity(new Intent(this, LoggedInActivity.class));
-                    setContentView(R.layout.activity_loggedin);
+                    Log.d("Debug", "Reached 0.5");
                 }
             } catch (Exception e) {
-                Log.d("RegisterActivity", "Thread Error");
+                Log.d("Task Error", "Cannot create logged in view.");
+            }
+
+            if (!cancel) {
+                MemberManager manager = (MemberManager) getApplicationContext();
+                manager.setCurrentMember(mEmailView.getText().toString());
+                startActivity(new Intent(this, LoggedInActivity.class));
             }
         }
     }
 
-    /**
-     * Uses RegEx to verify emails
-     * @param email
-     * @return ifValid
-     */
+    public void cancel(View view) {
+        startActivity(new Intent(this, WelcomeActivity.class));
+    }
+
     private boolean isEmailValid(String email) {
         return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
                 && email.length() >= 6);
     }
 
-    /**
-     * Uses RegEx to verify pass; must be more than 6 chars and alphnumeric
-     * @param password
-     * @return ifValid
-     */
     private boolean isPasswordValid(String password) {
-        return (password.matches("[a-zA-Z0-9]{6,30}") && password.length() > 6);
+        return (password.matches("[a-zA-Z0-9]+") && password.length() >= 6);
     }
 
     /**
@@ -314,27 +246,13 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     }
 
-    /**
-     * Generated autocomplete
-     * @param emailAddressCollection
-     */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(RegisterActivity.this,
+                new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
 
@@ -349,72 +267,46 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     }
 
     /**
-     * Return to previous view
-     * @param view
-     */
-    public void cancel(View view) {
-        startActivity(new Intent(this, WelcomeActivity.class));
-    }
-
-
-    /**
-     * Represents an asynchronous registration task used to authenticate
+     * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
         private final MemberManager manager = (MemberManager) getApplicationContext();
-        private Exception error;
+        private boolean internetAccessExists = true;
 
-        UserRegisterTask(String email, String password) {
+        UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-
+        protected Boolean doInBackground(Void...params) {
+            BlackBoardConnector bbc = null;
             try {
-                DBConnector dbc = new DBConnector();
-                boolean retVal = dbc.setNewUser(mEmail, mPassword);
-                Log.d("DB setNewUser Finished", "doInBackground method returned: "
+                bbc = new BlackBoardConnector();
+                boolean retVal = bbc.verifyUser(mEmail, mPassword);
+                Log.d("DB verifyUser Called", "doInBackground method returned: "
                         + Boolean.toString(retVal));
-                dbc.disconnect();
+                if (manager.getMember(mEmail) == null) {
+                    manager.addMember(mEmail, new User(mEmail, mPassword));
+                }
                 manager.setCurrentMember(mEmail);
+                bbc.disconnect();
                 return retVal;
-            } catch(InputMismatchException imee) {
-                error = imee;
-                return false;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
-                return false;
+                cancel(false);
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                for (Throwable e : sqle) {
-                            e.printStackTrace(System.err);
-                    Log.d("Connection Error", "SQLState: " +
-                                    ((SQLException) e).getSQLState());
-
-                    Log.d("Connection Error", "Error Code: " +
-                                    ((SQLException) e).getErrorCode());
-
-                    Log.d("Connection Error", "Message: " + e.getMessage());
-
-                            Throwable t = sqle.getCause();
-                            while(t != null) {
-                                Log.d("Connection Error", "Cause: " + t);
-                                t = t.getCause();
-                            }
-                        }
-
-                return false;
+                internetAccessExists = false;
+                cancel(false);
+            } finally {
+                bbc.disconnect();
             }
-        }
-
-        public Exception getError() {
-            return error;
+            return false;
         }
 
         @Override
@@ -423,7 +315,18 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             showProgress(false);
 
             if (success) {
+                Log.d("Debug", "Reached 6");
                 finish();
+            } else {
+                if (internetAccessExists) {
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                } else {
+                    mPasswordView.setError(getString(R.string.no_internet));
+                    mPasswordView.requestFocus();
+                }
+                Log.d("Debug", "Reached 7");
+
             }
         }
 
@@ -433,8 +336,5 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             showProgress(false);
         }
     }
-
-
-
 }
 

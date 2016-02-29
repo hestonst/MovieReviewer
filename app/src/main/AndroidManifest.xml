@@ -17,20 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".LoggedInActivity"
+            android:name=".activities.LoggedInActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_logged_in"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".activities.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_welcome"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activities.RegisterActivity"
             android:label="@string/title_activity_register" />
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -41,12 +41,12 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".ProfileActivity"
+            android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SearchResultsActivity"></activity>
+        <activity android:name=".activities.SearchResultsActivity"></activity>
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SearchActivity">
+        <activity android:name=".activities.SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

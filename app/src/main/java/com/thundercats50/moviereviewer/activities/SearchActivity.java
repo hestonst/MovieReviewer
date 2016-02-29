@@ -1,4 +1,4 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.activities;
 
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.widget.TextView;
 import android.view.View;
+
+import com.thundercats50.moviereviewer.R;
 
 public class SearchActivity extends AppCompatActivity {
     // holds the query the user enters

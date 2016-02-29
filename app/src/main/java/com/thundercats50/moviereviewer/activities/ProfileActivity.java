@@ -1,9 +1,7 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,8 +9,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.content.Intent;
 
+import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.activities.LoggedInActivity;
+import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.models.MemberManager;
-import com.thundercats50.moviereviewer.models.Member;
 import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.SQLException;
@@ -103,11 +103,11 @@ public class ProfileActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void...params) {
             boolean retVal = false;
             try {
-                DBConnector dbc = new DBConnector();
-                retVal = dbc.changePass(mEmail, mPassword);
+                BlackBoardConnector bbc = new BlackBoardConnector();
+                retVal = bbc.changePass(mEmail, mPassword);
                 Log.d("DB changePass Finished", "updateProfile method returned: "
                         + Boolean.toString(retVal));
-                dbc.disconnect();
+                bbc.disconnect();
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
             } catch (SQLException sqle) {

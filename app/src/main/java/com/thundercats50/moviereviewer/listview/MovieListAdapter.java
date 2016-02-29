@@ -13,7 +13,7 @@ import java.util.List;
 //If we want to use movie images:
 import com.android.volley.toolbox.ImageLoader;
 import com.thundercats50.moviereviewer.R;
-import com.thundercats50.moviereviewer.WelcomeActivity;
+import com.thundercats50.moviereviewer.activities.WelcomeActivity;
 import com.thundercats50.moviereviewer.models.SingleMovie;
 //to remove after integration of rotten tomatoes
 

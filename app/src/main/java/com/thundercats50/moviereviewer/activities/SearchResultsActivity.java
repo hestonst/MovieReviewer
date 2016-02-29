@@ -1,7 +1,9 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.thundercats50.moviereviewer.R;
 
 public class SearchResultsActivity extends AppCompatActivity {
 

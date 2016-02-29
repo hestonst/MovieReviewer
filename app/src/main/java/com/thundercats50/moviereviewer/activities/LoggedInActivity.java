@@ -1,15 +1,12 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
+import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.models.MemberManager;
 import com.thundercats50.moviereviewer.models.User;
 
