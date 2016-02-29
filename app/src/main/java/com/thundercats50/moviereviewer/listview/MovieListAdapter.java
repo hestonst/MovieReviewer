@@ -63,11 +63,11 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
 
         mImageLoader = MovieRequestQueue.getInstance(mContext).getImageLoader();
 
-        movieViewHolder.thumbnail.setImageUrl(movie.getThumbnail(), mImageLoader);
-        movieViewHolder.thumbnail.setDefaultImageResId(R.drawable.rotten_tomato);
+        //movieViewHolder.thumbnail.setImageUrl(movie.getThumbnail(), mImageLoader);
+        //movieViewHolder.thumbnail.setDefaultImageResId(R.drawable.rotten_tomato);
 
         movieViewHolder.title.setText(Html.fromHtml(movie.getTitle()));
-        movieViewHolder.synopsis.setText(Html.fromHtml(movie.getAuthor()));
+        //movieViewHolder.synopsis.setText(Html.fromHtml(movie.getAuthor()));
     }
 
     public void clearAdapter()
