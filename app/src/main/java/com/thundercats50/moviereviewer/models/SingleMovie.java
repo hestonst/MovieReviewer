@@ -1,5 +1,13 @@
 package com.thundercats50.moviereviewer.models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.ImageView;
+
+import java.io.InputStream;
+
 /**
  * Created by scottheston on 23/02/16.
  */
@@ -73,16 +81,19 @@ public class SingleMovie {
 
     // this begins data required for reddit integration:
     //TODO: delete or remake
-    private String title, thumbnail, url, subreddit, author;
+    private String title, url, subreddit, author;
+
+    // holds ImageView for thumbnail
+    protected Bitmap thumbnail;
 
     public String getTitle() { return title; }
 
     public void setTitle(String title) { this.title = title; }
 
-    public String getThumbnail() { return thumbnail; }
+    public Bitmap getThumbnail() { return thumbnail; }
 
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
+    public void setThumbnail(Bitmap image) {
+        thumbnail = image;
     }
 
     public String getUrl() { return url; }
@@ -96,5 +107,4 @@ public class SingleMovie {
     public String getAuthor() { return author; }
 
     public void setAuthor(String author) { this.author = author; }
-
 }

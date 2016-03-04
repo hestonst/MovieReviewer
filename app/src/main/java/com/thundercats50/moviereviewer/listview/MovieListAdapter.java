@@ -20,13 +20,15 @@ import com.thundercats50.moviereviewer.models.SingleMovie;
 /**
  * Created by scottheston on 23/02/16.
  * Consulting tutorial: https://www.youtube.com/watch?v=8ePqYGMxdSY
+ *
+ * Handles inflating the recycler view with MovieViewHolder objects. Also binds data stored in Movie
+ * object to the MovieViewHolder objects
  */
 public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
 
     //replace all access to movies with information from database
     private List<SingleMovie> movieList;
     private Context mContext;
-    private ImageLoader mImageLoader;
 
     private int focusedItem = 0;
 
@@ -39,6 +41,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
     public MovieViewHolder onCreateViewHolder(final ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, null);
         MovieViewHolder holder = new MovieViewHolder(view);
+
+
 
         holder.recLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,12 +65,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
 
         movieViewHolder.getLayoutPosition();
 
-        mImageLoader = MovieRequestQueue.getInstance(mContext).getImageLoader();
-
-        //movieViewHolder.thumbnail.setImageUrl(movie.getThumbnail(), mImageLoader);
-        //movieViewHolder.thumbnail.setDefaultImageResId(R.drawable.rotten_tomato);
-
         movieViewHolder.title.setText(Html.fromHtml(movie.getTitle()));
+        movieViewHolder.thumbnail.setImageBitmap(movie.getThumbnail());
         //movieViewHolder.synopsis.setText(Html.fromHtml(movie.getAuthor()));
     }
 

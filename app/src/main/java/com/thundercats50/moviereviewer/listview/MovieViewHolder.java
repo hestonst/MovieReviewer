@@ -1,32 +1,38 @@
 package com.thundercats50.moviereviewer.listview;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.thundercats50.moviereviewer.R;
 
+import java.io.InputStream;
+
 
 /**
  * Created by scottheston on 23/02/16.
+ *
+ * Responsible for grabbing all the Views defined in list_row.xml
  */
 
 public class MovieViewHolder extends RecyclerView.ViewHolder {
-    protected NetworkImageView thumbnail;
+    protected ImageView thumbnail;
     protected TextView title;
-    protected TextView synopsis;
     protected RelativeLayout recLayout;
 
 
     public MovieViewHolder(View view) {
         super(view);
-        this.thumbnail = (NetworkImageView) view.findViewById(R.id.thumbnail);
+        this.thumbnail = (ImageView) view.findViewById(R.id.thumbnailView);
         this.title = (TextView) view.findViewById(R.id.title);
-        this.synopsis = (TextView) view.findViewById(R.id.synopsis);
         this.recLayout = (RelativeLayout) view.findViewById(R.id.recLayout);
 
         view.setClickable(true);
     }
-
 }
 

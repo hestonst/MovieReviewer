@@ -1,7 +1,10 @@
 package com.thundercats50.moviereviewer.listview;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.models.SingleMovie;
@@ -30,31 +34,34 @@ import com.android.volley.toolbox.Volley;
 import com.android.volley.Response.ErrorListener;
 
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 //to remove after MovieSet integration
 
+/**
+ * This fragment is representative of the endless recycler view that exists on the search activity.
+ * This fragment handles taking the queries from the Search Activity, making ther API call, parsing
+ * the JSON returned and storing the relevant data in SingleMovie objects that will be used by the
+ * MovieListAdapter to populate the MovieViewHolder objects
+ */
 
 public class MovieFragment extends Fragment {
     private static final String TAG = "RecyclerViewExample";
     private List<SingleMovie> movieList = new ArrayList<>();
-
     private RecyclerView mRecyclerView;
     private MovieListAdapter adapter;
 
-    private int counter = 0;
+    private int position = 0;
     private String count;
-    private String jsonTomatoes;
     private String after_id;
 
     //Possibly useful for JSON query: (Originally reddit JSON queries)
+    private int pageCount = 1;
     private static final String key = "?apikey=yedukp76ffytfuy24zsqk7f5";
     private static final String baseURL = "http://api.rottentomatoes.com/api/public/v1.0/";
-    private static final String jsonEnd = "&page_limit=10";
-
-    //Possibly useful for JSON query:
-    private static final String qCount = "?count=";
-    private static final String after = "&after=";
+    private final String jsonEnd = "&page=";
+    private String nearCompleteCall;
 
     private ProgressDialog progressDialog;
 
@@ -81,6 +88,8 @@ public class MovieFragment extends Fragment {
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
+        // Keeps track of how far the recycler view has scrolled and updates the list when the end
+        // has been reached
         mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) {
@@ -89,8 +98,8 @@ public class MovieFragment extends Fragment {
                 //maintain scroll position
                 int lastFirstVisiblePosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
                 ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(lastFirstVisiblePosition);
-
-                loadMore(jsonTomatoes);
+                pageCount++;
+                loadMore(nearCompleteCall + jsonEnd + pageCount);
             }
         });
 
@@ -118,19 +127,21 @@ public class MovieFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * This method runs the query and creates and puts the initial SingleMovie objects into movieList
+     * @param type determines the type of query. 0 for user query, 1 for new releases or DVDs
+     * @param subkey the string associated with the query
+     */
     public void updateList(int type, String subkey) {
 
-        // Set the counter to 0. This counter will be used to create new json urls
-        // In the loadMore function we will increase this integer by 25
-        counter = 0;
-
+        // build the API call based on the type. 0 = regular query, 1 = special query
         if (type == 0) {
-            subkey = baseURL + "movies.json" + key + "&q=" + subkey + jsonEnd;
+            nearCompleteCall = baseURL + "movies.json" + key + "&q=" + subkey;
         } else {
-            subkey = baseURL + subkey + key + jsonEnd;
+            nearCompleteCall = baseURL + subkey + key;
         }
 
-        // "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=yedukp76ffytfuy24zsfqk75&q=Superman&page_limit=10";
+        // "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=yedukp76ffytfuy24zsqk7f5&q=Superman&page_limit=10";
 
         //declare the adapter and attach it to the recyclerview
         adapter = new MovieListAdapter(getActivity(), movieList);
@@ -145,8 +156,37 @@ public class MovieFragment extends Fragment {
 
         showPD();
 
-        // Request a string response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, subkey, null, new Response.Listener<JSONObject>() {
+        runQuery(queue, nearCompleteCall + jsonEnd + pageCount);
+    }
+
+    /**
+     * Loads more SingleMovie objects into the movieList as needed as the user scrolls
+     * @param query the full API call
+     */
+    public void loadMore(String query) {
+
+        // Declare the adapter and attach it to the recycler-view
+        adapter = new MovieListAdapter(getActivity(), movieList);
+        mRecyclerView.setAdapter(adapter);
+
+        showPD();
+
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+        runQuery(queue, query);
+    }
+
+    /**
+     * The meat of the JSON handling. Takes the API call, gets the JSON response, parses it,
+     * creates a movie object, and sets its Title and Thumbnail attributes
+     * @param queue the volley queue
+     * @param query the API call
+     */
+    private void runQuery(RequestQueue queue, String query) {
+        Log.d(TAG, query);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -160,14 +200,15 @@ public class MovieFragment extends Fragment {
                 try {
                     //JSONObject data = response.getJSONObject();
                     //after_id = data.getString("after");
-                    JSONArray arrayMovies = response.getJSONArray("movies");
-
-                    for (int i = 0; i < arrayMovies.length(); i++) {
-
-                        JSONObject currentMovie = arrayMovies.getJSONObject(i);
+                    JSONArray arrayTitles = response.getJSONArray("movies");
+                    for (int i = 0; i < arrayTitles.length(); i++) {
+                        // thumbnails is a subobject of movies, so need separate object to handle
+                        JSONObject currentMovie = arrayTitles.getJSONObject(i);
+                        JSONObject thumbnails = currentMovie.getJSONObject("posters");
                         SingleMovie item = new SingleMovie();
                         item.setTitle(currentMovie.getString("title"));
-//                        item.setThumbnail(currentMovie.getString("thumbnail"));
+                        // pass the url of the thumbnail to the ImageDownloader
+                        new ImageDownloader(item).execute(thumbnails.getString("thumbnail"));
 //                        item.setUrl(currentMovie.getString("url"));
 //                        item.setSubreddit(currentMovie.getString("subkey"));
 //                        item.setAuthor(currentMovie.getString("author"));
@@ -187,80 +228,6 @@ public class MovieFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 hidePD();
-            }
-        });
-
-        queue.add(jsObjRequest);
-
-    }
-
-    public void loadMore(String subkey) {
-
-        // Add 25 each time the function is called
-        // Then convert it to a string to add to other strings to create the new reddit json url.
-        counter = counter + 25;
-        count = String.valueOf(counter);
-
-
-        subkey = jsonTomatoes;
-
-        // Create the reddit json url for parsing
-        subkey = baseURL + subkey + jsonEnd + qCount + count + after + after_id;
-
-        // Declare the adapter and attach it to the recycler-view
-        adapter = new MovieListAdapter(getActivity(), movieList);
-        mRecyclerView.setAdapter(adapter);
-
-        showPD();
-
-
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-
-        // Request a string response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, subkey, null,
-                new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-
-                // Log to console the whole json string for debugging
-                Log.d(TAG, response.toString());
-                hidePD();
-
-                // Parse json data.
-                // Declare the json objects that we need and then for loop through the children array.
-                // Do the json parse in a try catch block to catch the exceptions
-                try {
-                    JSONObject data = response.getJSONObject("data");
-                    after_id = data.getString("after");
-                    JSONArray children = data.getJSONArray("children");
-
-                    for (int i = 0; i < children.length(); i++) {
-
-                        JSONObject post = children.getJSONObject(i).getJSONObject("data");
-                        SingleMovie item = new SingleMovie();
-                        item.setTitle(post.getString("title"));
-                        item.setThumbnail(post.getString("thumbnail"));
-                        item.setUrl(post.getString("url"));
-                        item.setSubreddit(post.getString("subkey"));
-                        item.setAuthor(post.getString("author"));
-                        movieList.add(item);
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                // Update list by notifying the adapter of changes
-                adapter.notifyDataSetChanged();
-            }
-        }, new ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error" + error.getMessage());
-                hidePD();
-
             }
         });
 
@@ -299,6 +266,44 @@ public class MovieFragment extends Fragment {
         super.onDestroy();
         hidePD();
     }
-    
+
+    /**
+     * Handles asynchronously downloading the thumbnail bitmap and sets it as the thumbnail
+     * of the SingleMovie object
+     */
+    private class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
+
+        SingleMovie movie;
+
+        public ImageDownloader(SingleMovie movie) {
+            this.movie = movie;
+        }
+
+        /**
+         * asyncronously gets the Bitmap from the url and returns it
+         * @param url the thumbnail url
+         * @return Bitmap thumbnail
+         */
+        protected Bitmap doInBackground(String... url) {
+            String urldisplay = url[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        /**
+         * set the thumbnail of the SingleMovie to the returned bitmap
+         * @param result the returned bitmap from doInBackground
+         */
+        protected void onPostExecute(Bitmap result) {
+            movie.setThumbnail(result);
+        }
+    }
 }
 
