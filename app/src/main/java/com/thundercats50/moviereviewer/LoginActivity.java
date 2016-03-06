@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.thundercats50.moviereviewer.models.MemberManager;
 import com.thundercats50.moviereviewer.models.User;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -277,6 +278,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private String mGender;
+        private String mFirstName;
+        private String mLastName;
+        private String mMajor;
         private final MemberManager manager = (MemberManager) getApplicationContext();
 
         UserLoginTask(String email, String password) {
@@ -292,8 +297,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 boolean retVal = dbc.verifyUser(mEmail, mPassword);
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
                         + Boolean.toString(retVal));
+                ResultSet userInfo = bbc.getUserData(mEmail);
+                mFirstName = userInfo.getString(0);
+                mLastName = userInfo.getString(1);
+                mMajor = userInfo.getString(2);
+                mGender = userInfo.getString(3);
                 if (manager.getMember(mEmail) == null) {
-                    manager.addMember(mEmail, new User(mEmail, mPassword));
+                    manager.addMember(mEmail, new User(mEmail, mPassword, mFirstName, mLastName,
+                            mMajor, mGender));
                 }
                 manager.setCurrentMember(mEmail);
                 dbc.disconnect();
