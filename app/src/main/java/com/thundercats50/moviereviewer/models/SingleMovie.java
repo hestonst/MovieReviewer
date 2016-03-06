@@ -2,6 +2,12 @@ package com.thundercats50.moviereviewer.models;
 
 import android.graphics.Bitmap;
 import java.util.List;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.ImageView;
+import java.io.InputStream;
 
 /**
  * Created by scottheston on 23/02/16.
