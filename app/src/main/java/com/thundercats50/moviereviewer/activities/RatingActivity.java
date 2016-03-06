@@ -77,9 +77,7 @@ public class RatingActivity {
     public static void addRating(int score, String review, String movieID, String username) {
 
         PreparedStatement preparedStatement = null;
-        try {
         // TODO: connect to database and add rating based on movieID
-        }
     }
 
 }
