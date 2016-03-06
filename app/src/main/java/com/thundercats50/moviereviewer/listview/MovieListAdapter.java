@@ -2,6 +2,7 @@ package com.thundercats50.moviereviewer.listview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Rating;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -13,6 +14,9 @@ import java.util.List;
 //If we want to use movie images:
 import com.android.volley.toolbox.ImageLoader;
 import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.activities.LoggedInActivity;
+import com.thundercats50.moviereviewer.activities.RatingActivity;
+import com.thundercats50.moviereviewer.activities.ReviewActivity;
 import com.thundercats50.moviereviewer.activities.WelcomeActivity;
 import com.thundercats50.moviereviewer.models.SingleMovie;
 //to remove after integration of rotten tomatoes
@@ -49,7 +53,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
             public void onClick(View view) {
 
                 //TODO: forward click to new activity
-                Intent intent = new Intent(mContext, WelcomeActivity.class);
+                Intent intent = new Intent(mContext, ReviewActivity.class);
                 mContext.startActivity(intent);
             }
         });

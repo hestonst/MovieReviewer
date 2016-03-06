@@ -1,6 +1,7 @@
 package com.thundercats50.moviereviewer.listview;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.activities.LoginActivity;
 import com.thundercats50.moviereviewer.models.SingleMovie;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -208,9 +210,9 @@ public class MovieFragment extends Fragment {
                         SingleMovie item = new SingleMovie();
                         item.setTitle(currentMovie.getString("title"));
                         item.setId(currentMovie.getLong("id"));
-                        item.setSynopsis(currentMovie.getString("synopsis"));
-                        item.setCriticReview(currentMovie.getString("critics_consensus"));
-                        item.setMpaaRating(currentMovie.getString("mpaa_rating"));
+//                        item.setSynopsis(currentMovie.getString("synopsis"));
+//                        item.setCriticReview(currentMovie.getString("critics_consensus"));
+//                        item.setMpaaRating(currentMovie.getString("mpaa_rating"));
                         // pass the url of the thumbnail to the ImageDownloader
                         new ImageDownloader(item).execute(thumbnails.getString("thumbnail"));
                         movieList.add(item);
@@ -265,6 +267,7 @@ public class MovieFragment extends Fragment {
         super.onDestroy();
         hidePD();
     }
+
 
     /**
      * Handles asynchronously downloading the thumbnail bitmap and sets it as the thumbnail

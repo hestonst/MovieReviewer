@@ -40,7 +40,9 @@
         android:textSize="18dp"
         android:textColor="#000"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/thumbnailView" />
+        android:layout_toEndOf="@+id/thumbnailView"
+
+        />
 
     <ImageView
         android:layout_width="75dp"
