@@ -82,6 +82,7 @@ public class SingleMovie {
     // this begins data required for reddit integration:
     //TODO: delete or remake
     private String title, url, subreddit, author;
+    private long id;
 
     // holds ImageView for thumbnail
     protected Bitmap thumbnail;
@@ -107,4 +108,10 @@ public class SingleMovie {
     public String getAuthor() { return author; }
 
     public void setAuthor(String author) { this.author = author; }
+
+    public void setId(long id) { this.id = id; }
+
+    public long getId() {
+        return id;
+    }
 }

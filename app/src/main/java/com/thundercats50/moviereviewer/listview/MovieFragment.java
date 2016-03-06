@@ -207,6 +207,7 @@ public class MovieFragment extends Fragment {
                         JSONObject thumbnails = currentMovie.getJSONObject("posters");
                         SingleMovie item = new SingleMovie();
                         item.setTitle(currentMovie.getString("title"));
+                        item.setId(currentMovie.getLong("id"));
                         // pass the url of the thumbnail to the ImageDownloader
                         new ImageDownloader(item).execute(thumbnails.getString("thumbnail"));
 //                        item.setUrl(currentMovie.getString("url"));
