@@ -45,8 +45,6 @@ public class ProfileActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.editEmail);
         gender = (EditText) findViewById(R.id.editGender);
         major = (EditText) findViewById(R.id.editMajor);
-        password = (EditText) findViewById(R.id.editPassword);
-        oldPassword = (EditText) findViewById(R.id.profileOldPass);
         member.setFirstname(name.getText().toString());
         member.setEmail(email.getText().toString());
         member.setGender(gender.getText().toString());

@@ -19,16 +19,31 @@ public class User extends Member {
 	 * @param password
 	 */
 	public User(String username, String password) {
-		super(username, password);
+		this(username,password, null, null, null, null);
 	}
 
     public User(String username, String password, String firstname, String lastname, String major, String gender) {
         super(username, password);
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.major = major;
-        this.gender = gender;
-
+        if (firstname == null) {
+            this.firstname = "";
+        } else {
+            this.firstname = firstname;
+        }
+        if (lastname == null) {
+            this.lastname = "";
+        } else {
+            this.lastname = lastname;
+        }
+        if (major == null) {
+            this.major = "Other";
+        } else {
+            this.major = major;
+        }
+        if (gender == null) {
+            this.gender = "";
+        } else {
+            this.gender = gender;
+        }
     }
 
     public User() {

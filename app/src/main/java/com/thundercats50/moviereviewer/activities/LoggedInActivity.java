@@ -22,19 +22,22 @@ public class LoggedInActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_loggedin);
 
-        EditText name = (EditText) findViewById(R.id.profileName);
+        EditText firstname = (EditText) findViewById(R.id.profileFirstName);
+        EditText lastname = (EditText) findViewById(R.id.profileLastName);
         EditText email = (EditText) findViewById(R.id.profileEmail);
         EditText gender = (EditText) findViewById(R.id.profileGender);
         EditText major = (EditText) findViewById(R.id.profileMajor);
 
         MemberManager manager = (MemberManager) getApplicationContext();
         User user = (User) manager.getCurrentMember();
-        name.setText(user.getFirstname());
+        firstname.setText(user.getFirstname());
+        lastname.setText(user.getLastname());
         email.setText(user.getEmail());
         gender.setText(user.getGender());
         major.setText(user.getMajor());
 
-        name.setKeyListener(null);
+        firstname.setKeyListener(null);
+        lastname.setKeyListener(null);
         email.setKeyListener(null);
         gender.setKeyListener(null);
         major.setKeyListener(null);

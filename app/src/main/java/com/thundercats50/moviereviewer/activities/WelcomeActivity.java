@@ -170,10 +170,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * Handles login button presses. Starts the LoginActivity activity.
      * @param view not currently used, but required
      */
-    public void login(View view) {
-        startActivity(new Intent(this, LoginActivity.class));
-    }
-    public void register(View view) {
-        startActivity(new Intent(this, RegisterActivity.class));
-    }
+    public void login(View view) {startActivity(new Intent(this, LoginActivity.class));}
+    public void register(View view) {startActivity(new Intent(this, RegisterActivity.class));}
+    public void rate(View view) {startActivity(new Intent(this, RatingActivity.class));}
 }

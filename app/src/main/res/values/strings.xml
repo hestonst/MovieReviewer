@@ -3,6 +3,12 @@
     <string name="title_activity_login">Sign in</string>
     <string name="no_internet">Please confirm your internet connection</string>
 
+    <!-- Strings related to userdata -->
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
+    <string name="email">Email</string>
+    <string name="major">Major</string>
+    <string name="gender">Gender</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -27,4 +33,6 @@
     <!-- Strings related to searching -->
     <string name="search_hint">Start typing your search..</string>
     <string name="search_return" formatted="false">Displaying 10 of %d results for %s</string>
+
+
 </resources>
