@@ -2,6 +2,8 @@ package com.thundercats50.moviereviewer.database;
 
 import android.util.Log;
 
+import com.thundercats50.moviereviewer.models.ValidMajors;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,20 +20,20 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * Method to add user to database. Screens info to prevent duplicates.
-     * @param userName
+     * @param Email
      * @param password
      * @return boolean true if succesfully created
      * @throws SQLException
      */
-    public boolean setNewUser(String userName, String password) throws SQLException,
+    public boolean setNewUser(String Email, String password) throws SQLException,
             InputMismatchException {
         ResultSet resultSet = null;
         try {
-            if (!isEmailValid(userName)) {
+            if (!isEmailValid(Email)) {
                 throw new InputMismatchException("Incorrectly formatted email.");
                 //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
             }
-            if (checkIfUser(userName)) {
+            if (checkIfUser(Email)) {
                 throw new InputMismatchException("User email is already registered.");
                 //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
             }
@@ -41,8 +43,8 @@ public class BlackBoardConnector extends DBConnector {
                 //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
             }
             statement = connection.createStatement();
-            String request = "INSERT INTO sql5107476.UserInfo (Username, Data1) VALUES ('"
-                    + userName + "','" + password + "')";
+            String request = "INSERT INTO sql5107476.UserInfo (Email, Password) VALUES ('"
+                    + Email + "','" + password + "')";
 
             int didSucceed = statement.executeUpdate(request);
 
@@ -79,15 +81,21 @@ public class BlackBoardConnector extends DBConnector {
 
 
     /**
-     * Method to be run on incorrect login. Updates the username's incorrect login number on the DB.
-     * @param user username to be incremented
+     * Method to be run on incorrect login. Updates the Email's incorrect login number on the DB.
+     * @param user Email to be incremented
      */
-    public boolean changePass(String user, String pass) {
+    public boolean changePass(String user, String pass, String oldPass)
+            throws NullPointerException {
         ResultSet resultSet = null;
         try {
+            if (!isEmailValid(user) || !isPasswordValid(pass) || !isPasswordValid(oldPass)) {
+                throw new InputMismatchException("The given user or pass is formatted incorrectly.");
+            }
+            if (!verifyUser(user, pass)) throw new NullPointerException("The given password does "
+                    + "not coorespond with the DB.");
             statement = connection.createStatement();
-            String request = "UPDATE sql5107476.UserInfo SET Data1 ='"
-                    + pass + "' WHERE Username = '" + user + "'";
+            String request = "UPDATE sql5107476.UserInfo SET Password ='"
+                    + pass + "' WHERE Email = '" + user + "'";
             PreparedStatement aStatement = connection.prepareStatement(request);
             aStatement.executeUpdate();
             int didSucceed = statement.executeUpdate(request);
@@ -115,6 +123,9 @@ public class BlackBoardConnector extends DBConnector {
         return false;
     }
 
+
+
+
     /**
      * Verifies user/pass combinations for login
      * @param user
@@ -127,7 +138,7 @@ public class BlackBoardConnector extends DBConnector {
         ResultSet resultSet = getUserData(user);
         if (resultSet.next()) {
             if (resultSet.getString(2).equals(pass)) {
-                //there is only 1 entry because there is only one username selected from DB at
+                //there is only 1 entry because there is only one Email selected from DB at
                 // a time; 2 because resultSet contains user, pass
                 return true;
             }
@@ -137,12 +148,12 @@ public class BlackBoardConnector extends DBConnector {
     }
 
     /**
-     * private method to query DB for user information matching username
-     * @param user
+     * method to query DB for user information matching Email
+     * @param email
      * @return ResultSet
      * @throws SQLException
      */
-    private ResultSet getUserData(String user)
+    public ResultSet getUserData(String email)
             throws SQLException {
         ResultSet resultSet = null;
         try {
@@ -150,8 +161,8 @@ public class BlackBoardConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT Username, Data1, LoginAttempts FROM sql5107476.UserInfo WHERE Username="
-                    + "'" + user +"'";
+            String request = "SELECT FirstName, LastName, Major, Gender FROM sql5107476.UserInfo WHERE Email="
+                    + "'" + email +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
@@ -163,8 +174,38 @@ public class BlackBoardConnector extends DBConnector {
     }
 
     /**
-     * Method to be run on incorrect login. Updates the username's incorrect login number on the DB.
-     * @param user username to be incremented
+     * Method to update User's data matching email
+     * @param email
+     * @param firstName
+     * @param lastName
+     * @param major
+     * @param gender
+     * @return boolean true if success
+     */
+    public boolean setUserData(String email, String firstName, String lastName, String major,
+                               String gender) {
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            String request = "UPDATE sql5107476.UserInfo SET " +
+                    "FirstName = '" + firstName + "',"
+                    + "LastName = '" + lastName + "',"
+                    + "Major = '" + major + "',"
+                    + "Gender = '" + gender + "' WHERE email ='" + email + "'";
+            PreparedStatement aStatement = connection.prepareStatement(request);
+            aStatement.executeUpdate();
+            statement.executeUpdate(request);
+            return true;
+        } catch (Exception e) {
+            Log.d("DB Write error", e.getMessage());
+            return false;
+        }
+    }
+
+
+    /**
+     * Method to be run on incorrect login. Updates the Email's incorrect login number on the DB.
+     * @param user Email to be incremented
      */
     public boolean incrementLoginAttempts(String user) {
         ResultSet resultSet = null;
@@ -172,7 +213,7 @@ public class BlackBoardConnector extends DBConnector {
             statement = connection.createStatement();
             int newVal = 1 + getLoginAttempts(user);
             String request = "UPDATE sql5107476.UserInfo SET LoginAttempts ="
-                    + Integer.toString(newVal) + " WHERE Username = '" + user + "'";
+                    + Integer.toString(newVal) + " WHERE Email = '" + user + "'";
             int didSucceed = statement.executeUpdate(request);
             return true;
         } catch (Exception e) {
@@ -194,7 +235,7 @@ public class BlackBoardConnector extends DBConnector {
         resultSet = getUserData(user);
         if (resultSet.next()) {
             retVal = resultSet.getInt(3);
-            //there is only 1 entry because there is only one username selected from DB at
+            //there is only 1 entry because there is only one Email selected from DB at
             // a time; 3 because resultSet contains user, pass, attempts
         }
         resultSet.close();

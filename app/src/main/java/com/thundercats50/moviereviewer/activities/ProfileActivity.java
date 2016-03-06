@@ -24,6 +24,7 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText gender;
     private EditText major;
     private EditText password;
+    private EditText oldPassword;
     private UpdatePassword mUpdateTask = null;
 
     @Override
@@ -45,10 +46,12 @@ public class ProfileActivity extends AppCompatActivity {
         gender = (EditText) findViewById(R.id.editGender);
         major = (EditText) findViewById(R.id.editMajor);
         password = (EditText) findViewById(R.id.editPassword);
+        oldPassword = (EditText) findViewById(R.id.profileOldPass);
         member.setFirstname(name.getText().toString());
         member.setEmail(email.getText().toString());
         member.setGender(gender.getText().toString());
         member.setMajor(major.getText().toString());
+        String oldPasswordInput = oldPassword.getText().toString();
         String passwordInput = password.getText().toString();
         if (passwordInput.equals("")) {
             startActivity(new Intent(this, LoggedInActivity.class));
@@ -63,7 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (cancel) {
                 focusView.requestFocus();
             } else {
-                mUpdateTask = new UpdatePassword(manager.getCurrentEmail(), passwordInput);
+                mUpdateTask = new UpdatePassword(manager.getCurrentEmail(), passwordInput, oldPasswordInput);
                 mUpdateTask.execute();
                 Log.d("The method is working", "The method is working");
                 boolean b = mUpdateTask.doInBackground();
@@ -95,16 +98,18 @@ public class ProfileActivity extends AppCompatActivity {
 
         private final String mEmail;
         private final String mPassword;
+        private final String mOldPassword;
 
-        UpdatePassword(String email, String password) {
+        UpdatePassword(String email, String password, String oldPassword) {
             mEmail = email;
             mPassword = password;
+            mOldPassword = oldPassword;
         }
         protected Boolean doInBackground(Void...params) {
             boolean retVal = false;
             try {
                 BlackBoardConnector bbc = new BlackBoardConnector();
-                retVal = bbc.changePass(mEmail, mPassword);
+                retVal = bbc.changePass(mEmail, mPassword, mOldPassword);
                 Log.d("DB changePass Finished", "updateProfile method returned: "
                         + Boolean.toString(retVal));
                 bbc.disconnect();

@@ -30,8 +30,8 @@ public class RepositoryConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT (MovieName,NumericalRating," +
-                    "TextReview) FROM sql5107476.RatingInfo WHERE Username="
+            String request = "SELECT (MovieID,NumericalRating," +
+                    "TextReview) FROM sql5107476.RatingInfo WHERE Email="
                     + "'" + user +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
@@ -49,7 +49,7 @@ public class RepositoryConnector extends DBConnector {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public ResultSet getMovieRatings(String movieName)
+    public ResultSet getMovieRatings(int movieID)
             throws ClassNotFoundException, SQLException {
         ResultSet resultSet = null;
         try {
@@ -57,9 +57,9 @@ public class RepositoryConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT (NumericalRating, UserName," +
-                    "TextReview) FROM sql5107476.RatingInfo WHERE MovieName="
-                    + "'" + movieName +"'";
+            String request = "SELECT (NumericalRating, Email," +
+                    "TextReview) FROM sql5107476.RatingInfo WHERE MovieID="
+                    + "" + movieID +"";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
@@ -72,11 +72,11 @@ public class RepositoryConnector extends DBConnector {
 
     /**
      * Method to add review to database. Screens info to prevent duplicates.
-     * @param userName userName of current user
+     * @param email email of current user
      * @return boolean true if successfully created
      * @throws SQLException see error message
      */
-    public boolean setRating(String userName,String movieName, int numericalRating,
+    public boolean setRating(String email, int movieID, int numericalRating,
                               String textReview) throws SQLException, InputMismatchException {
         ResultSet resultSet = null;
         try {
@@ -84,9 +84,9 @@ public class RepositoryConnector extends DBConnector {
                 throw new InputMismatchException("Rating must be from 1-100");
             }
             statement = connection.createStatement();
-            String request = "INSERT INTO sql5107476.RatingInfo (MovieName,NumericalRating,"
-                    + "UserName,TextReview) VALUES ('" + userName + "'," + numericalRating + ",'"
-                    + userName + "','" + textReview + "')";
+            String request = "INSERT INTO sql5107476.RatingInfo (MovieID,NumericalRating,"
+                    + "Email,TextReview) VALUES (" + movieID + "," + numericalRating + ",'"
+                    + email + "','" + textReview + "')";
 
             int didSucceed = statement.executeUpdate(request);
         }

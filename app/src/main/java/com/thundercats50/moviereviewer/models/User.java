@@ -11,9 +11,7 @@ public class User extends Member {
 	private String lastname;
 	private String major;
 	private String gender;
-	private String status;
     private String email;
-	private boolean locked = false;
 
 	/**
 	 *
@@ -23,6 +21,15 @@ public class User extends Member {
 	public User(String username, String password) {
 		super(username, password);
 	}
+
+    public User(String username, String password, String firstname, String lastname, String major, String gender) {
+        super(username, password);
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.major = major;
+        this.gender = gender;
+
+    }
 
     public User() {
         super();
@@ -67,7 +74,7 @@ public class User extends Member {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-    
+
     /**
      * Get the gender of the user
      * @return gender
@@ -99,23 +106,6 @@ public class User extends Member {
     }
 
     /**
-     * determines whether the user is locked or not
-     * @return boolean locked
-     */
-    @Override
-    public boolean isLocked() {
-    	return locked;
-    }
-
-    /**
-     * locks or unlocks a user account
-     * @param boolean whether account should be locked
-     */
-    public void setLock(boolean lockStatus) {
-    	locked = lockStatus;
-    }
-
-    /**
      * determines whether the user is an admin
      * @return always false for users
      */
@@ -140,20 +130,5 @@ public class User extends Member {
         this.major = major;
     }
 
-    /**
-     * Get the status of the user
-     * @return status
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * Set the status
-     * @param status
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
 }

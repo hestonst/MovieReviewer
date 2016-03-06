@@ -15,7 +15,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top">
+        android:layout_gravity="left|top">
 
         <Button
             android:layout_width="wrap_content"
@@ -39,33 +39,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/profileName"
+            android:layout_marginTop="47dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="37dp" />
+            android:layout_toEndOf="@+id/editProfile"
+            android:layout_marginStart="16dp"
+            android:inputType="textCapCharacters" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/profileEmail"
             android:layout_below="@+id/profileName"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="50dp" />
+            android:layout_alignStart="@+id/profileName"
+            android:editable="false"
+            android:inputType="none" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/profileGender"
-            android:layout_below="@+id/profileEmail"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="39dp" />
+            android:layout_below="@+id/profileMajor"
+            android:layout_alignStart="@+id/profileMajor" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/profileMajor"
-            android:layout_below="@+id/profileGender"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="56dp" />
+            android:layout_below="@+id/profileEmail"
+            android:layout_alignStart="@+id/profileEmail" />
 
         <Button
             android:layout_width="wrap_content"
@@ -75,5 +76,93 @@
             android:layout_alignParentBottom="true"
             android:layout_toEndOf="@+id/editProfile"
             android:onClick="goToSearch"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:id="@+id/emailLabel"
+            android:layout_marginStart="15dp"
+            android:layout_alignBaseline="@+id/profileEmail"
+            android:layout_alignBottom="@+id/profileEmail"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:id="@+id/nameLabel"
+            android:layout_alignBaseline="@+id/profileName"
+            android:layout_alignBottom="@+id/profileName"
+            android:layout_alignStart="@+id/emailLabel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gender"
+            android:id="@+id/genderLabel"
+            android:layout_alignBaseline="@+id/profileGender"
+            android:layout_alignBottom="@+id/profileGender"
+            android:layout_alignStart="@+id/nameLabel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Old Password"
+            android:id="@+id/oldPassLabel"
+            android:layout_alignBaseline="@+id/profileOldPass"
+            android:layout_alignBottom="@+id/profileOldPass"
+            android:layout_alignStart="@+id/genderLabel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Major"
+            android:id="@+id/majorLabel"
+            android:layout_alignBaseline="@+id/profileMajor"
+            android:layout_alignBottom="@+id/profileMajor"
+            android:layout_alignStart="@+id/emailLabel" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profileOldPass"
+            android:layout_below="@+id/profileGender"
+            android:layout_alignStart="@+id/profileGender"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Password"
+            android:id="@+id/newPassLabel"
+            android:layout_alignBaseline="@+id/profilePass"
+            android:layout_alignBottom="@+id/profilePass"
+            android:layout_alignStart="@+id/oldPassLabel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verify Password"
+            android:id="@+id/verifyPassLabel"
+            android:layout_alignBaseline="@+id/profileVerifyPass"
+            android:layout_alignBottom="@+id/profileVerifyPass"
+            android:layout_alignStart="@+id/newPassLabel" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profilePass"
+            android:inputType="textPassword"
+            android:layout_below="@+id/profileOldPass"
+            android:layout_alignStart="@+id/profileOldPass" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profileVerifyPass"
+            android:inputType="textPassword"
+            android:layout_below="@+id/profilePass"
+            android:layout_alignStart="@+id/profilePass" />
     </RelativeLayout>
 </FrameLayout>
