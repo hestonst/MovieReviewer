@@ -8,6 +8,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v7.app.AppCompatActivity;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.thundercats50.moviereviewer.activities.LoggedInActivity;
 import com.thundercats50.moviereviewer.activities.RatingActivity;
 import com.thundercats50.moviereviewer.activities.ReviewActivity;
 import com.thundercats50.moviereviewer.activities.WelcomeActivity;
+import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
 //to remove after integration of rotten tomatoes
 
@@ -42,7 +44,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
     }
 
     @Override
-    public MovieViewHolder onCreateViewHolder(final ViewGroup viewGroup, int position) {
+    public MovieViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, null);
         MovieViewHolder holder = new MovieViewHolder(view);
 
@@ -53,6 +55,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
             public void onClick(View view) {
 
                 //TODO: forward click to new activity
+                SingleMovie movie = movieList.get(position);
+
+                MovieManager.movie = movie;
+
                 Intent intent = new Intent(mContext, ReviewActivity.class);
                 mContext.startActivity(intent);
             }
