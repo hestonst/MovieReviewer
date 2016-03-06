@@ -210,6 +210,7 @@ public class MovieFragment extends Fragment {
                         item.setId(currentMovie.getLong("id"));
                         item.setSynopsis(currentMovie.getString("synopsis"));
                         item.setCriticReview(currentMovie.getString("critics_consensus"));
+                        item.setMpaaRating(currentMovie.getString("mpaa_rating"));
                         // pass the url of the thumbnail to the ImageDownloader
                         new ImageDownloader(item).execute(thumbnails.getString("thumbnail"));
                         movieList.add(item);
