@@ -56,7 +56,6 @@ public class RatingActivity {
                     //after_id = data.getString("after");
                     JSONArray title = response.getJSONArray("movies");
                     JSONObject currentMovie = title.getJSONObject(0);
-                    JSONObject thumbnails = currentMovie.getJSONObject("posters");
                     SingleMovie item = new SingleMovie();
                     item.setTitle(currentMovie.getString("title"));
                     movie = item;
