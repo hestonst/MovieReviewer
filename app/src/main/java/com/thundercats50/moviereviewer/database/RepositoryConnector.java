@@ -44,7 +44,7 @@ public class RepositoryConnector extends DBConnector {
 
     /**
      * method to query DB for rating information matching movie's name
-     * @param movieName to search for ratings
+     * @param movieID to search for ratings
      * @return ResultSet (which can be accessed through a for-while loop)
      * @throws ClassNotFoundException
      * @throws SQLException

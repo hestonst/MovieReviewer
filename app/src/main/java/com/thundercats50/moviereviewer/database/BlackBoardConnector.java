@@ -115,7 +115,7 @@ public class BlackBoardConnector extends DBConnector {
      * @throws SQLException
      */
     public boolean checkIfUser(String user) throws ClassNotFoundException, SQLException {
-        ResultSet resultSet = getUserData(user);
+        ResultSet resultSet = getUserPass(user);
         if (resultSet.next()) {
             resultSet.close();
             return true;
@@ -135,9 +135,9 @@ public class BlackBoardConnector extends DBConnector {
      */
     public boolean verifyUser(String user, String pass)
             throws SQLException {
-        ResultSet resultSet = getUserData(user);
+        ResultSet resultSet = getUserPass(user);
         if (resultSet.next()) {
-            if (resultSet.getString(2).equals(pass)) {
+            if (resultSet.getString(0).equals(pass)) {
                 //there is only 1 entry because there is only one Email selected from DB at
                 // a time; 2 because resultSet contains user, pass
                 return true;
@@ -145,6 +145,32 @@ public class BlackBoardConnector extends DBConnector {
             resultSet.close();
         }
         return false;
+    }
+
+    /**
+     * method to query DB for user information matching Email
+     * @param email
+     * @return ResultSet
+     * @throws SQLException
+     */
+    public ResultSet getUserPass(String email)
+            throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            if (connection == null) connect();
+            statement = connection.createStatement();
+            //keep making new statements as security method to keep buggy code from accessing
+            // old data
+            String request = "SELECT Password FROM sql5107476.UserInfo WHERE Email="
+                    + "'" + email +"'";
+            resultSet = statement.executeQuery(request);
+        } catch (SQLException sqle) {
+            Log.e("Database SQLException", sqle.getMessage());
+            Log.e("Database SQLState", sqle.getSQLState());
+            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+            throw sqle;
+        }
+        return resultSet;
     }
 
     /**
