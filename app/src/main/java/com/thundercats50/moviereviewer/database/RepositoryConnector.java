@@ -72,11 +72,11 @@ public class RepositoryConnector extends DBConnector {
 
     /**
      * Method to add review to database. Screens info to prevent duplicates.
-     * @param userName userName of current user
+     * @param email email of current user
      * @return boolean true if successfully created
      * @throws SQLException see error message
      */
-    public boolean setRating(String userName,String movieName, int numericalRating,
+    public boolean setRating(String email,long movieID, int numericalRating,
                               String textReview) throws SQLException, InputMismatchException {
         ResultSet resultSet = null;
         try {
@@ -84,9 +84,9 @@ public class RepositoryConnector extends DBConnector {
                 throw new InputMismatchException("Rating must be from 1-100");
             }
             statement = connection.createStatement();
-            String request = "INSERT INTO sql5107476.RatingInfo (MovieName,NumericalRating,"
-                    + "UserName,TextReview) VALUES ('" + userName + "'," + numericalRating + ",'"
-                    + userName + "','" + textReview + "')";
+            String request = "INSERT INTO sql5107476.RatingInfo (MovieID,NumericalRating,"
+                    + "Email,TextReview) VALUES ('" + movieID + "'," + numericalRating + ",'"
+                    + email + "','" + textReview + "')";
 
             int didSucceed = statement.executeUpdate(request);
         }
