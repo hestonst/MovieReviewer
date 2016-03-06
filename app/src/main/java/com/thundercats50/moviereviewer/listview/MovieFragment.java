@@ -208,13 +208,10 @@ public class MovieFragment extends Fragment {
                         SingleMovie item = new SingleMovie();
                         item.setTitle(currentMovie.getString("title"));
                         item.setId(currentMovie.getLong("id"));
+                        item.setSynopsis(currentMovie.getString("synopsis"));
+                        item.setCriticReview(currentMovie.getString("critics_consensus"));
                         // pass the url of the thumbnail to the ImageDownloader
                         new ImageDownloader(item).execute(thumbnails.getString("thumbnail"));
-//                        item.setUrl(currentMovie.getString("url"));
-//                        item.setSubreddit(currentMovie.getString("subkey"));
-//                        item.setAuthor(currentMovie.getString("author"));
-//                        jsonTomatoes = currentMovie.getString("subkey");
-
                         movieList.add(item);
                     }
                 } catch (JSONException e) {
