@@ -2,43 +2,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
     tools:context=".activities.RatingActivity">
+
+    <EditText
+        android:layout_width="161dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/movie_rating"
+        android:layout_gravity="right|center_vertical"
+        android:numeric="integer"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Rate Movie (1-100):"
-        android:id="@+id/textView" />
+        android:id="@+id/text2"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginTop="40dp" />
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="336dp"
+        android:layout_height="233dp"
+        android:id="@+id/movie_review"
+        android:layout_gravity="center_horizontal|top"
+        android:hint="Write Review..."
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="0dp" />
+
+    <Button
+        android:layout_width="267dp"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/movie_rating"
-        android:layout_gravity="right" />
+        android:text="Submit"
+        android:id="@+id/movie_submit"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="140dp" />
 
     <TextView
-        android:layout_width="136dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Write Review:"
-        android:id="@+id/textView2" />
+        android:id="@+id/textView3"
+        android:layout_gravity="left|top"
+        android:layout_marginTop="10dp" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/movie_review"
-        android:layout_weight="0.55" />
-
-    <Button
-        android:layout_width="360dp"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/review_submit"
-        android:layout_gravity="center_horizontal" />
 </FrameLayout>
