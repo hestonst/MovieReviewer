@@ -13,11 +13,9 @@ import java.util.InputMismatchException;
 import java.util.InvalidPropertiesFormatException;
 
 /**
- * TODO: Remove SQL injection potential
- * TODO: Split class into Repo and Blackboard classes
  * TODO: Encrypt passwords
  * @author Scott Heston
- * @version 1.1.0
+ * @version 2.0.0
  * Documentation:
  * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
