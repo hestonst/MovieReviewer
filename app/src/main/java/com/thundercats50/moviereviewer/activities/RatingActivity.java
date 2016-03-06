@@ -144,7 +144,4 @@ public class RatingActivity {
             return false;
         }
     }
-
-
-
 }
