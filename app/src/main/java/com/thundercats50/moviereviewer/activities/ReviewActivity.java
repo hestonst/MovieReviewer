@@ -1,5 +1,7 @@
 package com.thundercats50.moviereviewer.activities;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.UserManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,10 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.database.RepositoryConnector;
 import com.thundercats50.moviereviewer.models.MemberManager;
 import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
+import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,6 +36,8 @@ public class ReviewActivity extends AppCompatActivity {
     private EditText review;
     private EditText movieRating;
     private MemberManager manager;
+    private UserReviewTask reviewTask = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +50,7 @@ public class ReviewActivity extends AppCompatActivity {
 
 
     }
+
     public boolean addRating(int score, String review, int movieID, String username) {
 
         //TODO: Hook up to UI and getMovieByID method
@@ -83,6 +90,7 @@ public class ReviewActivity extends AppCompatActivity {
             return false;
         }
     }
+
     public boolean getRating(int movieID, String username) {
 
         Exception error;
@@ -123,13 +131,39 @@ public class ReviewActivity extends AppCompatActivity {
         }
         return false;
     }
-    public void submitReview(View view){
-        review = (EditText)findViewById(R.id.movie_review);
+
+    public void submitReview(View view) {
+        review = (EditText) findViewById(R.id.movie_review);
         String aReview = review.getText().toString();
-        movieRating = (EditText)findViewById(R.id.movie_rating);
+        movieRating = (EditText) findViewById(R.id.movie_rating);
         String aRating = movieRating.getText().toString();
         int rating = Integer.parseInt(aRating);
-        addRating(rating, aReview, (int)movie.getId(), manager.getCurrentEmail());
+        //addRating(rating, aReview, (int)movie.getId(), manager.getCurrentEmail());
+        reviewTask = new UserReviewTask(aReview, rating, (int) movie.getId());
+        //startActivity(new Intent(this, WelcomeActivity.class));
+        reviewTask.doInBackground();
 
     }
+
+    public class UserReviewTask extends AsyncTask<Void, Void, Boolean> {
+
+        private String mReview;
+        private int mRating;
+        private int mId;
+        private final MemberManager manager = (MemberManager) getApplicationContext();
+        private boolean internetAccessExists = true;
+
+        UserReviewTask(String mReview, int mRating, int mId) {
+            this.mReview = mReview;
+            this.mRating = mRating;
+            this.mId = mId;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
+            return false;
+        }
+    }
+
 }
