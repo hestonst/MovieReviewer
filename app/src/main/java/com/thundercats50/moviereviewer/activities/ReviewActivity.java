@@ -46,7 +46,9 @@ public class ReviewActivity extends AppCompatActivity {
         SingleMovie movie = MovieManager.movie;
         name.setText(movie.getTitle());
         manager = (MemberManager) getApplicationContext();
-        getRating((int) movie.getId(), manager.getCurrentEmail());
+        //getRating((int) movie.getId(), manager.getCurrentEmail());
+        reviewTask = new UserReviewTask(null, 0, (int) movie.getId());
+        reviewTask.execute();
 
 
     }
@@ -97,10 +99,11 @@ public class ReviewActivity extends AppCompatActivity {
         try {
             RepositoryConnector rpc = new RepositoryConnector();
             ResultSet retVal = rpc.getMovieRatings(movieID);
-            Log.d("DB getRating finished", "doInBackground method returned: ");
+            Log.d("DB getRating finished", "doInBackground method returned:" + retVal);
             while (retVal.next()) {
-                ratings.add(retVal.getInt("NumericalRating"));
-                reviews.add(retVal.getString("TextReview"));
+                //if (retVal.getString(1).equals(manager.getCurrentEmail()))
+                ratings.add(retVal.getInt(1));
+                reviews.add(retVal.getString(3));
             }
             rpc.disconnect();
         } catch (InputMismatchException imee) {
@@ -139,9 +142,9 @@ public class ReviewActivity extends AppCompatActivity {
         String aRating = movieRating.getText().toString();
         int rating = Integer.parseInt(aRating);
         //addRating(rating, aReview, (int)movie.getId(), manager.getCurrentEmail());
-        reviewTask = new UserReviewTask(aReview, rating, (int) movie.getId());
+        //reviewTask = new UserReviewTask(aReview, rating, (int) movie.getId());
         //startActivity(new Intent(this, WelcomeActivity.class));
-        reviewTask.doInBackground();
+        //reviewTask.doInBackground();
 
     }
 
@@ -161,7 +164,8 @@ public class ReviewActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
+            //addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
+            getRating(mId, manager.getCurrentEmail());
             return false;
         }
     }
