@@ -51,13 +51,13 @@ public class ReviewActivity extends AppCompatActivity {
 
     }
 
-    public boolean addRating(int score, String review, int movieID, String username) {
+    public boolean addRating(String email, int movieID, int score, String review) {
 
         //TODO: Hook up to UI and getMovieByID method
         Exception error;
         try {
             RepositoryConnector rpc = new RepositoryConnector();
-            boolean retVal = rpc.setRating(username, movieID, score, review);
+            boolean retVal = rpc.setRating(email, movieID, score, review);
             Log.d("DB setRating Finished", "doInBackground method returned: "
                     + Boolean.toString(retVal));
             rpc.disconnect();
@@ -91,7 +91,7 @@ public class ReviewActivity extends AppCompatActivity {
         }
     }
 
-    public boolean getRating(int movieID, String username) {
+    public boolean getRating(int movieID, String email) {
 
         Exception error;
         try {
