@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class SingleMovie {
 
-    private String title, mpaaRating, synopsis, criticReview;
+    private String title, mpaaRating, synopsis, criticReview, rating;
     private List<String> genres, cast;
     private long id;
     private Integer year, runtime;
@@ -19,6 +19,10 @@ public class SingleMovie {
     public String getTitle() { return title; }
 
     public void setTitle(String title) { this.title = title; }
+
+    public String getReview() { return rating; }
+
+    public void setReview(String rating) { this.rating = rating; }
 
     public Bitmap getThumbnail() { return thumbnail; }
 

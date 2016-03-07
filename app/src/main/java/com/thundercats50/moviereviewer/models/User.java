@@ -1,5 +1,8 @@
 package com.thundercats50.moviereviewer.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The user class contains all the information of the user
  *
@@ -12,6 +15,7 @@ public class User extends Member {
 	private String major;
 	private String gender;
     private String email;
+    private Map reviews = new HashMap();
 
 	/**
 	 *
@@ -144,6 +148,7 @@ public class User extends Member {
     public void setMajor(String major) {
         this.major = major;
     }
+
 
 
 }

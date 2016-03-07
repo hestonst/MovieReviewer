@@ -1,4 +1,8 @@
 package com.thundercats50.moviereviewer.models;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Abstract class that specifies features of members of the app
  *
@@ -8,8 +12,10 @@ public abstract class Member {
 	
 	private String username;
 	private String password;
+	public static HashMap<Integer, String> reviews = new HashMap();
 
-    /**
+
+	/**
      * Constructor for members
      * @param username of member
      * @param password of member
@@ -74,4 +80,14 @@ public abstract class Member {
 	public boolean isLocked() {
 		return false;
 	}
+
+	public void addRevew(String review, int id) {
+		reviews.put(id, review);
+	}
+
+    public String getReview(int key) {
+        String aString;
+        aString = reviews.get(key);
+        return aString;
+    }
 }
