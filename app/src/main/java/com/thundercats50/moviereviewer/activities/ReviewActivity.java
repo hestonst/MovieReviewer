@@ -34,7 +34,9 @@ public class ReviewActivity extends AppCompatActivity {
     private List<String> reviews;
     private TextView name;
     private EditText review;
+    private EditText score;
     private String aReview;
+    private String aScore;
     private EditText movieRating;
     private MemberManager manager;
     private UserReviewTask reviewTask = null;
@@ -50,12 +52,14 @@ public class ReviewActivity extends AppCompatActivity {
         //getRating((int) movie.getId(), manager.getCurrentEmail());
         review = (EditText) findViewById(R.id.movie_review);
         manager.setCurrentMember(manager.getCurrentEmail());
+        score = (EditText) findViewById(R.id.movie_rating);
         Log.d("The current movie id is", manager.getCurrentMember().reviews.isEmpty() + "We are very cool");
         if (manager.getCurrentMember().getReview((int)movie.getId()) != null) {
             Log.d("The Review is ", manager.getCurrentMember().getReview((int)movie.getId()));
             aReview = manager.getCurrentMember().getReview((int)movie.getId());
-            //review.setText(movie.getReview());
+            aScore = manager.getCurrentMember().getScore((int) movie.getId());
             review.setText(aReview);
+            score.setText(aScore);
         }
 
     }
@@ -144,9 +148,12 @@ public class ReviewActivity extends AppCompatActivity {
     public void submitReview(View view) {
         review = (EditText) findViewById(R.id.movie_review);
         String aReview = review.getText().toString();
+        score = (EditText) findViewById(R.id.movie_rating);
+        String aScore = score.getText().toString();
         movie.setReview(aReview);
         Log.d("The current movie id is", (int) movie.getId() + "We are very cool");
         manager.getCurrentMember().addRevew(aReview, (int) movie.getId());
+        manager.getCurrentMember().addScore(aScore, (int) movie.getId());
         Log.d("The current movie id is", manager.getCurrentMember().reviews.isEmpty() + "We are very cool");
         movieRating = (EditText) findViewById(R.id.movie_rating);
         String aRating = movieRating.getText().toString();

@@ -13,6 +13,7 @@ public abstract class Member {
 	private String username;
 	private String password;
 	public static HashMap<Integer, String> reviews = new HashMap();
+    public static HashMap<Integer, String> scores = new HashMap();
 
 
 	/**
@@ -88,6 +89,14 @@ public abstract class Member {
     public String getReview(int key) {
         String aString;
         aString = reviews.get(key);
+        return aString;
+    }
+    public void addScore(String score, int id) {
+        scores.put(id, score);
+    }
+    public String getScore(int key) {
+        String aString;
+        aString = scores.get(key);
         return aString;
     }
 }
