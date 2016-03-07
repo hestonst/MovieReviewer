@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.thundercats50.moviereviewer.R;
-import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
 
 /**
@@ -22,14 +22,18 @@ public class LoggedInActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_loggedin);
 
+        refillForms();
+    }
+
+    private void refillForms() {
         EditText firstname = (EditText) findViewById(R.id.profileFirstName);
         EditText lastname = (EditText) findViewById(R.id.profileLastName);
         EditText email = (EditText) findViewById(R.id.profileEmail);
         EditText gender = (EditText) findViewById(R.id.profileGender);
         EditText major = (EditText) findViewById(R.id.profileMajor);
 
-        MemberManager manager = (MemberManager) getApplicationContext();
-        User user = (User) manager.getCurrentMember();
+        UserManager manager = (UserManager) getApplicationContext();
+        User user = manager.getCurrentMember();
         firstname.setText(user.getFirstname());
         lastname.setText(user.getLastname());
         email.setText(user.getEmail());
@@ -42,6 +46,13 @@ public class LoggedInActivity extends AppCompatActivity {
         gender.setKeyListener(null);
         major.setKeyListener(null);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refillForms();
+    }
+
 
 
     public void logout(View view) {

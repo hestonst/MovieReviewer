@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import java.util.List;
 
 //If we want to use movie images:
-import com.android.volley.toolbox.ImageLoader;
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.activities.LoggedInActivity;
 import com.thundercats50.moviereviewer.activities.RatingActivity;

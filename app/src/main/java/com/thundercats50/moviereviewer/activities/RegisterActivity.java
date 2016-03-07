@@ -35,7 +35,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
-import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.UserManager;
+import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -366,7 +367,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         private final String mEmail;
         private final String mPassword;
-        private final MemberManager manager = (MemberManager) getApplicationContext();
+        private final UserManager manager = (UserManager) getApplicationContext();
         private Exception error;
 
         UserRegisterTask(String email, String password) {
@@ -383,7 +384,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 Log.d("DB setNewUser Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 bbc.disconnect();
-                manager.setCurrentMember(mEmail);
+                manager.setCurrentMember(new User(mEmail, mPassword));
                 return retVal;
             } catch(InputMismatchException imee) {
                 error = imee;

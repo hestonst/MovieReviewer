@@ -137,9 +137,9 @@ public class BlackBoardConnector extends DBConnector {
             throws SQLException {
         ResultSet resultSet = getUserPass(user);
         if (resultSet.next()) {
-            if (resultSet.getString(0).equals(pass)) {
+            if (resultSet.getString(1).equals(pass)) {
                 //there is only 1 entry because there is only one Email selected from DB at
-                // a time; 2 because resultSet contains user, pass
+                // a time
                 return true;
             }
             resultSet.close();
@@ -201,15 +201,10 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * Method to update User's data matching email
-     * @param email
-     * @param firstName
-     * @param lastName
-     * @param major
-     * @param gender
      * @return boolean true if success
      */
-    public boolean setUserData(String email, String firstName, String lastName, String major,
-                               String gender) {
+    public boolean setUserData(String firstName, String lastName, String major, String gender,
+                               String email) {
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
