@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.activities.LoginActivity;
+import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -48,7 +49,7 @@ import java.util.List;
  * MovieListAdapter to populate the MovieViewHolder objects
  */
 
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment{
     private static final String TAG = "RecyclerViewExample";
     private List<SingleMovie> movieList = new ArrayList<>();
     private RecyclerView mRecyclerView;

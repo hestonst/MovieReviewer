@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.Rating;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ import com.thundercats50.moviereviewer.models.SingleMovie;
  * Handles inflating the recycler view with MovieViewHolder objects. Also binds data stored in Movie
  * object to the MovieViewHolder objects
  */
-public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
+public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     //replace all access to movies with information from database
     private List<SingleMovie> movieList;
@@ -46,16 +47,16 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
     @Override
     public MovieViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, null);
-        MovieViewHolder holder = new MovieViewHolder(view);
-
+        final MovieViewHolder holder = new MovieViewHolder(view);
 
 
         holder.recLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                //TODO: forward click to new activity
-                SingleMovie movie = movieList.get(position);
+
+                int click = holder.getAdapterPosition();
+                SingleMovie movie = movieList.get(click);
 
                 MovieManager.movie = movie;
 
@@ -75,13 +76,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
 
         movieViewHolder.getLayoutPosition();
 
+        //MovieManager.movie = movie;
         movieViewHolder.title.setText(Html.fromHtml(movie.getTitle()));
         movieViewHolder.thumbnail.setImageBitmap(movie.getThumbnail());
         //movieViewHolder.synopsis.setText(Html.fromHtml(movie.getAuthor()));
     }
 
-    public void clearAdapter()
-    {
+    public void clearAdapter() {
         movieList.clear();
         notifyDataSetChanged();
     }
@@ -91,6 +92,5 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
     public int getItemCount() {
         return (null != movieList ? movieList.size() : 0);
     }
-
 }
 
