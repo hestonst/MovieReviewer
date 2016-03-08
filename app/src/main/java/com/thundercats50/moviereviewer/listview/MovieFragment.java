@@ -21,7 +21,6 @@ import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.activities.LoginActivity;
 import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
-import com.thundercats50.moviereviewer.models.ValidMajors;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONArray;
@@ -141,9 +140,9 @@ public class MovieFragment extends Fragment{
 
     /**
      * Method to search movie by major and then populate onto recycler view
-     * @param major
+     * @param major of the user
      */
-    public void searchByMajor(ValidMajors major) {
+    public void searchByMajor(String major) {
         //TODO: Implementation of searching by major
     }
 

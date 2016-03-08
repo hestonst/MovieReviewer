@@ -13,11 +13,14 @@ import android.support.v4.app.Fragment;
 import com.thundercats50.moviereviewer.listview.MovieFragment;
 
 import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.User;
 
 public class RecommendationActivity extends AppCompatActivity {
 
     private MovieFragment movieFragment;
     private String genre;
+    String major;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +32,13 @@ public class RecommendationActivity extends AppCompatActivity {
                 "Documentary", "Musical & Performing Arts", "Special Interest", "Sports & Fitness", "Television", "Western"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(adapter);
-        this.genre = dropdown.getSelectedItem().toString()
+        this.genre = dropdown.getSelectedItem().toString();
 
         // get the movie fragment to send the queries to
         movieFragment = (MovieFragment) getSupportFragmentManager().findFragmentById(R.id.fragment2);
+        MemberManager manager = (MemberManager) getApplicationContext();
+        User user = (User) manager.getCurrentMember();
+        major = user.getMajor();
 
     }
 
@@ -40,6 +46,6 @@ public class RecommendationActivity extends AppCompatActivity {
         movieFragment.searchByGenre(genre);
     }
 
-    public void searchByMajor(View view) {movieFragment.searchByMajor();}
+    public void searchByMajor(View view) {movieFragment.searchByMajor(major);}
 
 }
