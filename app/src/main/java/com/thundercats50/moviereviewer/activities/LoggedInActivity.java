@@ -55,4 +55,6 @@ public class LoggedInActivity extends AppCompatActivity {
     public void goToSearch(View view) {
         startActivity(new Intent(this, SearchActivity.class));
     }
+
+    public void getRecommendation(View view) { startActivity(new Intent(this, RecommendationActivity.class)); }
 }

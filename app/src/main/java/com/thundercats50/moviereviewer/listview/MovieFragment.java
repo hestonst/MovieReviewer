@@ -21,6 +21,7 @@ import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.activities.LoginActivity;
 import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
+import com.thundercats50.moviereviewer.models.ValidMajors;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONArray;
@@ -129,6 +130,24 @@ public class MovieFragment extends Fragment{
 
         return rootView;
     }
+
+    /**
+     * Method to search movie by genre and then populate onto recycler view
+     * @param genre genre of the movie
+     */
+    public void searchByGenre(String genre) {
+        //TODO: Implementation of searching by genre
+    }
+
+    /**
+     * Method to search movie by major and then populate onto recycler view
+     * @param major
+     */
+    public void searchByMajor(ValidMajors major) {
+        //TODO: Implementation of searching by major
+    }
+
+
 
     /**
      * This method runs the query and creates and puts the initial SingleMovie objects into movieList

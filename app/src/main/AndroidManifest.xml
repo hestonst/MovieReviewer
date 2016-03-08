@@ -61,7 +61,7 @@
                 android:name="android.app.searchable"
                 android:resource="@layout/searchable" />
         </activity>
-        <activity android:name=".activities.ReviewActivity"></activity>
+        <activity android:name=".activities.ReviewActivity" />
     </application>
 
 </manifest>

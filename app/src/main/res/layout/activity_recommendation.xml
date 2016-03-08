@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".activities.SearchActivity">
+    tools:context=".activities.RecommendationActivity">
 
     <Button
         android:layout_width="wrap_content"
@@ -17,32 +17,14 @@
         android:layout_below="@+id/searchPrompt"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
-        android:id="@+id/searchPrompt"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:text="New DVDs"
+        android:text="Sort by Major"
         android:id="@+id/recommendation_major"
         android:layout_alignTop="@+id/homeButton"
         android:layout_toEndOf="@+id/homeButton"
-        android:onClick="searchNewDVD"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="New Releases"
-        android:id="@+id/new_releases"
-        android:layout_alignTop="@+id/homeButton"
-        android:layout_toEndOf="@+id/recommendation_major"
-        android:onClick="searchNewReleases"/>
+        android:onClick="searchByMajor"/>
 
     <fragment
         android:layout_width="wrap_content"
@@ -53,4 +35,15 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/genre"
+        android:background="@android:drawable/btn_dropdown"
+        android:layout_alignBottom="@+id/recommendation_major"
+        android:layout_toEndOf="@+id/recommendation_major"
+        android:spinnerMode="dropdown" />
+
 </RelativeLayout>
+
