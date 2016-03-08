@@ -23,8 +23,8 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText email;
     private EditText gender;
     private EditText major;
-    private EditText password;
-    private EditText oldPassword;
+    //private EditText password;
+    //private EditText oldPassword;
     private UpdatePassword mUpdateTask = null;
 
     @Override
@@ -49,33 +49,34 @@ public class ProfileActivity extends AppCompatActivity {
         member.setEmail(email.getText().toString());
         member.setGender(gender.getText().toString());
         member.setMajor(major.getText().toString());
-        String oldPasswordInput = oldPassword.getText().toString();
-        String passwordInput = password.getText().toString();
-        if (passwordInput.equals("")) {
-            startActivity(new Intent(this, LoggedInActivity.class));
-        } else {
-            View focusView = null;
-            boolean cancel = false;
-            if (!isPasswordValid(passwordInput)) {
-                password.setError("Please input a 6 character alphanumeric password");
-                focusView = password;
-                cancel = true;
-            }
-            if (cancel) {
-                focusView.requestFocus();
-            } else {
-                mUpdateTask = new UpdatePassword(manager.getCurrentEmail(), passwordInput, oldPasswordInput);
-                mUpdateTask.execute();
-                Log.d("The method is working", "The method is working");
-                boolean b = mUpdateTask.doInBackground();
-                if (b) {
-                    startActivity(new Intent(this, LoggedInActivity.class));
-                } else {
-                    email.setError("An error occured. Please check the log");
-                    email.requestFocus();
-                }
-            }
-        }
+        startActivity(new Intent(this, LoggedInActivity.class));
+        //String oldPasswordInput = oldPassword.getText().toString();
+        //String passwordInput = password.getText().toString();
+//        if (passwordInput.equals("")) {
+//            startActivity(new Intent(this, LoggedInActivity.class));
+//        } else {
+//            View focusView = null;
+//            boolean cancel = false;
+//            if (!isPasswordValid(passwordInput)) {
+//                password.setError("Please input a 6 character alphanumeric password");
+//                focusView = password;
+//                cancel = true;
+//            }
+//            if (cancel) {
+//                focusView.requestFocus();
+//            } else {
+//                mUpdateTask = new UpdatePassword(manager.getCurrentEmail(), passwordInput, oldPasswordInput);
+//                mUpdateTask.execute();
+//                Log.d("The method is working", "The method is working");
+//                boolean b = mUpdateTask.doInBackground();
+//                if (b) {
+//                    startActivity(new Intent(this, LoggedInActivity.class));
+//                } else {
+//                    email.setError("An error occured. Please check the log");
+//                    email.requestFocus();
+//                }
+//            }
+//        }
     }
 
     /**
