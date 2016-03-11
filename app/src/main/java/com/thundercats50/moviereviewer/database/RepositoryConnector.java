@@ -59,7 +59,7 @@ public class RepositoryConnector extends DBConnector {
             // old data
             String request = "SELECT (NumericalRating, Email," +
                     "TextReview) FROM sql5107476.RatingInfo WHERE MovieID="
-                    + "" + movieID +"";
+                    + "'" + movieID +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());

@@ -100,12 +100,14 @@ public class ReviewActivity extends AppCompatActivity {
             RepositoryConnector rpc = new RepositoryConnector();
             ResultSet retVal = rpc.getMovieRatings(movieID);
             Log.d("DB getRating finished", "doInBackground method returned:" + retVal);
-            while (retVal.next()) {
-                //if (retVal.getString(1).equals(manager.getCurrentEmail()))
-                ratings.add(retVal.getInt(1));
-                reviews.add(retVal.getString(3));
+            if (retVal != null) {
+                while (retVal.next()) {
+                    //if (retVal.getString(1).equals(manager.getCurrentEmail()))
+                    ratings.add(retVal.getInt(1));
+                    reviews.add(retVal.getString(3));
+                }
+                rpc.disconnect();
             }
-            rpc.disconnect();
         } catch (InputMismatchException imee) {
             error = imee;
             return false;
@@ -162,10 +164,18 @@ public class ReviewActivity extends AppCompatActivity {
             this.mId = mId;
         }
 
+        public void updateVars(String mReview, int mRating, int mId) {
+            this.mReview = mReview;
+            this.mRating = mRating;
+            this.mId = mId;
+        }
         @Override
         protected Boolean doInBackground(Void... params) {
             //addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
             getRating(mId, manager.getCurrentEmail());
+            if (mReview != null) {
+
+            }
             return false;
         }
     }
