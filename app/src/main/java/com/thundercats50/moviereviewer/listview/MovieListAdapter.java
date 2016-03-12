@@ -2,6 +2,7 @@ package com.thundercats50.moviereviewer.listview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Rating;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -11,22 +12,26 @@ import android.view.ViewGroup;
 import java.util.List;
 
 //If we want to use movie images:
-import com.android.volley.toolbox.ImageLoader;
 import com.thundercats50.moviereviewer.R;
-import com.thundercats50.moviereviewer.WelcomeActivity;
+import com.thundercats50.moviereviewer.activities.LoggedInActivity;
+import com.thundercats50.moviereviewer.activities.RatingActivity;
+import com.thundercats50.moviereviewer.activities.ReviewActivity;
+import com.thundercats50.moviereviewer.activities.WelcomeActivity;
 import com.thundercats50.moviereviewer.models.SingleMovie;
 //to remove after integration of rotten tomatoes
 
 /**
  * Created by scottheston on 23/02/16.
  * Consulting tutorial: https://www.youtube.com/watch?v=8ePqYGMxdSY
+ *
+ * Handles inflating the recycler view with MovieViewHolder objects. Also binds data stored in Movie
+ * object to the MovieViewHolder objects
  */
 public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
 
     //replace all access to movies with information from database
     private List<SingleMovie> movieList;
     private Context mContext;
-    private ImageLoader mImageLoader;
 
     private int focusedItem = 0;
 
@@ -40,12 +45,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, null);
         MovieViewHolder holder = new MovieViewHolder(view);
 
+
+
         holder.recLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 //TODO: forward click to new activity
-                Intent intent = new Intent(mContext, WelcomeActivity.class);
+                Intent intent = new Intent(mContext, ReviewActivity.class);
                 mContext.startActivity(intent);
             }
         });
@@ -61,12 +68,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder>  {
 
         movieViewHolder.getLayoutPosition();
 
-        mImageLoader = MovieRequestQueue.getInstance(mContext).getImageLoader();
-
-        //movieViewHolder.thumbnail.setImageUrl(movie.getThumbnail(), mImageLoader);
-        //movieViewHolder.thumbnail.setDefaultImageResId(R.drawable.rotten_tomato);
-
         movieViewHolder.title.setText(Html.fromHtml(movie.getTitle()));
+        movieViewHolder.thumbnail.setImageBitmap(movie.getThumbnail());
         //movieViewHolder.synopsis.setText(Html.fromHtml(movie.getAuthor()));
     }
 

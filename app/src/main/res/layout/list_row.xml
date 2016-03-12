@@ -26,27 +26,7 @@
     -->
 
     <!-- <ImageView -->
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="fitXY"
-        android:src="@drawable/rotten_tomato"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Synopsis"
-        android:id="@+id/synopsis"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:singleLine="false"
-        android:layout_alignParentBottom="false" />
 
     <TextView
         android:id="@+id/title"
@@ -60,8 +40,16 @@
         android:textSize="18dp"
         android:textColor="#000"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:layout_toEndOf="@+id/thumbnail" />
+        android:layout_toEndOf="@+id/thumbnailView"
+
+        />
+
+    <ImageView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:id="@+id/thumbnailView"
+        android:layout_alignTop="@+id/title"
+        android:layout_alignParentStart="true" />
 
     <!-- un-comment for card view -->
     <!--

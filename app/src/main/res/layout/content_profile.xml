@@ -9,30 +9,40 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.thundercats50.moviereviewer.ProfileActivity"
+    tools:context=".activities.ProfileActivity"
     tools:showIn="@layout/activity_profile">
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:text="@string/first_name"
         android:ems="10"
-        android:id="@+id/editName"
+        android:id="@+id/editFirstName"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:editable="false" />
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="@string/last_name"
+        android:ems="10"
+        android:id="@+id/editLastName"
+        android:layout_below="@+id/editFirstName"
+        android:layout_alignParentStart="true" />
+
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
+        android:text="@string/email"
         android:ems="10"
         android:id="@+id/editEmail"
-        android:layout_below="@+id/editName"
+        android:layout_below="@+id/editLastName"
         android:layout_alignParentStart="true"
-        android:editable="false"
-        android:text="Email" />
+        android:editable="false" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -41,7 +51,7 @@
         android:layout_below="@+id/editEmail"
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/editEmail"
-        android:text="Gender" />
+        android:text="@string/gender" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -50,12 +60,12 @@
         android:layout_below="@+id/editGender"
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/editGender"
-        android:text="Major" />
+        android:text="@string/major"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Update Profile"
+        android:text="@string/update_profile"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
@@ -65,7 +75,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:id="@+id/button2"
         android:layout_alignTop="@+id/button"
         android:layout_alignParentEnd="true"
@@ -75,11 +85,33 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/editPassword"
+        android:id="@+id/editOldPassword"
         android:layout_below="@+id/editMajor"
         android:layout_alignParentStart="true"
         android:singleLine="true"
         android:maxLines="1"
-        android:hint="password" />
+        android:hint="@string/old_password" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/editPassword"
+        android:layout_below="@+id/editOldPassword"
+        android:layout_alignParentStart="true"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:hint="@string/new_password" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/editVerifyPassword"
+        android:layout_below="@+id/editPassword"
+        android:layout_alignParentStart="true"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:hint="@string/verify_new_password" />
 
 </RelativeLayout>

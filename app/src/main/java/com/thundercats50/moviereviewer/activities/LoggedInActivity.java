@@ -1,16 +1,13 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
-import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
 
 /**
@@ -25,23 +22,37 @@ public class LoggedInActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_loggedin);
 
-        EditText name = (EditText) findViewById(R.id.profileName);
+        refillForms();
+    }
+
+    private void refillForms() {
+        EditText firstname = (EditText) findViewById(R.id.profileFirstName);
+        EditText lastname = (EditText) findViewById(R.id.profileLastName);
         EditText email = (EditText) findViewById(R.id.profileEmail);
         EditText gender = (EditText) findViewById(R.id.profileGender);
         EditText major = (EditText) findViewById(R.id.profileMajor);
 
-        MemberManager manager = (MemberManager) getApplicationContext();
-        User user = (User) manager.getCurrentMember();
-        name.setText(user.getFirstname());
+        UserManager manager = (UserManager) getApplicationContext();
+        User user = manager.getCurrentMember();
+        firstname.setText(user.getFirstname());
+        lastname.setText(user.getLastname());
         email.setText(user.getEmail());
         gender.setText(user.getGender());
         major.setText(user.getMajor());
 
-        name.setKeyListener(null);
+        firstname.setKeyListener(null);
+        lastname.setKeyListener(null);
         email.setKeyListener(null);
         gender.setKeyListener(null);
         major.setKeyListener(null);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refillForms();
+    }
+
 
 
     public void logout(View view) {

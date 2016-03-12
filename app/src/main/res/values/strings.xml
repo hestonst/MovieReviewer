@@ -1,7 +1,20 @@
 <resources>
     <string name="app_name">MovieReviewer</string>
     <string name="title_activity_login">Sign in</string>
-
+    <string name="no_internet">Please confirm your internet connection</string>
+    <!-- Strings related to navigation -->
+    <string name="update_profile">Update Profile</string>
+    <string name="cancel">Cancel</string>
+    <!-- Strings related to userdata -->
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
+    <string name="email">Email</string>
+    <string name="major">Major</string>
+    <string name="gender">Gender</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="verify_new_password">Verify New Password</string>
+    <string name="passwords_dont_match">Passwords must match.</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -16,16 +29,17 @@
     </string>
     <!-- Strings related to registration -->
     <string name="user_already_exists">This username is already taken</string>
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_logged_in">LoggedInActivity</string>
-    <string name="title_activity_welcome">WelcomeActivity</string>
-    <string name="welcome_screen">Welcome to Team Thundercats App</string>
+    <string name="title_activity_fullscreen">ThunderCat Reviews</string>
+    <string name="title_activity_logged_in">Your Profile</string>
+    <string name="title_activity_welcome">Welcome to Thunder Cat Review</string>
+    <string name="welcome_screen">Welcome to Thunder Cat Movie Reviewer!</string>
     <string name="title_activity_register">Register</string>
     <string name="title_activity_profile">Edit Profile</string>
     <string name="edit_profile">Edit Profile</string>
     <!-- Strings related to searching -->
     <string name="search_hint">Start typing your search..</string>
     <string name="search_return" formatted="false">Displaying 10 of %d results for %s</string>
+    <string name="update_info">Update Info</string>
+
+
 </resources>

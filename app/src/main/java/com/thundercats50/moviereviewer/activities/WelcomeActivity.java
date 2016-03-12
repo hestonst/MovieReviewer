@@ -1,4 +1,4 @@
-package com.thundercats50.moviereviewer;
+package com.thundercats50.moviereviewer.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
+
+import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.activities.LoginActivity;
+import com.thundercats50.moviereviewer.activities.RegisterActivity;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -167,10 +170,7 @@ public class WelcomeActivity extends AppCompatActivity {
      * Handles login button presses. Starts the LoginActivity activity.
      * @param view not currently used, but required
      */
-    public void login(View view) {
-        startActivity(new Intent(this, LoginActivity.class));
-    }
-    public void register(View view) {
-        startActivity(new Intent(this, RegisterActivity.class));
-    }
+    public void login(View view) {startActivity(new Intent(this, LoginActivity.class));}
+    public void register(View view) {startActivity(new Intent(this, RegisterActivity.class));}
+    public void rate(View view) {startActivity(new Intent(this, RatingActivity.class));}
 }
