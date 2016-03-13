@@ -199,6 +199,34 @@ public class BlackBoardConnector extends DBConnector {
         return resultSet;
     }
 
+
+    /**
+     * method to return all users of given major
+     * @param major to check for
+     * @return ResultSet of users
+     * @throws SQLException on connection error
+     */
+    public ResultSet getUsersWithMajor(String major)
+            throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            if (connection == null) connect();
+            statement = connection.createStatement();
+            //keep making new statements as security method to keep buggy code from accessing
+            // old data
+            String request = "SELECT Email FROM sql5107476.UserInfo WHERE Major="
+                    + "'" + major +"'";
+            resultSet = statement.executeQuery(request);
+        } catch (SQLException sqle) {
+            Log.e("Database SQLException", sqle.getMessage());
+            Log.e("Database SQLState", sqle.getSQLState());
+            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+            throw sqle;
+        }
+        return resultSet;
+    }
+
+
     /**
      * Method to update User's data matching email
      * @return boolean true if success
