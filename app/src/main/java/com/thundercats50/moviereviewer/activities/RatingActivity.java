@@ -1,5 +1,9 @@
 package com.thundercats50.moviereviewer.activities;
+
 import com.thundercats50.moviereviewer.database.RepositoryConnector;
+import com.thundercats50.moviereviewer.models.SingleMovie;
+
+
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -8,8 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-
-import com.thundercats50.moviereviewer.models.SingleMovie;
 
 import java.sql.SQLException;
 
@@ -20,8 +22,6 @@ import java.sql.ResultSet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 
 /**
@@ -84,7 +84,8 @@ public class RatingActivity {
         Exception error;
         try {
             RepositoryConnector rpc = new RepositoryConnector();
-            boolean retVal = rpc.setRating(username, movieID, score, review);
+            String imageURL = ""; //TODO: pass url in from JSON object
+            boolean retVal = rpc.setRating(username, movieID, score, review, imageURL);
             Log.d("DB setRating Finished", "doInBackground method returned: "
                     + Boolean.toString(retVal));
             rpc.disconnect();

@@ -2,13 +2,19 @@ package com.thundercats50.moviereviewer.models;
 
 import android.graphics.Bitmap;
 import java.util.List;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.ImageView;
+import java.io.InputStream;
 
 /**
  * Created by scottheston on 23/02/16.
  */
 public class SingleMovie {
 
-    private String title, mpaaRating, synopsis, criticReview;
+    private String title, mpaaRating, synopsis, criticReview, imageURL;
     private List<String> genres, cast;
     private long id;
     private Integer year, runtime;
@@ -19,6 +25,13 @@ public class SingleMovie {
     public String getTitle() { return title; }
 
     public void setTitle(String title) { this.title = title; }
+
+    public String getThumbnailURL() { return imageURL; }
+
+    public void setThumbnailURL(String imageURL) {
+        imageURL = imageURL;
+    }
+
 
     public Bitmap getThumbnail() { return thumbnail; }
 

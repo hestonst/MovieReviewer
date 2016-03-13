@@ -5,25 +5,26 @@ package com.thundercats50.moviereviewer.models;
  *
  * @author Neil Barooah
  */
-public class User extends Member {
+public class User {
 	
-	private String firstname;
-	private String lastname;
-	private String major;
-	private String gender;
-    private String email;
+	private String firstname = "";
+	private String lastname = "";
+	private String major = "";
+	private String gender = "";
+    private String email = "";
 
 	/**
 	 *
-	 * @param username
+	 * @param email
 	 * @param password
 	 */
-	public User(String username, String password) {
-		this(username,password, null, null, null, null);
+	public User(String email, String password) {
+		this(email, "", "", "", "");
+
 	}
 
-    public User(String username, String password, String firstname, String lastname, String major, String gender) {
-        super(username, password);
+    public User(String email, String firstname, String lastname, String major, String gender) {
+        this.email = email;
         if (firstname == null) {
             this.firstname = "";
         } else {
@@ -118,15 +119,6 @@ public class User extends Member {
             return "Female";
         }
         return "Unknown";
-    }
-
-    /**
-     * determines whether the user is an admin
-     * @return always false for users
-     */
-    @Override
-    public boolean isAdmin() {
-    	return false;
     }
 
 	/**

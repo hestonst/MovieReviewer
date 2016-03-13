@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
-import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.ResultSet;
@@ -43,7 +43,6 @@ import java.sql.SQLException;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    //TODO: add profile permanence, change password form to DB
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -157,8 +156,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             if (!cancel) {
-                MemberManager manager = (MemberManager) getApplicationContext();
-                manager.setCurrentMember(mEmailView.getText().toString());
                 startActivity(new Intent(this, LoggedInActivity.class));
             }
         }
@@ -279,7 +276,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private String mFirstName;
         private String mLastName;
         private String mMajor;
-        private final MemberManager manager = (MemberManager) getApplicationContext();
+        private final UserManager manager = (UserManager) getApplicationContext();
         private boolean internetAccessExists = true;
 
         UserLoginTask(String email, String password) {
@@ -296,15 +293,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 ResultSet userInfo = bbc.getUserData(mEmail);
-                mFirstName = userInfo.getString(0);
-                mLastName = userInfo.getString(1);
-                mMajor = userInfo.getString(2);
-                mGender = userInfo.getString(3);
-                if (manager.getMember(mEmail) == null) {
-                    manager.addMember(mEmail, new User(mEmail, mPassword, mFirstName, mLastName,
+                userInfo.next(); //must call next to move to first entry
+                mFirstName = userInfo.getString(1);
+                mLastName = userInfo.getString(2);
+                mMajor = userInfo.getString(3);
+                mGender = userInfo.getString(4);
+                manager.setCurrentMember(new User(mEmail, mFirstName, mLastName,
                             mMajor, mGender));
-                }
-                manager.setCurrentMember(mEmail);
                 bbc.disconnect();
                 return retVal;
             } catch (ClassNotFoundException cnfe) {
