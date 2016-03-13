@@ -2,7 +2,6 @@ package com.thundercats50.moviereviewer.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.UserManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,14 +12,16 @@ import android.widget.TextView;
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.database.RepositoryConnector;
-import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
 import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.InputMismatchException;
+import java.util.Iterator;
 import java.util.List;
 
 public class ReviewActivity extends AppCompatActivity {
@@ -35,7 +36,7 @@ public class ReviewActivity extends AppCompatActivity {
     private TextView name;
     private EditText review;
     private EditText movieRating;
-    private MemberManager manager;
+    private UserManager manager;
     private UserReviewTask reviewTask = null;
 
     @Override
@@ -45,31 +46,29 @@ public class ReviewActivity extends AppCompatActivity {
         name = (TextView) findViewById(R.id.movie_title);
         SingleMovie movie = MovieManager.movie;
         name.setText(movie.getTitle());
-        manager = (MemberManager) getApplicationContext();
+        manager = (UserManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());
-        reviewTask = new UserReviewTask(null, 0, (int) movie.getId());
+        reviewTask = new UserReviewTask(null, 0, movie.getId());
         reviewTask.execute();
-
+        getRating(movie.getId(), manager.getCurrentMember().getEmail());
 
     }
-
-    public boolean addRating(String email, int movieID, int score, String review) {
-
-        //TODO: Hook up to UI and getMovieByID method
+    public void addRating(View view) {
         Exception error;
         try {
             RepositoryConnector rpc = new RepositoryConnector();
-            boolean retVal = rpc.setRating(email, movieID, score, review);
+            UserManager manager = (UserManager) getApplicationContext();
+            String email = manager.getCurrentMember().getEmail();
+            EditText review = (EditText) findViewById(R.id.movie_review);
+            EditText rating = (EditText) findViewById(R.id.movie_rating);
+            boolean retVal = rpc.setRating(email, movie, Integer.parseInt(rating.toString()), review.toString());
             Log.d("DB setRating Finished", "doInBackground method returned: "
                     + Boolean.toString(retVal));
             rpc.disconnect();
-            return retVal;
         } catch (InputMismatchException imee) {
             error = imee;
-            return false;
         } catch (ClassNotFoundException cnfe) {
             Log.d("Dependency Error", "Check if MySQL library is present.");
-            return false;
         } catch (SQLException sqle) {
             Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
             for (Throwable e : sqle) {
@@ -88,22 +87,22 @@ public class ReviewActivity extends AppCompatActivity {
                     t = t.getCause();
                 }
             }
-
-            return false;
         }
+        startActivity(new Intent(this, SearchActivity.class));
     }
 
-    public boolean getRating(int movieID, String email) {
+    public boolean getRating(long movieID, String email) {
 
         Exception error;
         try {
             RepositoryConnector rpc = new RepositoryConnector();
-            ResultSet retVal = rpc.getMovieRatings(movieID);
+            HashSet<SingleMovie> retVal = rpc.getMovieRatings(movieID);
+            Iterator<SingleMovie> iterator = retVal.iterator();
             Log.d("DB getRating finished", "doInBackground method returned:" + retVal);
-            while (retVal.next()) {
-                //if (retVal.getString(1).equals(manager.getCurrentEmail()))
-                ratings.add(retVal.getInt(1));
-                reviews.add(retVal.getString(3));
+            while (iterator.hasNext()) {
+                SingleMovie movie = iterator.next();
+                review.setText(movie.getUserReview(movieID));
+                movieRating.setText(movie.getUserRating(movieID));
             }
             rpc.disconnect();
         } catch (InputMismatchException imee) {
@@ -152,11 +151,11 @@ public class ReviewActivity extends AppCompatActivity {
 
         private String mReview;
         private int mRating;
-        private int mId;
-        private final MemberManager manager = (MemberManager) getApplicationContext();
+        private long mId;
+        private final UserManager manager = (UserManager) getApplicationContext();
         private boolean internetAccessExists = true;
 
-        UserReviewTask(String mReview, int mRating, int mId) {
+        UserReviewTask(String mReview, int mRating, long mId) {
             this.mReview = mReview;
             this.mRating = mRating;
             this.mId = mId;
@@ -165,7 +164,7 @@ public class ReviewActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             //addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
-            getRating(mId, manager.getCurrentEmail());
+            getRating(mId, manager.getCurrentMember().getEmail());
             return false;
         }
     }

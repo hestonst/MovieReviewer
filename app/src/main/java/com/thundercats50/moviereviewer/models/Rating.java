@@ -6,6 +6,7 @@ package com.thundercats50.moviereviewer.models;
 public class Rating {
     private String user, textReview;
     private int numericalRating;
+    private long movieId;
 
     public String getUser() {
         return user;
@@ -29,6 +30,14 @@ public class Rating {
 
     public void setNumericalRating(int numericalRating) {
         this.numericalRating = numericalRating;
+    }
+
+    public void setMovieId(long id) {
+        movieId = id;
+    }
+
+    public long getMovieId() {
+        return movieId;
     }
 
 }

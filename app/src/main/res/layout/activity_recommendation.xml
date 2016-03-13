@@ -21,7 +21,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:text="Sort by Major"
+        android:text="Get By Major"
         android:id="@+id/recommendation_major"
         android:layout_alignTop="@+id/homeButton"
         android:layout_toEndOf="@+id/homeButton"

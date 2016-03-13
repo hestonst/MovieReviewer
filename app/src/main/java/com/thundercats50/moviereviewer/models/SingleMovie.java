@@ -2,6 +2,7 @@ package com.thundercats50.moviereviewer.models;
 
 import android.graphics.Bitmap;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import android.graphics.Bitmap;
@@ -21,18 +22,21 @@ public class SingleMovie {
     private List<String> genres, cast;
     private long id;
     private Integer year, runtime;
-    private Set<Rating> userRatings;
+    private HashMap<Long, Rating> userRatings;
 
     public SingleMovie() {
-        userRatings = new HashSet<>();
+        userRatings = new HashMap<>();
     }
 
-    public Set<Rating> getUserRatings() {
-        return userRatings;
+    public int getUserRating(long mID) {
+        return userRatings.get(mID).getNumericalRating();
     }
 
-    public void addUserRating(Rating rating) {
-        this.userRatings.add(rating);
+    public String getUserReview(long mID) {
+        return userRatings.get(mID).getTextReview();
+    }
+    public void addUserRating(Long movieID, Rating rating) {
+        this.userRatings.put(movieID, rating);
     }
 
     // holds ImageView for thumbnail

@@ -66,12 +66,12 @@ public class RepositoryConnector extends DBConnector {
             ResultSet current = null;
             while (users.next()) {
                 String request = "SELECT (MovieID, MovieName, NumericalRating," +
-                        "TextReview, PhotoURL, Email, Synopsis) FROM sql5107476.RatingInfo WHERE Email="
-                        + "'" + users.getString(1) +"' ORDER BY NumericalRating";
+                        "TextReview, PhotoURL, Email, Synopsis) FROM sql5107476.RatingInfo WHERE Major="
+                        + "'" + major +"' ORDER BY NumericalRating";
                 current = statement.executeQuery(request);
                 SingleMovie currentMovie = new SingleMovie();
                 Rating currentRating = new Rating();
-                while (current.next()) {
+                while (current.next() && !(current.isAfterLast())) {
                     currentMovie.setId((long) current.getDouble("MovieID"));
                     currentRating.setUser(current.getString("Email"));
                     currentRating.setNumericalRating(current.getInt("NumericalRating"));
@@ -79,11 +79,11 @@ public class RepositoryConnector extends DBConnector {
                     if (retVal.contains(currentMovie)) {
                         for (SingleMovie m : retVal) {
                             if (m.equals(currentMovie)) {
-                                m.addUserRating(currentRating);
+                                m.addUserRating(currentMovie.getId(), currentRating);
                             }
                         }
                     } else {
-                        currentMovie.addUserRating(currentRating);
+                        currentMovie.addUserRating(currentMovie.getId(), currentRating);
                         currentMovie.setTitle(current.getString("MovieName"));
                         currentMovie.setThumbnailURL(current.getString("PhotoURL"));
                         currentMovie.setSynopsis(current.getString("Synopsis"));
@@ -108,24 +108,37 @@ public class RepositoryConnector extends DBConnector {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public ResultSet getMovieRatings(int movieID)
+    public HashSet<SingleMovie> getMovieRatings(long movieID)
             throws ClassNotFoundException, SQLException {
-        ResultSet resultSet = null;
+        HashSet<SingleMovie> retVal = new HashSet<>();
         try {
             if (connection == null) connect();
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT (NumericalRating, Email," +
-                    "TextReview, PhotoURL) FROM sql5107476.RatingInfo WHERE MovieID="
+            String request = "SELECT (MovieID, MovieName, NumericalRating,"+
+                    "TextReview, PhotoURL, Email, Synopsis) FROM sql5107476.RatingInfo WHERE MovieID="
                     + "" + movieID +"";
-            resultSet = statement.executeQuery(request);
+            ResultSet current = statement.executeQuery(request);
+            SingleMovie currentMovie = new SingleMovie();
+            Rating currentRating = new Rating();
+            while (current.next() && !(current.isAfterLast())) {
+                currentMovie.setId((long) current.getDouble("MovieID"));
+                currentMovie.setTitle(current.getString("MovieName"));
+                currentMovie.setThumbnailURL(current.getString("PhotoURL"));
+                currentMovie.setSynopsis(current.getString("Synopsis"));
+                currentRating.setUser(current.getString("Email"));
+                currentRating.setNumericalRating(current.getInt("NumericalRating"));
+                currentRating.setTextReview(current.getString("TextReview"));
+                currentMovie.addUserRating(currentMovie.getId(), currentRating);
+                retVal.add(currentMovie);
+            }
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
             Log.e("Database SQLState", sqle.getSQLState());
             Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
         }
-        return resultSet;
+        return retVal;
     }
 
 

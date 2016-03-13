@@ -16,7 +16,6 @@ import java.util.List;
 //If we want to use movie images:
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.activities.LoggedInActivity;
-import com.thundercats50.moviereviewer.activities.RatingActivity;
 import com.thundercats50.moviereviewer.activities.ReviewActivity;
 import com.thundercats50.moviereviewer.activities.WelcomeActivity;
 import com.thundercats50.moviereviewer.models.MovieManager;

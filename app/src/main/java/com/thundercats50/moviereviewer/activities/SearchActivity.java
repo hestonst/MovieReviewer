@@ -1,6 +1,7 @@
 package com.thundercats50.moviereviewer.activities;
 
 import android.app.SearchManager;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -46,6 +47,10 @@ public class SearchActivity extends AppCompatActivity {
 
     public void searchNewDVD(View view) {
         movieFragment.updateList(1, newDVDSubkey);
+    }
+
+    public void goHome(View view){
+        startActivity(new Intent(this, WelcomeActivity.class));
     }
 
 }

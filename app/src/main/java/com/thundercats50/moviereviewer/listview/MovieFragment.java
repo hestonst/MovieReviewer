@@ -18,8 +18,10 @@ import android.view.ViewGroup;
 
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.activities.LoginActivity;
+import com.thundercats50.moviereviewer.database.RepositoryConnector;
 import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
+import com.thundercats50.moviereviewer.database.RepositoryConnector;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONArray;
@@ -36,7 +38,10 @@ import com.android.volley.toolbox.Volley;
 
 
 import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 //to remove after MovieSet integration
 
@@ -141,7 +146,24 @@ public class MovieFragment extends Fragment{
      * @param major of the user
      */
     public void searchByMajor(String major) {
-        //TODO: Implementation of searching by major
+        try {
+            RepositoryConnector rpc = new RepositoryConnector();
+            HashSet<SingleMovie> result = rpc.getAllByMajor(major);
+            Iterator<SingleMovie> iterator = result.iterator();
+
+            //declare the adapter and attach it to the recyclerview
+            adapter = new MovieListAdapter(getActivity(), movieList);
+            mRecyclerView.setAdapter(adapter);
+            adapter.clearAdapter();
+            while(iterator.hasNext()) {
+                SingleMovie item = iterator.next();
+                new ImageDownloader(item).execute(item.getThumbnailURL());
+                movieList.add(item);
+            }
+            adapter.notifyDataSetChanged();
+        } catch(Exception e) {
+            Log.d("DB_Exception", e.getMessage());
+        }
     }
 
 

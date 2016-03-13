@@ -172,5 +172,5 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     public void login(View view) {startActivity(new Intent(this, LoginActivity.class));}
     public void register(View view) {startActivity(new Intent(this, RegisterActivity.class));}
-    public void rate(View view) {startActivity(new Intent(this, RatingActivity.class));}
+    public void rate(View view) {startActivity(new Intent(this, ReviewActivity.class));}
 }
