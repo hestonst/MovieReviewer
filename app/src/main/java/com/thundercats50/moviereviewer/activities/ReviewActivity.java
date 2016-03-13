@@ -37,6 +37,7 @@ public class ReviewActivity extends AppCompatActivity {
     private EditText movieRating;
     private MemberManager manager;
     private UserReviewTask reviewTask = null;
+    private UserReviewTask reviewTask2 = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,9 +144,12 @@ public class ReviewActivity extends AppCompatActivity {
         movieRating = (EditText) findViewById(R.id.movie_rating);
         String aRating = movieRating.getText().toString();
         int rating = Integer.parseInt(aRating);
+        reviewTask2 = new UserReviewTask(null, 0, (int) movie.getId());
+        reviewTask2.updateVars(aReview, rating, (int) movie.getId());
+        reviewTask2.execute();
         //addRating(rating, aReview, (int)movie.getId(), manager.getCurrentEmail());
         //reviewTask = new UserReviewTask(aReview, rating, (int) movie.getId());
-        //startActivity(new Intent(this, WelcomeActivity.class));
+        startActivity(new Intent(this, SearchActivity.class));
         //reviewTask.doInBackground();
 
     }
@@ -172,9 +176,11 @@ public class ReviewActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             //addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
+            Log.e("Got to section", "yay1");
             getRating(mId, manager.getCurrentEmail());
             if (mReview != null) {
-
+                addRating(manager.getCurrentEmail(), mId, mRating, mReview);
+                Log.e("Got to section", "yay");
             }
             return false;
         }
