@@ -17,12 +17,12 @@ public class RepositoryConnector extends DBConnector {
 
     /**
      * method to query DB for ratings matching username
-     * @param user to search for ratings
+     * @param email to search for ratings
      * @return ResultSet (which can be accessed through a for-while loop)
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public ResultSet getUserRatings(String user)
+    public ResultSet getUserRatings(String email)
             throws ClassNotFoundException, SQLException {
         ResultSet resultSet = null;
         try {
@@ -31,8 +31,8 @@ public class RepositoryConnector extends DBConnector {
             //keep making new statements as security method to keep buggy code from accessing
             // old data
             String request = "SELECT (MovieID,NumericalRating," +
-                    "TextReview) FROM sql5107476.RatingInfo WHERE Email="
-                    + "'" + user +"'";
+                    "TextReview, PhotoURL) FROM sql5107476.RatingInfo WHERE Email="
+                    + "'" + email +"' ORDER BY NumericalRating";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
@@ -41,6 +41,34 @@ public class RepositoryConnector extends DBConnector {
         }
         return resultSet;
     }
+
+    /**
+     * method to query DB for ratings matching major
+     * @param major to search for ratings
+     * @return ResultSet (which can be accessed through a for-while loop)
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public ResultSet getAllByMajor(String major)
+            throws ClassNotFoundException, SQLException {
+        ResultSet resultSet = null;
+        try {
+            if (connection == null) connect();
+            statement = connection.createStatement();
+            //keep making new statements as security method to keep buggy code from accessing
+            // old data
+            String request = "SELECT (MovieID,NumericalRating," +
+                    "TextReview, PhotoURL) FROM sql5107476.RatingInfo WHERE Email="
+                    + "'" + major +"' ORDER BY NumericalRating";
+            resultSet = statement.executeQuery(request);
+        } catch (SQLException sqle) {
+            Log.e("Database SQLException", sqle.getMessage());
+            Log.e("Database SQLState", sqle.getSQLState());
+            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+        }
+        return resultSet;
+    }
+
 
     /**
      * method to query DB for rating information matching movie's name
@@ -58,7 +86,7 @@ public class RepositoryConnector extends DBConnector {
             //keep making new statements as security method to keep buggy code from accessing
             // old data
             String request = "SELECT (NumericalRating, Email," +
-                    "TextReview) FROM sql5107476.RatingInfo WHERE MovieID="
+                    "TextReview, PhotoURL) FROM sql5107476.RatingInfo WHERE MovieID="
                     + "" + movieID +"";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
@@ -77,7 +105,8 @@ public class RepositoryConnector extends DBConnector {
      * @throws SQLException see error message
      */
     public boolean setRating(String email, int movieID, int numericalRating,
-                             String textReview) throws SQLException, InputMismatchException {
+                             String textReview, String photoURL)
+            throws SQLException, InputMismatchException {
         ResultSet resultSet = null;
         try {
             if (numericalRating < 0 || numericalRating > 100) {
@@ -85,8 +114,9 @@ public class RepositoryConnector extends DBConnector {
             }
             statement = connection.createStatement();
             String request = "INSERT INTO sql5107476.RatingInfo (MovieID,NumericalRating,"
-                    + "Email,TextReview) VALUES (" + movieID + "," + numericalRating + ",'"
-                    + email + "','" + textReview + "')";
+                    + "Email,TextReview, PhotoURL) VALUES (" + movieID + ","
+                    + numericalRating + ",'" + email + "','" + textReview + "','"
+                    + photoURL + "')";
 
             int didSucceed = statement.executeUpdate(request);
         }

@@ -84,7 +84,8 @@ public class RatingActivity {
         Exception error;
         try {
             RepositoryConnector rpc = new RepositoryConnector();
-            boolean retVal = rpc.setRating(username, movieID, score, review);
+            String imageURL = ""; //TODO: pass url in from JSON object
+            boolean retVal = rpc.setRating(username, movieID, score, review, imageURL);
             Log.d("DB setRating Finished", "doInBackground method returned: "
                     + Boolean.toString(retVal));
             rpc.disconnect();

@@ -7,11 +7,11 @@ package com.thundercats50.moviereviewer.models;
  */
 public class User {
 	
-	private String firstname;
-	private String lastname;
-	private String major;
-	private String gender;
-    private String email;
+	private String firstname = "";
+	private String lastname = "";
+	private String major = "";
+	private String gender = "";
+    private String email = "";
 
 	/**
 	 *
