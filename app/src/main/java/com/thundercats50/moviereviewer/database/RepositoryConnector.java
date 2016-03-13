@@ -135,21 +135,25 @@ public class RepositoryConnector extends DBConnector {
      * @return boolean true if successfully created
      * @throws SQLException see error message
      */
-    public boolean setRating(String email, int movieID, int numericalRating,
-                             String textReview, String photoURL)
+    public boolean setRating(String email, SingleMovie movie, int numericalRating,
+                             String textReview)
             throws SQLException, InputMismatchException {
         ResultSet resultSet = null;
+        String photoURL = movie.getThumbnailURL();
+        String movieName = movie.getTitle();
+        String synopsis = movie.getSynopsis();
+        double movieID = (double) movie.getId();
         try {
             if (numericalRating < 0 || numericalRating > 100) {
                 throw new InputMismatchException("Rating must be from 1-100");
             }
             statement = connection.createStatement();
-            String request = "INSERT INTO sql5107476.RatingInfo (MovieID,NumericalRating,"
-                    + "Email,TextReview, PhotoURL) VALUES (" + movieID + ","
-                    + numericalRating + ",'" + email + "','" + textReview + "','"
-                    + photoURL + "')";
+            String request = "INSERT INTO sql5107476.RatingInfo (MovieID, MovieName, Synopsis, " +
+                    "PhotoURL, Email, NumericalRating, TextReview) VALUES ("
+                    + movieID + ",'" + movieName + "','" + synopsis + "','" + photoURL + "','"
+                    + email + "'," + numericalRating + "','" + textReview + "')";
 
-            int didSucceed = statement.executeUpdate(request);
+            statement.executeUpdate(request);
         }
         catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());
