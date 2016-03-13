@@ -48,4 +48,8 @@ public class RecommendationActivity extends AppCompatActivity {
 
     public void searchByMajor(View view) {movieFragment.searchByMajor(major);}
 
+    public void goHome(View view) {
+        startActivity(new Intent(this, LoggedInActivity.class));
+    }
+
 }

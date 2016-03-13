@@ -15,7 +15,8 @@
         android:text="Home"
         android:id="@+id/homeButton"
         android:layout_below="@+id/searchPrompt"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:onClick="goHome" />
 
     <Button
         android:layout_width="wrap_content"

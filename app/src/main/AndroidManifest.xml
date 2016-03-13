@@ -52,7 +52,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.SearchResultsActivity" />
         android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.SearchActivity">
+        <activity
+            android:name=".activities.SearchActivity"
+            android:label="Search For Movies">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -62,6 +64,8 @@
                 android:resource="@layout/searchable" />
         </activity>
         <activity android:name=".activities.ReviewActivity" />
+        <activity android:name=".activities.RecommendationActivity"
+                  android:label="Recommendations"/>
     </application>
 
 </manifest>
