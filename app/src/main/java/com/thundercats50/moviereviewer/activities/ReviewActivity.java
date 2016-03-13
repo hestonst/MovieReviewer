@@ -20,6 +20,8 @@ import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.List;
 
@@ -30,8 +32,8 @@ public class ReviewActivity extends AppCompatActivity {
     private final String jsonEnd = ".json?apikey=";
     private SingleMovie movie = MovieManager.movie;
     private List<SingleMovie> ratedMovies;
-    private List<Integer> ratings;
-    private List<String> reviews;
+    private List<Integer> ratings = new ArrayList();
+    private List<String> reviews = new ArrayList();
     private TextView name;
     private EditText review;
     private EditText movieRating;
@@ -48,10 +50,18 @@ public class ReviewActivity extends AppCompatActivity {
         name.setText(movie.getTitle());
         manager = (MemberManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());
-        reviewTask = new UserReviewTask(null, 0, (int) movie.getId());
+        review = (EditText) findViewById(R.id.movie_review);
+        movieRating = (EditText) findViewById(R.id.movie_rating);
+        reviewTask = new UserReviewTask(null, 0, (int) movie.getId(), review, movieRating);
+
         reviewTask.execute();
-
-
+        review = (EditText) findViewById(R.id.movie_review);
+        movieRating = (EditText) findViewById(R.id.movie_rating);
+        Log.d("The size of array is ", "" + reviews.size());
+//        if (reviews.get(0) != null) {
+//            review.setText(reviews.get(0));
+//            movieRating.setText(ratings.get(0));
+//        }
     }
 
     public boolean addRating(String email, int movieID, int score, String review) {
@@ -94,27 +104,36 @@ public class ReviewActivity extends AppCompatActivity {
         }
     }
 
-    public boolean getRating(int movieID, String email) {
-
+    public ArrayList getRating(int movieID, String email) {
+        ArrayList aList = new ArrayList();
         Exception error;
         try {
             RepositoryConnector rpc = new RepositoryConnector();
             ResultSet retVal = rpc.getMovieRatings(movieID);
-            Log.d("DB getRating finished", "doInBackground method returned:" + retVal);
+            Log.d("DB getRating finished", "doInBackground method returned:" + retVal.toString());
             if (retVal != null) {
                 while (retVal.next()) {
                     //if (retVal.getString(1).equals(manager.getCurrentEmail()))
-                    ratings.add(retVal.getInt(1));
-                    reviews.add(retVal.getString(3));
+                    //Log.d("Checking for retVal", "the value at table is " + retVal.getInt(5));
+                    //ratings.add(retVal.getInt(1));
+                    aList.add(retVal.getString(4));
+                    aList.add(retVal.getInt(3));
+
+                    Log.d("Is this string stored", "plz help " + aList.size());
+                    Log.d("Is this string stored", "plz help " + aList.get(0));
+                    Log.d("Is this string stored", "plz help " + aList.get(1));
+
                 }
                 rpc.disconnect();
+                return aList;
+
             }
         } catch (InputMismatchException imee) {
             error = imee;
-            return false;
+            return aList;
         } catch (ClassNotFoundException cnfe) {
             Log.d("Dependency Error", "Check if MySQL library is present.");
-            return false;
+            return aList;
         } catch (SQLException sqle) {
             Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
             for (Throwable e : sqle) {
@@ -133,9 +152,9 @@ public class ReviewActivity extends AppCompatActivity {
                     t = t.getCause();
                 }
             }
-            return false;
+            return aList;
         }
-        return false;
+        return aList;
     }
 
     public void submitReview(View view) {
@@ -144,7 +163,7 @@ public class ReviewActivity extends AppCompatActivity {
         movieRating = (EditText) findViewById(R.id.movie_rating);
         String aRating = movieRating.getText().toString();
         int rating = Integer.parseInt(aRating);
-        reviewTask2 = new UserReviewTask(null, 0, (int) movie.getId());
+        reviewTask2 = new UserReviewTask(null, 0, (int) movie.getId(), review, movieRating);
         reviewTask2.updateVars(aReview, rating, (int) movie.getId());
         reviewTask2.execute();
         //addRating(rating, aReview, (int)movie.getId(), manager.getCurrentEmail());
@@ -154,18 +173,22 @@ public class ReviewActivity extends AppCompatActivity {
 
     }
 
-    public class UserReviewTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserReviewTask extends AsyncTask<Void, Void, ArrayList> {
 
         private String mReview;
         private int mRating;
         private int mId;
         private final MemberManager manager = (MemberManager) getApplicationContext();
         private boolean internetAccessExists = true;
+        EditText review;
+        EditText rating;
 
-        UserReviewTask(String mReview, int mRating, int mId) {
+        UserReviewTask(String mReview, int mRating, int mId, EditText review, EditText rating) {
             this.mReview = mReview;
             this.mRating = mRating;
             this.mId = mId;
+            this.review = review;
+            this.rating = rating;
         }
 
         public void updateVars(String mReview, int mRating, int mId) {
@@ -174,15 +197,25 @@ public class ReviewActivity extends AppCompatActivity {
             this.mId = mId;
         }
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected ArrayList doInBackground(Void... params) {
             //addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
+            ArrayList arrayList = new ArrayList();
             Log.e("Got to section", "yay1");
-            getRating(mId, manager.getCurrentEmail());
+            arrayList = getRating(mId, manager.getCurrentEmail());
             if (mReview != null) {
                 addRating(manager.getCurrentEmail(), mId, mRating, mReview);
                 Log.e("Got to section", "yay");
             }
-            return false;
+            return arrayList;
+        }
+        protected void onPostExecute(ArrayList aList) {
+            if (aList.size() > 0) {
+                String aReview = ((String) aList.get(0));
+                int aRating = ((Integer) aList.get(1));
+                String aRating1 = Integer.toString(aRating);
+                review.setText(aReview);
+                rating.setText(aRating1);
+            }
         }
     }
 
