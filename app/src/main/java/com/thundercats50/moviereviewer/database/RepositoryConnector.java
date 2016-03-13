@@ -34,8 +34,8 @@ public class RepositoryConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT (MovieID,NumericalRating," +
-                    "TextReview, PhotoURL) FROM sql5107476.RatingInfo WHERE Email="
+            String request = "SELECT MovieID,NumericalRating," +
+                    "TextReview, PhotoURL FROM sql5107476.RatingInfo WHERE Email="
                     + "'" + email +"' ORDER BY NumericalRating";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
@@ -45,6 +45,10 @@ public class RepositoryConnector extends DBConnector {
         }
         return resultSet;
     }
+
+
+    //TODO: write method deal with overwritting
+    //
 
     /**
      * method to query DB for ratings matching major
@@ -65,8 +69,8 @@ public class RepositoryConnector extends DBConnector {
             ResultSet users = bbc.getUsersWithMajor(major);
             ResultSet current = null;
             while (users.next()) {
-                String request = "SELECT (MovieID, MovieName, NumericalRating," +
-                        "TextReview, PhotoURL, Email, Synopsis) FROM sql5107476.RatingInfo WHERE Major="
+                String request = "SELECT MovieID, MovieName, NumericalRating," +
+                        "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE Major="
                         + "'" + major +"' ORDER BY NumericalRating";
                 current = statement.executeQuery(request);
                 SingleMovie currentMovie = new SingleMovie();
@@ -116,8 +120,8 @@ public class RepositoryConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT (MovieID, MovieName, NumericalRating,"+
-                    "TextReview, PhotoURL, Email, Synopsis) FROM sql5107476.RatingInfo WHERE MovieID="
+            String request = "SELECT MovieID, MovieName, NumericalRating,"+
+                    "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE MovieID="
                     + "" + movieID +"";
             ResultSet current = statement.executeQuery(request);
             SingleMovie currentMovie = new SingleMovie();
