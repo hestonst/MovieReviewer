@@ -157,7 +157,7 @@ public class RepositoryConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT MovieID,NumericalRating," +
+            String request = "SELECT MovieID, NumericalRating," +
                     "TextReview, PhotoURL FROM sql5107476.RatingInfo WHERE Email="
                     + "'" + email +"' AND MovieID =" + Double.toString((double) id)
                     + " ORDER BY NumericalRating";
