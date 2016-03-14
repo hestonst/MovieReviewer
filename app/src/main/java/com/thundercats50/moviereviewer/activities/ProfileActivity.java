@@ -332,13 +332,10 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 manager.getCurrentMember().setLastname(mLastName);
                 manager.getCurrentMember().setGender(mGender);
                 return retVal && retVal2;
-            } catch (ClassNotFoundException cnfe) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
-                cancel(false);
-            } catch (SQLException sqle) {
+            }  catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 internetAccessExists = false;
-                cancel(false);
+                cancel(true);
             } finally {
                 bbc.disconnect();
             }

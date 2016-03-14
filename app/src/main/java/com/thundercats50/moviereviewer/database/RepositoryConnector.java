@@ -80,11 +80,11 @@ public class RepositoryConnector extends DBConnector {
                     if (retVal.contains(currentMovie)) {
                         for (SingleMovie m : retVal) {
                             if (m.equals(currentMovie)) {
-                                m.addUserRating(currentMovie.getId(), currentRating);
+                                m.addUserRating(current.getString("Email"), currentRating);
                             }
                         }
                     } else {
-                        currentMovie.addUserRating(currentMovie.getId(), currentRating);
+                        currentMovie.addUserRating(current.getString("Email"), currentRating);
                         currentMovie.setTitle(current.getString("MovieName"));
                         currentMovie.setThumbnailURL(current.getString("PhotoURL"));
                         currentMovie.setSynopsis(current.getString("Synopsis"));
@@ -131,7 +131,7 @@ public class RepositoryConnector extends DBConnector {
                 currentRating.setUser(current.getString("Email"));
                 currentRating.setNumericalRating(current.getInt("NumericalRating"));
                 currentRating.setTextReview(current.getString("TextReview"));
-                currentMovie.addUserRating(currentMovie.getId(), currentRating);
+                currentMovie.addUserRating(current.getString("Email"), currentRating);
                 retVal.add(currentMovie);
             }
         } catch (SQLException sqle) {
@@ -145,6 +145,7 @@ public class RepositoryConnector extends DBConnector {
 
 
     /**
+     * TODO: Make this method return a SingleMovie
      * method to query DB for ratings matching username
      * @param email to search for ratings
      * @param id to match
@@ -161,6 +162,7 @@ public class RepositoryConnector extends DBConnector {
                     "TextReview, PhotoURL FROM sql5107476.RatingInfo WHERE Email="
                     + "'" + email +"' AND MovieID =" + Double.toString((double) id)
                     + " ORDER BY NumericalRating";
+            Log.d("SQL STRING", request);
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
@@ -196,13 +198,16 @@ public class RepositoryConnector extends DBConnector {
             statement = connection.createStatement();
             ResultSet previous = getRating(email, movieID);
             if (previous.next()) {
+                Log.d("SQL STRING", request);
                 request = "UPDATE sql5107476.RatingInfo SET NumericalRating=" + numericalRating
                         + ", TextReview='" + textReview + "'";
+                Log.d("SQL STRING", request);
             } else {
                 request = "INSERT INTO sql5107476.RatingInfo (MovieID, MovieName, Synopsis, " +
                         "PhotoURL, Email, NumericalRating, TextReview) VALUES ("
                         + movieID + ",'" + movieName + "','" + synopsis + "','" + photoURL + "','"
                         + email + "'," + numericalRating + "','" + textReview + "')";
+                Log.d("SQL STRING", request);
             }
 
             statement.executeUpdate(request);

@@ -143,10 +143,11 @@ public class ReviewActivity extends AppCompatActivity {
                 HashSet<SingleMovie> retVal = rpc.getMovieRatings(movieID);
                 Iterator<SingleMovie> iterator = retVal.iterator();
                 Log.d("DB getRating finished", "doInBackground method returned:" + retVal);
-                while (iterator.hasNext()) {
+                while (!retVal.isEmpty()) {
                     SingleMovie movie = iterator.next();
-                    review.setText(movie.getUserReview(movieID));
-                    rating.setText(movie.getUserRating(movieID));
+                    retVal.remove(movie);
+                    review.setText(movie.getUserReview(email));
+                    rating.setText(Integer.toString(movie.getUserRating(email)));
                 }
                 rpc.disconnect();
             } catch (InputMismatchException imee) {

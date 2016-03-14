@@ -22,21 +22,21 @@ public class SingleMovie {
     private List<String> genres, cast;
     private long id;
     private Integer year, runtime;
-    private HashMap<Long, Rating> userRatings;
+    private HashMap<String, Rating> userRatings;
 
     public SingleMovie() {
         userRatings = new HashMap<>();
     }
 
-    public int getUserRating(long mID) {
-        return userRatings.get(mID).getNumericalRating();
+    public int getUserRating(String email) {
+        return userRatings.get(email).getNumericalRating();
     }
 
-    public String getUserReview(long mID) {
-        return userRatings.get(mID).getTextReview();
+    public String getUserReview(String email) {
+        return userRatings.get(email).getTextReview();
     }
-    public void addUserRating(Long movieID, Rating rating) {
-        this.userRatings.put(movieID, rating);
+    public void addUserRating(String email, Rating rating) {
+        this.userRatings.put(email, rating);
     }
 
     // holds ImageView for thumbnail

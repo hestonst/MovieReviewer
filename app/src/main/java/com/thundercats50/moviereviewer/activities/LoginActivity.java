@@ -147,7 +147,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
             try {
-                if (!mAuthTask.get()) {
+                boolean b = mAuthTask.get();
+                Log.d("Pass found:", Boolean.toString(b));
+                if (!b) {
                     cancel = true;
                     Log.d("Debug", "Reached 0.5");
                 }
@@ -157,6 +159,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (!cancel) {
                 startActivity(new Intent(this, LoggedInActivity.class));
+                finish();
             }
         }
     }
@@ -278,10 +281,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private String mMajor;
         private final UserManager manager = (UserManager) getApplicationContext();
         private boolean internetAccessExists = true;
+        private boolean userVerified;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
+            userVerified = false;
+            internetAccessExists = true;
         }
 
         @Override
@@ -301,14 +307,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 manager.setCurrentMember(new User(mEmail, mFirstName, mLastName,
                             mMajor, mGender));
                 bbc.disconnect();
+                userVerified = retVal;
                 return retVal;
-            } catch (ClassNotFoundException cnfe) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
-                cancel(false);
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 internetAccessExists = false;
-                cancel(false);
+                cancel(true);
             } finally {
                 bbc.disconnect();
             }
@@ -320,19 +324,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                Log.d("Debug", "Reached 6");
-                finish();
-            } else {
-                if (internetAccessExists) {
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                    mPasswordView.requestFocus();
-                } else {
-                    mPasswordView.setError(getString(R.string.no_internet));
-                    mPasswordView.requestFocus();
-                }
-                Log.d("Debug", "Reached 7");
-
+            if (!internetAccessExists) {
+                mPasswordView.setError(getString(R.string.no_internet));
+                mPasswordView.requestFocus();
+            } else if (!userVerified) {
+                mPasswordView.setError(getString(R.string.no_internet));
+                mPasswordView.requestFocus();
             }
         }
 

@@ -14,7 +14,7 @@ import java.util.InputMismatchException;
  */
 public class BlackBoardConnector extends DBConnector {
 
-    public BlackBoardConnector() throws ClassNotFoundException, SQLException {
+    public BlackBoardConnector() throws SQLException {
         super();
     }
 
