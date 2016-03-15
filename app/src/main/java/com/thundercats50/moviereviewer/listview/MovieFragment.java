@@ -357,7 +357,7 @@ public class MovieFragment extends Fragment{
             Iterator<SingleMovie> iterator = result.iterator();
             while(iterator.hasNext()) {
                 SingleMovie item = iterator.next();
-                new ImageDownloader(item).execute(item.getThumbnailURL());
+                //new ImageDownloader(item).execute(item.getThumbnailURL());
                 movieList.add(item);
             }
             adapter.notifyDataSetChanged();
