@@ -67,8 +67,9 @@ public class RepositoryConnector extends DBConnector {
             ResultSet current = null;
             while (users.next()) {
                 String request = "SELECT MovieID, MovieName, NumericalRating," +
-                        "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE Major="
-                        + "'" + major +"' ORDER BY NumericalRating";
+                        "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE Email="
+                        + "'" + users.getString("Email") +"' ORDER BY NumericalRating";
+                Log.d("DB_QUERY", request);
                 current = statement.executeQuery(request);
                 SingleMovie currentMovie = new SingleMovie();
                 Rating currentRating = new Rating();

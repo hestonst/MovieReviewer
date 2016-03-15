@@ -316,7 +316,7 @@ public class MovieFragment extends Fragment{
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
+                Log.e("Error", " "+e.getMessage());
                 e.printStackTrace();
             }
             return mIcon11;
@@ -331,7 +331,7 @@ public class MovieFragment extends Fragment{
         }
     }
 
-    private class GetReviewsTask extends AsyncTask<Void, Void, Void> {
+    private class GetReviewsTask extends AsyncTask<Void, Void, HashSet<SingleMovie>> {
 
         private RecyclerView mRecyclerView;
         private MovieListAdapter adapter;
@@ -344,31 +344,35 @@ public class MovieFragment extends Fragment{
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected HashSet<SingleMovie> doInBackground(Void... params) {
             return searchByMajor();
         }
 
-        public Void searchByMajor() {
+        @Override
+        protected void onPostExecute(final HashSet<SingleMovie> result) {
+            //declare the adapter and attach it to the recyclerview
+            adapter = new MovieListAdapter(getActivity(), movieList);
+            mRecyclerView.setAdapter(adapter);
+            adapter.clearAdapter();
+            Iterator<SingleMovie> iterator = result.iterator();
+            while(iterator.hasNext()) {
+                SingleMovie item = iterator.next();
+                new ImageDownloader(item).execute(item.getThumbnailURL());
+                movieList.add(item);
+            }
+            adapter.notifyDataSetChanged();
+        }
+
+        public HashSet<SingleMovie> searchByMajor() {
             try {
                 RepositoryConnector rpc = new RepositoryConnector();
                 HashSet<SingleMovie> result = rpc.getAllByMajor(major);
-                Iterator<SingleMovie> iterator = result.iterator();
-
-                //declare the adapter and attach it to the recyclerview
-                adapter = new MovieListAdapter(getActivity(), movieList);
-                mRecyclerView.setAdapter(adapter);
-                adapter.clearAdapter();
-                while(iterator.hasNext()) {
-                    SingleMovie item = iterator.next();
-                    new ImageDownloader(item).execute(item.getThumbnailURL());
-                    movieList.add(item);
-                }
-                adapter.notifyDataSetChanged();
+                rpc.disconnect();
+                return result;
             } catch(Exception e) {
                 Log.d("DB_Exception", e.getMessage());
                 return null;
             }
-            return null;
         }
     }
 }
