@@ -34,8 +34,8 @@ public class ReviewActivity extends AppCompatActivity {
     private List<Integer> ratings;
     private List<String> reviews;
     private TextView name;
-    private EditText review;
-    private EditText rating;
+    private EditText mReviewView;
+    private EditText mRatingView;
     private UserManager manager;
 
     @Override
@@ -43,20 +43,24 @@ public class ReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
         name = (TextView) findViewById(R.id.movie_title);
+        mReviewView = (EditText) findViewById(R.id.movie_review);
+        mRatingView = (EditText) findViewById(R.id.movie_rating);
         SingleMovie movie = MovieManager.movie;
         name.setText(movie.getTitle());
         manager = (UserManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());
-        UserReviewTask reviewTask = new UserReviewTask(null, 0, movie.getId());
+        UserReviewTask reviewTask = new UserReviewTask(null, 0, movie.getId(), mReviewView, mRatingView);
         reviewTask.execute();
         //getRating(movie.getId(), manager.getCurrentMember().getEmail());
 
     }
+
     public void addRating(View view) {
-        AddReviewTask ratingTask = new AddReviewTask(manager, review, rating);
+        AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
         ratingTask.execute();
         startActivity(new Intent(this, SearchActivity.class));
     }
+
 
     public class AddReviewTask extends AsyncTask<Void, Void, Void> {
         private UserManager manager;
@@ -113,6 +117,7 @@ public class ReviewActivity extends AppCompatActivity {
         }
     }
 
+
     public class UserReviewTask extends AsyncTask<Void, Void, Boolean> {
 
         private String mReview;
@@ -120,35 +125,31 @@ public class ReviewActivity extends AppCompatActivity {
         private long mId;
         private final UserManager manager = (UserManager) getApplicationContext();
         private boolean internetAccessExists = true;
+        private SingleMovie movie;
 
-        UserReviewTask(String mReview, int mRating, long mId) {
+        private EditText mReviewView;
+        private EditText mRatingView;
+
+
+        UserReviewTask(String mReview, int mRating, long mId, EditText mReviewView,
+                       EditText mRatingView) {
             this.mReview = mReview;
             this.mRating = mRating;
             this.mId = mId;
+            this.mReviewView = mReviewView;
+            this.mRatingView = mRatingView;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            //addRating(mRating, mReview, (int)movie.getId(), manager.getCurrentEmail());
-            getRating(mId, manager.getCurrentMember().getEmail());
-            return false;
-        }
-
-
-
-        public boolean getRating(long movieID, String email) {
             Exception error;
+            long movieID = mId;
+            String email = manager.getCurrentMember().getEmail();
+
             try {
                 RepositoryConnector rpc = new RepositoryConnector();
-                HashSet<SingleMovie> retVal = rpc.getMovieRatings(movieID);
-                Iterator<SingleMovie> iterator = retVal.iterator();
-                Log.d("DB getRating finished", "doInBackground method returned:" + retVal);
-                while (iterator.hasNext()) {
-                    SingleMovie movie = iterator.next();
-                    retVal.remove(movie);
-                    review.setText(movie.getUserReview(email));
-                    rating.setText(Integer.toString(movie.getUserRating(email)));
-                }
+                movie = rpc.getRating(email, movieID);
+                Log.d("Contains Tag", Boolean.toString(movie.hasRatingByUser(email)));
                 rpc.disconnect();
             } catch (InputMismatchException imee) {
                 error = imee;
@@ -178,6 +179,16 @@ public class ReviewActivity extends AppCompatActivity {
             }
             return false;
         }
-    }
 
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            String email = manager.getCurrentMember().getEmail();
+            if (movie != null && movie.hasRatingByUser(email)) {
+                mReviewView.setText(movie.getUserReview(email));
+                mRatingView.setText(Integer.toString(movie.getUserRating(email)));
+            }
+        }
+
+
+    }
 }

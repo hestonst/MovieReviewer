@@ -32,6 +32,10 @@ public class SingleMovie {
         return userRatings.get(email).getNumericalRating();
     }
 
+    public boolean hasRatingByUser(String email) {
+        return userRatings.containsKey(email);
+    }
+
     public String getUserReview(String email) {
         return userRatings.get(email).getTextReview();
     }

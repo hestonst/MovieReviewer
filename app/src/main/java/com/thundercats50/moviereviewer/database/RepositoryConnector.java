@@ -148,29 +148,40 @@ public class RepositoryConnector extends DBConnector {
      * TODO: Make this method return a SingleMovie
      * method to query DB for ratings matching username
      * @param email to search for ratings
-     * @param id to match
+     * @param movieID to match
      * @return ResultSet (which can be accessed through a for-while loop)
      */
-    public ResultSet getRating(String email, double id) {
-        ResultSet resultSet = null;
+    public SingleMovie getRating(String email, long movieID) {
+        SingleMovie currentMovie = null;
         try {
             if (connection == null) connect();
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT MovieID, NumericalRating," +
-                    "TextReview, PhotoURL FROM sql5107476.RatingInfo WHERE Email="
-                    + "'" + email +"' AND MovieID =" + Double.toString((double) id)
-                    + " ORDER BY NumericalRating";
-            Log.d("SQL STRING", request);
-            resultSet = statement.executeQuery(request);
+            String request = "SELECT MovieID, MovieName, NumericalRating," +
+                    "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE MovieID="
+                     + movieID + " AND Email ='" + email + "'";
+            ResultSet current = statement.executeQuery(request);
+            if (current.next()) {
+                currentMovie = new SingleMovie();
+                Rating currentRating = new Rating();
+                currentMovie.setId((long) current.getDouble("MovieID"));
+                currentMovie.setTitle(current.getString("MovieName"));
+                currentMovie.setThumbnailURL(current.getString("PhotoURL"));
+                currentMovie.setSynopsis(current.getString("Synopsis"));
+                currentRating.setUser(current.getString("Email"));
+                currentRating.setNumericalRating(current.getInt("NumericalRating"));
+                currentRating.setTextReview(current.getString("TextReview"));
+                currentMovie.addUserRating(current.getString("Email"), currentRating);
+            }
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
             Log.e("Database SQLState", sqle.getSQLState());
             Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
         }
-        return resultSet;
+        return currentMovie;
     }
+
 
 
 
@@ -196,8 +207,8 @@ public class RepositoryConnector extends DBConnector {
                 throw new InputMismatchException("Rating must be from 1-100");
             }
             statement = connection.createStatement();
-            ResultSet previous = getRating(email, movieID);
-            if (previous.next()) {
+            SingleMovie previous = getRating(email, (long) movieID);
+            if (previous != null) {
                 Log.d("SQL STRING", request);
                 request = "UPDATE sql5107476.RatingInfo SET NumericalRating=" + numericalRating
                         + ", TextReview='" + textReview + "'";
