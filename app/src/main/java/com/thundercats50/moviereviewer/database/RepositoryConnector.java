@@ -206,7 +206,7 @@ public class RepositoryConnector extends DBConnector {
                 request = "INSERT INTO sql5107476.RatingInfo (MovieID, MovieName, Synopsis, " +
                         "PhotoURL, Email, NumericalRating, TextReview) VALUES ("
                         + movieID + ",'" + movieName + "','" + synopsis + "','" + photoURL + "','"
-                        + email + "'," + numericalRating + "','" + textReview + "')";
+                        + email + "'," + numericalRating + ",'" + textReview + "')";
                 Log.d("SQL STRING", request);
             }
 
@@ -218,7 +218,4 @@ public class RepositoryConnector extends DBConnector {
         }
         return true;
     }
-
-
-
 }

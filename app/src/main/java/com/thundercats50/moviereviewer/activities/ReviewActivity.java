@@ -143,7 +143,7 @@ public class ReviewActivity extends AppCompatActivity {
                 HashSet<SingleMovie> retVal = rpc.getMovieRatings(movieID);
                 Iterator<SingleMovie> iterator = retVal.iterator();
                 Log.d("DB getRating finished", "doInBackground method returned:" + retVal);
-                while (!retVal.isEmpty()) {
+                while (iterator.hasNext()) {
                     SingleMovie movie = iterator.next();
                     retVal.remove(movie);
                     review.setText(movie.getUserReview(email));
