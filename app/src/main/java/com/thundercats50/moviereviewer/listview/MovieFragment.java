@@ -146,24 +146,8 @@ public class MovieFragment extends Fragment{
      * @param major of the user
      */
     public void searchByMajor(String major) {
-        try {
-            RepositoryConnector rpc = new RepositoryConnector();
-            HashSet<SingleMovie> result = rpc.getAllByMajor(major);
-            Iterator<SingleMovie> iterator = result.iterator();
-
-            //declare the adapter and attach it to the recyclerview
-            adapter = new MovieListAdapter(getActivity(), movieList);
-            mRecyclerView.setAdapter(adapter);
-            adapter.clearAdapter();
-            while(iterator.hasNext()) {
-                SingleMovie item = iterator.next();
-                new ImageDownloader(item).execute(item.getThumbnailURL());
-                movieList.add(item);
-            }
-            adapter.notifyDataSetChanged();
-        } catch(Exception e) {
-            Log.d("DB_Exception", e.getMessage());
-        }
+        GetReviewsTask task = new GetReviewsTask(mRecyclerView, adapter, major);
+        task.execute();
     }
 
 
@@ -344,6 +328,47 @@ public class MovieFragment extends Fragment{
          */
         protected void onPostExecute(Bitmap result) {
             movie.setThumbnail(result);
+        }
+    }
+
+    private class GetReviewsTask extends AsyncTask<Void, Void, Void> {
+
+        private RecyclerView mRecyclerView;
+        private MovieListAdapter adapter;
+        private String major;
+
+        public GetReviewsTask(RecyclerView mRecyclerView, MovieListAdapter adapter, String major) {
+            this.mRecyclerView = mRecyclerView;
+            this.adapter = adapter;
+            this.major = major;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return searchByMajor();
+        }
+
+        public Void searchByMajor() {
+            try {
+                RepositoryConnector rpc = new RepositoryConnector();
+                HashSet<SingleMovie> result = rpc.getAllByMajor(major);
+                Iterator<SingleMovie> iterator = result.iterator();
+
+                //declare the adapter and attach it to the recyclerview
+                adapter = new MovieListAdapter(getActivity(), movieList);
+                mRecyclerView.setAdapter(adapter);
+                adapter.clearAdapter();
+                while(iterator.hasNext()) {
+                    SingleMovie item = iterator.next();
+                    new ImageDownloader(item).execute(item.getThumbnailURL());
+                    movieList.add(item);
+                }
+                adapter.notifyDataSetChanged();
+            } catch(Exception e) {
+                Log.d("DB_Exception", e.getMessage());
+                return null;
+            }
+            return null;
         }
     }
 }

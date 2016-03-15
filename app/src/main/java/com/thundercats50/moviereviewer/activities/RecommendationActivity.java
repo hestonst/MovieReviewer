@@ -20,7 +20,7 @@ public class RecommendationActivity extends AppCompatActivity {
 
     private MovieFragment movieFragment;
     private String genre;
-    String major;
+    private String major;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
