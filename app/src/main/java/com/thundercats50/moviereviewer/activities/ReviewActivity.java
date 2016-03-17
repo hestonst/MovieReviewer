@@ -149,7 +149,7 @@ public class ReviewActivity extends AppCompatActivity {
             try {
                 RepositoryConnector rpc = new RepositoryConnector();
                 movie = rpc.getRating(email, movieID);
-                Log.d("Contains Tag", Boolean.toString(movie.hasRatingByUser(email)));
+                //Log.d("Contains Tag", Boolean.toString(movie.hasRatingByUser(email)));
                 rpc.disconnect();
             } catch (InputMismatchException imee) {
                 error = imee;

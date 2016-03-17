@@ -53,7 +53,7 @@ public class SingleMovie {
     public String getThumbnailURL() { return imageURL; }
 
     public void setThumbnailURL(String imageURL) {
-        imageURL = imageURL;
+        this.imageURL = imageURL;
     }
 
 

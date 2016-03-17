@@ -201,6 +201,7 @@ public class RepositoryConnector extends DBConnector {
         String request = "";
         String photoURL = movie.getThumbnailURL();
         String movieName = movie.getTitle();
+        Log.d("What is the synopsis","It is: " + movie.getSynopsis());
         String synopsis = movie.getSynopsis();
         double movieID = (double) movie.getId();
         try {
