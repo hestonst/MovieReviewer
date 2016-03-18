@@ -179,6 +179,34 @@ public class BlackBoardConnector extends DBConnector {
      * @return ResultSet
      * @throws SQLException
      */
+    public ResultSet getAllUsers(String email)
+            throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            if (connection == null) connect();
+            statement = connection.createStatement();
+            //keep making new statements as security method to keep buggy code from accessing
+            // old data
+            String request = "SELECT FirstName, LastName, Email, LoginAttempts, Banned" +
+                    " FROM sql5107476.UserInfo";
+            resultSet = statement.executeQuery(request);
+        } catch (SQLException sqle) {
+            Log.e("Database SQLException", sqle.getMessage());
+            Log.e("Database SQLState", sqle.getSQLState());
+            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+            throw sqle;
+        }
+        return resultSet;
+    }
+
+
+
+    /**
+     * method to query DB for user information matching Email
+     * @param email
+     * @return ResultSet
+     * @throws SQLException
+     */
     public ResultSet getUserData(String email)
             throws SQLException {
         ResultSet resultSet = null;

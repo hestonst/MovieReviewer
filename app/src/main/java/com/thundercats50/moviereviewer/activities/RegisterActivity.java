@@ -220,10 +220,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 if (!cancel) {
                     startActivity(new Intent(this, LoggedInActivity.class));
                     setContentView(R.layout.activity_loggedin);
-                    UserManager manager = (UserManager) getApplicationContext();
-//                    manager.setCurrentMember(new User("",""));
-                    //delete the current users info as you move up stack
-                    //as security measure
                     finish();
 
                 }
