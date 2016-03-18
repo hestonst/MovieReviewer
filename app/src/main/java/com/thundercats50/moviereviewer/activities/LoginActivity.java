@@ -138,6 +138,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
             Log.d("Debug", "Reached 2");
 
+        } else if (email.equals("admin@email.com") && password.equals("password")) {
+
+            showProgress(true);
+            startActivity(new Intent(this, AdminActivity.class));
+            finish();
+
         } else {
             showProgress(true);
             Log.d("Debug", "Reached -3");
@@ -158,6 +164,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             if (!cancel) {
+
                 startActivity(new Intent(this, LoggedInActivity.class));
                 finish();
             }
