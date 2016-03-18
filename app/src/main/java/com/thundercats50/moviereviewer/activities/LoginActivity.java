@@ -35,6 +35,9 @@ import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
+import com.thundercats50.moviereviewer.database.BlackBoardConnector.UserStatus;
+
+
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -147,8 +150,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute();
             try {
-                boolean b = mAuthTask.get();
-                if (!b) {
+                UserStatus s = mAuthTask.get();
+                if (!s.equals(UserStatus.VERIFIED)) {
+                    if (s.equals(UserStatus.INTERRUPTED_BY_INTERNET)) {
+                        mEmailView.setError(getString(R.string.no_internet));
+                        focusView = mEmailView;
+                    } else if (s.equals(UserStatus.BANNED)) {
+                        mEmailView.setError(getString(R.string.account_banned));
+                        focusView = mEmailView;
+                    } else if (s.equals(UserStatus.BAD_USER)) {
+                        mEmailView.setError(getString(R.string.no_user));
+                        focusView = mEmailView;
+                    } else if (s.equals(UserStatus.LOCKED)) {
+                        mEmailView.setError(getString(R.string.account_locked));
+                        focusView = mEmailView;
+                    } else {
+                        mEmailView.setError(getString(R.string.no_internet));
+                        focusView = mEmailView;
+                    }
                     cancel = true;
                 }
             } catch (Exception e) {
@@ -157,8 +176,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (!cancel) {
                 startActivity(new Intent(this, LoggedInActivity.class));
-                UserManager manager = (UserManager) getApplicationContext();
-                manager.setCurrentMember(new User("",""));
                 //delete the current users info as you move up stack
                 //as security measure
                 finish();
@@ -290,7 +307,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, UserStatus> {
 
         private final String mEmail;
         private final String mPassword;
@@ -310,13 +327,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected Boolean doInBackground(Void...params) {
+        protected UserStatus doInBackground(Void...params) {
             BlackBoardConnector bbc = null;
+            UserStatus retVal = UserStatus.INTERRUPTED_BY_INTERNET;
             try {
                 bbc = new BlackBoardConnector();
-                boolean retVal = bbc.verifyUser(mEmail, mPassword);
+                retVal = bbc.verifyUser(mEmail, mPassword);
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
-                        + Boolean.toString(retVal));
+                        + retVal);
+                if (!retVal.equals(UserStatus.VERIFIED)) {
+                    bbc.disconnect();
+                    return retVal;
+                }
+                bbc.resetLoginAttempts(mEmail);
                 ResultSet userInfo = bbc.getUserData(mEmail);
                 userInfo.next(); //must call next to move to first entry
                 mFirstName = userInfo.getString(1);
@@ -325,31 +348,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mGender = userInfo.getString(4);
                 manager.setCurrentMember(new User(mEmail, mFirstName, mLastName,
                             mMajor, mGender));
-                bbc.disconnect();
-                userVerified = retVal;
-                return retVal;
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                internetAccessExists = false;
                 cancel(true);
+                return UserStatus.INTERRUPTED_BY_INTERNET;
             } finally {
                 bbc.disconnect();
+                return retVal;
             }
-            return false;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final UserStatus success) {
             mAuthTask = null;
             showProgress(false);
-
-            if (!internetAccessExists) {
-                mPasswordView.setError(getString(R.string.no_internet));
-                mPasswordView.requestFocus();
-            } else if (!userVerified) {
-                mPasswordView.setError(getString(R.string.no_internet));
-                mPasswordView.requestFocus();
-            }
         }
 
         @Override

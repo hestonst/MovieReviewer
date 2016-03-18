@@ -314,12 +314,12 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 Log.d("Test", "Reached -1.");
                 bbc = new BlackBoardConnector();
                 Log.d("Test", "Reached 0.");
-                boolean retVal = bbc.verifyUser(mEmail, mOldPassword);
-                if (!retVal) {
+                BlackBoardConnector.UserStatus check = bbc.verifyUser(mEmail, mOldPassword);
+                if (!check.equals(BlackBoardConnector.UserStatus.VERIFIED)) {
                     return false; //old password was not correct
                 }
                 Log.d("Test", "Reached 1.");
-                retVal = bbc.setUserData(mFirstName, mLastName, mMajor, mGender, mEmail);
+                boolean retVal = bbc.setUserData(mFirstName, mLastName, mMajor, mGender, mEmail);
                 Log.d("Test", "Reached 2.");
                 boolean retVal2 = true;
                 if (!mOldPassword.equals(mPassword) && !mPassword.equals("")) {

@@ -62,7 +62,7 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * Uses RegEx to verify emails
-     * @param email
+     * @param email to check
      * @return ifValid
      */
     private boolean isEmailValid(String email) {
@@ -91,8 +91,10 @@ public class BlackBoardConnector extends DBConnector {
             if (!isEmailValid(user) || !isPasswordValid(pass) || !isPasswordValid(oldPass)) {
                 throw new InputMismatchException("The given user or pass is formatted incorrectly.");
             }
-            if (!verifyUser(user, pass)) throw new NullPointerException("The given password does "
-                    + "not coorespond with the DB.");
+            if (!verifyUser(user, pass).equals(UserStatus.VERIFIED)) {
+                throw new NullPointerException("The given password does "
+                        + "not correspond with the DB.");
+            }
             statement = connection.createStatement();
             String request = "UPDATE sql5107476.UserInfo SET Password ='"
                     + pass + "' WHERE Email = '" + user + "'";
@@ -133,18 +135,23 @@ public class BlackBoardConnector extends DBConnector {
      * @return boolean true if valid
      * @throws SQLException
      */
-    public boolean verifyUser(String user, String pass)
+    public UserStatus verifyUser(String user, String pass)
             throws SQLException {
         ResultSet resultSet = getUserPass(user);
         if (resultSet.next()) {
-            if (resultSet.getString(1).equals(pass)) {
+            if (resultSet.getInt("Banned") == 1) {
+                return UserStatus.BANNED;
+            } else if (resultSet.getInt("LoginAttempts") > 3) {
+                return UserStatus.LOCKED;
+            } else if (resultSet.getString("Password").equals(pass)) {
                 //there is only 1 entry because there is only one Email selected from DB at
                 // a time
-                return true;
+                return UserStatus.VERIFIED;
             }
             resultSet.close();
         }
-        return false;
+        incrementLoginAttempts(user);
+        return UserStatus.BAD_USER;
     }
 
     /**
@@ -161,8 +168,8 @@ public class BlackBoardConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT Password FROM sql5107476.UserInfo WHERE Email="
-                    + "'" + email +"'";
+            String request = "SELECT Password, Banned, LoginAttempts FROM " +
+                    "sql5107476.UserInfo WHERE Email=" + "'" + email +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
@@ -175,11 +182,10 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * method to query DB for user information matching Email
-     * @param email
      * @return ResultSet
      * @throws SQLException
      */
-    public ResultSet getAllUsers(String email)
+    public ResultSet getAllUsers()
             throws SQLException {
         ResultSet resultSet = null;
         try {
@@ -290,7 +296,7 @@ public class BlackBoardConnector extends DBConnector {
             statement = connection.createStatement();
             int newVal = 1 + getLoginAttempts(user);
             String request = "UPDATE sql5107476.UserInfo SET LoginAttempts ="
-                    + Integer.toString(newVal) + " WHERE Email = '" + user + "'";
+                    + newVal + " WHERE Email = '" + user + "'";
             int didSucceed = statement.executeUpdate(request);
             return true;
         } catch (Exception e) {
@@ -298,6 +304,26 @@ public class BlackBoardConnector extends DBConnector {
             return false;
         }
     }
+
+
+    /**
+     * Method to be run on incorrect login. Updates the Email's incorrect login number on the DB.
+     * @param user Email to be incremented
+     */
+    public boolean resetLoginAttempts(String user) {
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            String request = "UPDATE sql5107476.UserInfo SET LoginAttempts ="
+                    + 0 + " WHERE Email = '" + user + "'";
+            int didSucceed = statement.executeUpdate(request);
+            return true;
+        } catch (Exception e) {
+            Log.d("DB Write error", e.getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * Method to lock or unlock user.
@@ -309,7 +335,6 @@ public class BlackBoardConnector extends DBConnector {
         int isBannedInt = (isBanned ? 1 : 0);
         try {
             statement = connection.createStatement();
-            int newVal = 1 + getLoginAttempts(user);
             String request = "UPDATE sql5107476.UserInfo SET Banned ="
                     + isBannedInt + " WHERE Email = '" + user + "'";
             int didSucceed = statement.executeUpdate(request);
@@ -333,12 +358,16 @@ public class BlackBoardConnector extends DBConnector {
         ResultSet resultSet = null;
         resultSet = getUserData(user);
         if (resultSet.next()) {
-            retVal = resultSet.getInt(3);
+            retVal = resultSet.getInt("LoginAttempts");
             //there is only 1 entry because there is only one Email selected from DB at
             // a time; 3 because resultSet contains user, pass, attempts
         }
         resultSet.close();
         return retVal;
+    }
+
+    public enum UserStatus {
+        VERIFIED, BANNED, LOCKED, BAD_USER, INTERRUPTED_BY_INTERNET
     }
 
 }
