@@ -213,7 +213,8 @@ public class RepositoryConnector extends DBConnector {
             if (previous != null) {
                 Log.d("SQL STRING", request);
                 request = "UPDATE sql5107476.RatingInfo SET NumericalRating=" + numericalRating
-                        + ", TextReview='" + textReview + "'";
+                        + ", TextReview='" + textReview + "' WHERE MovieID="
+                        + movieID + " AND Email ='" + email + "'";
                 Log.d("SQL STRING", request);
             } else {
                 request = "INSERT INTO sql5107476.RatingInfo (MovieID, MovieName, Synopsis, " +

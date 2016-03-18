@@ -41,5 +41,8 @@
     <string name="search_return" formatted="false">Displaying 10 of %d results for %s</string>
     <string name="update_info">Update Info</string>
 
+    <!-- Strings related to registration -->
+    <string name="rating_range">Rating must be from 1-100</string>
+
 
 </resources>

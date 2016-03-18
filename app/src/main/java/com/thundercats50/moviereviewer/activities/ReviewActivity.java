@@ -1,7 +1,11 @@
 package com.thundercats50.moviereviewer.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +40,8 @@ public class ReviewActivity extends AppCompatActivity {
     private TextView name;
     private EditText mReviewView;
     private EditText mRatingView;
+    private View mReviewFormView;
+    private View mProgressView;
     private UserManager manager;
 
     @Override
@@ -45,6 +51,8 @@ public class ReviewActivity extends AppCompatActivity {
         name = (TextView) findViewById(R.id.movie_title);
         mReviewView = (EditText) findViewById(R.id.movie_review);
         mRatingView = (EditText) findViewById(R.id.movie_rating);
+        mReviewFormView = findViewById(R.id.rating_form);
+        mProgressView = findViewById(R.id.rating_progress);
         SingleMovie movie = MovieManager.movie;
         name.setText(movie.getTitle());
         manager = (UserManager) getApplicationContext();
@@ -55,17 +63,67 @@ public class ReviewActivity extends AppCompatActivity {
 
     }
 
-    public void addRating(View view) {
-        AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
-        ratingTask.execute();
-        startActivity(new Intent(this, SearchActivity.class));
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mReviewFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mReviewFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mReviewFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mReviewFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 
 
-    public class AddReviewTask extends AsyncTask<Void, Void, Void> {
+    public void addRating(View view) {
+        showProgress(true);
+        AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
+        try {
+            boolean successfulFinish = ratingTask.execute().get();
+            Log.d("Returned:", Boolean.toString(successfulFinish));
+            if (successfulFinish) {
+                finish();
+            } else {
+                showProgress(false);
+                mRatingView.setError(getString(R.string.rating_range));
+                mRatingView.requestFocus();
+            }
+        } catch (Exception e) {
+            Log.d("Write to DB", "Concurrent exception in ReviewAct");
+        }
+    }
+
+
+    public class AddReviewTask extends AsyncTask<Void, Void, Boolean> {
         private UserManager manager;
         private EditText review;
         private EditText rating;
+        private Exception error;
 
         AddReviewTask(UserManager manager, EditText review, EditText rating) {
             this.manager = manager;
@@ -74,27 +132,37 @@ public class ReviewActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
+            error = null;
             return addRating();
         }
 
-        public Void addRating() {
-            Exception error;
+        public Boolean addRating() {
+            RepositoryConnector rpc;
+            boolean retVal = false;
             try {
-                RepositoryConnector rpc = new RepositoryConnector();
+//                if (rating.getText().toString().equals("")) {
+//                    throw new InputMismatchException("Ratings are required.");
+//                }
+                rpc = new RepositoryConnector();
                 UserManager manager = (UserManager) getApplicationContext();
                 String email = manager.getCurrentMember().getEmail();
                 EditText review = (EditText) findViewById(R.id.movie_review);
                 EditText rating = (EditText) findViewById(R.id.movie_rating);
-                boolean retVal = rpc.setRating(email, movie, Integer.parseInt(rating.getText().toString()), review.getText().toString());
+                Log.d("Int Passed to DB:", rating.getText().toString());
+                retVal = rpc.setRating(email, movie, Integer
+                        .parseInt(rating.getText().toString()), review.getText().toString());
                 Log.d("DB setRating Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 rpc.disconnect();
+                return retVal;
             } catch (InputMismatchException imee) {
                 error = imee;
             } catch (ClassNotFoundException cnfe) {
+                error = cnfe;
                 Log.d("Dependency Error", "Check if MySQL library is present.");
             } catch (SQLException sqle) {
+                error = sqle;
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 for (Throwable e : sqle) {
                     e.printStackTrace(System.err);
@@ -112,9 +180,12 @@ public class ReviewActivity extends AppCompatActivity {
                         t = t.getCause();
                     }
                 }
+            } finally {
+                return retVal;
             }
-            return null;
         }
+
+
     }
 
 

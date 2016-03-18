@@ -3,6 +3,9 @@ package com.thundercats50.moviereviewer.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -127,7 +130,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
-            Log.d("Debug", "Reached 0.1");
+            cancel = true;
+        } else if (!haveNetworkConnection()) {
+            mEmailView.setError(getString(R.string.no_internet));
+            focusView = mEmailView;
             cancel = true;
         }
 
@@ -136,22 +142,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-            Log.d("Debug", "Reached 2");
-
         } else {
             showProgress(true);
-            Log.d("Debug", "Reached -3");
             mAuthTask = new UserLoginTask(email, password);
-            Log.d("Debug", "Reached -2");
             mAuthTask.execute();
-
-
             try {
                 boolean b = mAuthTask.get();
-                Log.d("Pass found:", Boolean.toString(b));
                 if (!b) {
                     cancel = true;
-                    Log.d("Debug", "Reached 0.5");
                 }
             } catch (Exception e) {
                 Log.d("Task Error", "Cannot create logged in view.");
@@ -159,6 +157,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (!cancel) {
                 startActivity(new Intent(this, LoggedInActivity.class));
+                UserManager manager = (UserManager) getApplicationContext();
+                manager.setCurrentMember(new User("",""));
+                //delete the current users info as you move up stack
+                //as security measure
                 finish();
             }
         }
@@ -175,6 +177,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         return (password.matches("[a-zA-Z0-9]+") && password.length() >= 6);
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     /**

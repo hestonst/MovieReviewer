@@ -82,7 +82,7 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * Method to be run on incorrect login. Updates the Email's incorrect login number on the DB.
-     * @param user Email to be incremented
+     * @param user Email to be check
      */
     public boolean changePass(String user, String pass, String oldPass)
             throws NullPointerException {
@@ -187,8 +187,8 @@ public class BlackBoardConnector extends DBConnector {
             statement = connection.createStatement();
             //keep making new statements as security method to keep buggy code from accessing
             // old data
-            String request = "SELECT FirstName, LastName, Major, Gender FROM sql5107476.UserInfo WHERE Email="
-                    + "'" + email +"'";
+            String request = "SELECT FirstName, LastName, Major, Gender, LoginAttempts, Banned" +
+                    " FROM sql5107476.UserInfo WHERE Email='" + email +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
@@ -270,6 +270,28 @@ public class BlackBoardConnector extends DBConnector {
             return false;
         }
     }
+
+    /**
+     * Method to lock or unlock user.
+     * @param user  to update
+     * @param isBanned value to update
+     */
+    public boolean setBanned(String user, boolean isBanned) {
+        ResultSet resultSet = null;
+        int isBannedInt = (isBanned ? 1 : 0);
+        try {
+            statement = connection.createStatement();
+            int newVal = 1 + getLoginAttempts(user);
+            String request = "UPDATE sql5107476.UserInfo SET Banned ="
+                    + isBannedInt + " WHERE Email = '" + user + "'";
+            int didSucceed = statement.executeUpdate(request);
+            return true;
+        } catch (Exception e) {
+            Log.d("DB Write error", e.getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * Returns 1000 if user not found.
