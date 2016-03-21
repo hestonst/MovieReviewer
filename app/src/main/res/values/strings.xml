@@ -43,6 +43,9 @@
     <string name="search_hint">Start typing your search..</string>
     <string name="search_return" formatted="false">Displaying 10 of %d results for %s</string>
     <string name="update_info">Update Info</string>
+    <string name="title_activity_admin">AdminActivity</string>
+    <string name="title_activity_ban">BanActivity</string>
+    <string name="title_activity_ban_acitivity">BanAcitivity</string>
 
     <!-- Strings related to registration -->
     <string name="rating_range">Rating must be from 1-100</string>

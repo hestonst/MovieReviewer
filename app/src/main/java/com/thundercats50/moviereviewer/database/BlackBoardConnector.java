@@ -2,11 +2,13 @@ package com.thundercats50.moviereviewer.database;
 
 import android.util.Log;
 
+import com.thundercats50.moviereviewer.models.User;
 import com.thundercats50.moviereviewer.models.ValidMajors;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 
 /**
@@ -185,9 +187,10 @@ public class BlackBoardConnector extends DBConnector {
      * @return ResultSet
      * @throws SQLException
      */
-    public ResultSet getAllUsers()
+    public HashSet<User> getAllUsers()
             throws SQLException {
         ResultSet resultSet = null;
+        HashSet<User> retVal = new HashSet<>();
         try {
             if (connection == null) connect();
             statement = connection.createStatement();
@@ -196,13 +199,19 @@ public class BlackBoardConnector extends DBConnector {
             String request = "SELECT FirstName, LastName, Email, LoginAttempts, Banned" +
                     " FROM sql5107476.UserInfo";
             resultSet = statement.executeQuery(request);
+            while(resultSet.next()) {
+                User currentUser = new User();
+                currentUser.setFirstname(resultSet.getString("FirstName"));
+                currentUser.setEmail(resultSet.getString("Email"));
+                retVal.add(currentUser);
+            }
         } catch (SQLException sqle) {
             Log.e("Database SQLException", sqle.getMessage());
             Log.e("Database SQLState", sqle.getSQLState());
             Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
             throw sqle;
         }
-        return resultSet;
+        return retVal;
     }
 
 

@@ -68,8 +68,14 @@
                 android:resource="@layout/searchable" />
         </activity>
         <activity android:name=".activities.ReviewActivity" />
-        <activity android:name=".activities.RecommendationActivity"
-                  android:label="Recommendations"/>
+        <activity
+            android:name=".activities.RecommendationActivity"
+            android:label="Recommendations" />
+        <activity
+            android:name=".activities.AdminActivity"
+            android:label="@string/title_activity_admin"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.StatusActivity"></activity>
     </application>
 
 </manifest>

@@ -145,6 +145,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            Log.d("Debug", "Reached 2");
+
+        } else if (email.equals("admin@email.com") && password.equals("password")) {
+
+            showProgress(true);
+            startActivity(new Intent(this, AdminActivity.class));
+            finish();
+
         } else {
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
@@ -175,6 +183,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             if (!cancel) {
+
                 startActivity(new Intent(this, LoggedInActivity.class));
                 //delete the current users info as you move up stack
                 //as security measure
