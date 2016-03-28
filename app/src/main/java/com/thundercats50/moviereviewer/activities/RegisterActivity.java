@@ -389,9 +389,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             } catch(InputMismatchException imee) {
                 error = imee;
                 return false;
-            } catch (ClassNotFoundException cnfe) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
-                return false;
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 for (Throwable e : sqle) {

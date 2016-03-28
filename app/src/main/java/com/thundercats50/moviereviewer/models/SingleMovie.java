@@ -1,6 +1,9 @@
 package com.thundercats50.moviereviewer.models;
 
 import android.graphics.Bitmap;
+
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,16 +11,37 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * Created by scottheston on 23/02/16.
  */
 public class SingleMovie {
 
-    private String title, mpaaRating, synopsis, criticReview;
+    private String title, mpaaRating, synopsis, criticReview, imageURL;
     private List<String> genres, cast;
     private long id;
     private Integer year, runtime;
+    private HashMap<String, Rating> userRatings;
+
+    public SingleMovie() {
+        userRatings = new HashMap<>();
+    }
+
+    public int getUserRating(String email) {
+        return userRatings.get(email).getNumericalRating();
+    }
+
+    public boolean hasRatingByUser(String email) {
+        return userRatings.containsKey(email);
+    }
+
+    public String getUserReview(String email) {
+        return userRatings.get(email).getTextReview();
+    }
+    public void addUserRating(String email, Rating rating) {
+        this.userRatings.put(email, rating);
+    }
 
     // holds ImageView for thumbnail
     protected Bitmap thumbnail;
@@ -25,6 +49,13 @@ public class SingleMovie {
     public String getTitle() { return title; }
 
     public void setTitle(String title) { this.title = title; }
+
+    public String getThumbnailURL() { return imageURL; }
+
+    public void setThumbnailURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
 
     public Bitmap getThumbnail() { return thumbnail; }
 
@@ -79,4 +110,16 @@ public class SingleMovie {
     public long getId() {
         return id;
     }
+
+    public boolean equals(Object object) {
+        if (!(object instanceof SingleMovie)) {
+            return false;
+        }
+        SingleMovie movie = (SingleMovie) object;
+        if (movie.getId() == id) {
+            return true;
+        }
+        return false;
+    }
+
 }

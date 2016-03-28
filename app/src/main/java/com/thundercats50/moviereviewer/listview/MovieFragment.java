@@ -18,8 +18,10 @@ import android.view.ViewGroup;
 
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.activities.LoginActivity;
+import com.thundercats50.moviereviewer.database.RepositoryConnector;
 import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
+import com.thundercats50.moviereviewer.database.RepositoryConnector;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONArray;
@@ -36,7 +38,10 @@ import com.android.volley.toolbox.Volley;
 
 
 import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 //to remove after MovieSet integration
 
@@ -141,7 +146,8 @@ public class MovieFragment extends Fragment{
      * @param major of the user
      */
     public void searchByMajor(String major) {
-        //TODO: Implementation of searching by major
+        GetReviewsTask task = new GetReviewsTask(mRecyclerView, adapter, major);
+        task.execute();
     }
 
 
@@ -227,7 +233,9 @@ public class MovieFragment extends Fragment{
                         SingleMovie item = new SingleMovie();
                         item.setTitle(currentMovie.getString("title"));
                         item.setId(currentMovie.getLong("id"));
-//                        item.setSynopsis(currentMovie.getString("synopsis"));
+                        item.setSynopsis(currentMovie.getString("synopsis"));
+                        //Log.e("Is this value null", "The value is " + thumbnails.getString("thumbnail"));
+                        item.setThumbnailURL(thumbnails.getString("thumbnail"));
 //                        item.setCriticReview(currentMovie.getString("critics_consensus"));
 //                        item.setMpaaRating(currentMovie.getString("mpaa_rating"));
                         // pass the url of the thumbnail to the ImageDownloader
@@ -310,7 +318,7 @@ public class MovieFragment extends Fragment{
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
+                Log.e("Error", " "+e.getMessage());
                 e.printStackTrace();
             }
             return mIcon11;
@@ -322,6 +330,51 @@ public class MovieFragment extends Fragment{
          */
         protected void onPostExecute(Bitmap result) {
             movie.setThumbnail(result);
+        }
+    }
+
+    private class GetReviewsTask extends AsyncTask<Void, Void, HashSet<SingleMovie>> {
+
+        private RecyclerView mRecyclerView;
+        private MovieListAdapter adapter;
+        private String major;
+
+        public GetReviewsTask(RecyclerView mRecyclerView, MovieListAdapter adapter, String major) {
+            this.mRecyclerView = mRecyclerView;
+            this.adapter = adapter;
+            this.major = major;
+        }
+
+        @Override
+        protected HashSet<SingleMovie> doInBackground(Void... params) {
+            return searchByMajor();
+        }
+
+        @Override
+        protected void onPostExecute(final HashSet<SingleMovie> result) {
+            //declare the adapter and attach it to the recyclerview
+            adapter = new MovieListAdapter(getActivity(), movieList);
+            mRecyclerView.setAdapter(adapter);
+            adapter.clearAdapter();
+            Iterator<SingleMovie> iterator = result.iterator();
+            while(iterator.hasNext()) {
+                SingleMovie item = iterator.next();
+                //new ImageDownloader(item).execute(item.getThumbnailURL());
+                movieList.add(item);
+            }
+            adapter.notifyDataSetChanged();
+        }
+
+        public HashSet<SingleMovie> searchByMajor() {
+            try {
+                RepositoryConnector rpc = new RepositoryConnector();
+                HashSet<SingleMovie> result = rpc.getAllByMajor(major);
+                rpc.disconnect();
+                return result;
+            } catch(Exception e) {
+                Log.d("DB_Exception", e.getMessage());
+                return null;
+            }
         }
     }
 }

@@ -13,14 +13,14 @@ import android.support.v4.app.Fragment;
 import com.thundercats50.moviereviewer.listview.MovieFragment;
 
 import com.thundercats50.moviereviewer.R;
-import com.thundercats50.moviereviewer.models.MemberManager;
+import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
 
 public class RecommendationActivity extends AppCompatActivity {
 
     private MovieFragment movieFragment;
     private String genre;
-    String major;
+    private String major;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class RecommendationActivity extends AppCompatActivity {
 
         // get the movie fragment to send the queries to
         movieFragment = (MovieFragment) getSupportFragmentManager().findFragmentById(R.id.fragment2);
-        MemberManager manager = (MemberManager) getApplicationContext();
+        UserManager manager = (UserManager) getApplicationContext();
         User user = (User) manager.getCurrentMember();
         major = user.getMajor();
 
@@ -47,5 +47,9 @@ public class RecommendationActivity extends AppCompatActivity {
     }
 
     public void searchByMajor(View view) {movieFragment.searchByMajor(major);}
+
+    public void goHome(View view) {
+        startActivity(new Intent(this, LoggedInActivity.class));
+    }
 
 }

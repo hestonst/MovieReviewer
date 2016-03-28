@@ -54,7 +54,7 @@
         android:id="@+id/movie_submit"
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="140dp"
-        android:onClick="submitReview"
+        android:onClick="addRating"
         />
 
     <TextView
