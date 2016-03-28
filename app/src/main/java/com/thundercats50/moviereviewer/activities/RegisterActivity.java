@@ -220,6 +220,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 if (!cancel) {
                     startActivity(new Intent(this, LoggedInActivity.class));
                     setContentView(R.layout.activity_loggedin);
+                    finish();
+
                 }
             } catch (Exception e) {
                 Log.d("RegisterActivity", "Thread Error");

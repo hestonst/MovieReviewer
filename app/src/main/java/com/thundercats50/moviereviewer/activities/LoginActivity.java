@@ -3,6 +3,9 @@ package com.thundercats50.moviereviewer.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -32,6 +35,9 @@ import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
+import com.thundercats50.moviereviewer.database.BlackBoardConnector.UserStatus;
+
+
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -127,7 +133,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
-            Log.d("Debug", "Reached 0.1");
+            cancel = true;
+        } else if (!haveNetworkConnection()) {
+            mEmailView.setError(getString(R.string.no_internet));
+            focusView = mEmailView;
             cancel = true;
         }
 
@@ -146,18 +155,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         } else {
             showProgress(true);
-            Log.d("Debug", "Reached -3");
             mAuthTask = new UserLoginTask(email, password);
-            Log.d("Debug", "Reached -2");
             mAuthTask.execute();
-
-
             try {
-                boolean b = mAuthTask.get();
-                Log.d("Pass found:", Boolean.toString(b));
-                if (!b) {
+                UserStatus s = mAuthTask.get();
+                if (!s.equals(UserStatus.VERIFIED)) {
+                    if (s.equals(UserStatus.INTERRUPTED_BY_INTERNET)) {
+                        mEmailView.setError(getString(R.string.no_internet));
+                        focusView = mEmailView;
+                    } else if (s.equals(UserStatus.BANNED)) {
+                        mEmailView.setError(getString(R.string.account_banned));
+                        focusView = mEmailView;
+                    } else if (s.equals(UserStatus.BAD_USER)) {
+                        mEmailView.setError(getString(R.string.no_user));
+                        focusView = mEmailView;
+                    } else if (s.equals(UserStatus.LOCKED)) {
+                        mEmailView.setError(getString(R.string.account_locked));
+                        focusView = mEmailView;
+                    } else {
+                        mEmailView.setError(getString(R.string.no_internet));
+                        focusView = mEmailView;
+                    }
                     cancel = true;
-                    Log.d("Debug", "Reached 0.5");
                 }
             } catch (Exception e) {
                 Log.d("Task Error", "Cannot create logged in view.");
@@ -166,6 +185,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (!cancel) {
 
                 startActivity(new Intent(this, LoggedInActivity.class));
+                //delete the current users info as you move up stack
+                //as security measure
                 finish();
             }
         }
@@ -182,6 +203,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         return (password.matches("[a-zA-Z0-9]+") && password.length() >= 6);
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     /**
@@ -278,7 +316,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, UserStatus> {
 
         private final String mEmail;
         private final String mPassword;
@@ -298,13 +336,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected Boolean doInBackground(Void...params) {
+        protected UserStatus doInBackground(Void...params) {
             BlackBoardConnector bbc = null;
+            UserStatus retVal = UserStatus.INTERRUPTED_BY_INTERNET;
             try {
                 bbc = new BlackBoardConnector();
-                boolean retVal = bbc.verifyUser(mEmail, mPassword);
+                retVal = bbc.verifyUser(mEmail, mPassword);
                 Log.d("DB verifyUser Called", "doInBackground method returned: "
-                        + Boolean.toString(retVal));
+                        + retVal);
+                if (!retVal.equals(UserStatus.VERIFIED)) {
+                    bbc.disconnect();
+                    return retVal;
+                }
+                bbc.resetLoginAttempts(mEmail);
                 ResultSet userInfo = bbc.getUserData(mEmail);
                 userInfo.next(); //must call next to move to first entry
                 mFirstName = userInfo.getString(1);
@@ -313,31 +357,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mGender = userInfo.getString(4);
                 manager.setCurrentMember(new User(mEmail, mFirstName, mLastName,
                             mMajor, mGender));
-                bbc.disconnect();
-                userVerified = retVal;
-                return retVal;
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                internetAccessExists = false;
                 cancel(true);
+                return UserStatus.INTERRUPTED_BY_INTERNET;
             } finally {
                 bbc.disconnect();
+                return retVal;
             }
-            return false;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final UserStatus success) {
             mAuthTask = null;
             showProgress(false);
-
-            if (!internetAccessExists) {
-                mPasswordView.setError(getString(R.string.no_internet));
-                mPasswordView.requestFocus();
-            } else if (!userVerified) {
-                mPasswordView.setError(getString(R.string.no_internet));
-                mPasswordView.requestFocus();
-            }
         }
 
         @Override

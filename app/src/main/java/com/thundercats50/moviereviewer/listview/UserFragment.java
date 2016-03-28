@@ -23,6 +23,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.thundercats50.moviereviewer.R;
+import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.models.User;
 import com.thundercats50.moviereviewer.listview.UserListAdapter;
 import com.thundercats50.moviereviewer.database.RepositoryConnector;
@@ -34,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -187,8 +189,9 @@ public class UserFragment extends Fragment {
     /**
      * get user list from DB
      */
-    private void getUserList() {
-        // TODO: implement method in database
+    public void getUserList() {
+        GetUsersTask task = new GetUsersTask();
+        task.execute();
     }
 
     // Reload the fragment list holding the recyclerviews
@@ -222,5 +225,39 @@ public class UserFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         hidePD();
+    }
+
+    private class GetUsersTask extends AsyncTask<Void, Void, HashSet<User>> {
+
+        @Override
+        public HashSet<User> doInBackground(Void... params) {
+            return getUsers();
+        }
+
+        @Override
+        public void onPostExecute(final HashSet<User> set) {
+            adapter = new UserListAdapter(getActivity(), userList);
+            mRecyclerView.setAdapter(adapter);
+            adapter.clearAdapter();
+            Iterator<User> iterator = set.iterator();
+            while(iterator.hasNext()) {
+                User item = iterator.next();
+                //new ImageDownloader(item).execute(item.getThumbnailURL());
+                userList.add(item);
+            }
+            adapter.notifyDataSetChanged();
+        }
+
+        private HashSet<User> getUsers() {
+            try {
+                BlackBoardConnector bbc = new BlackBoardConnector();
+                HashSet<User> retVal =  bbc.getAllUsers();
+                bbc.disconnect();
+                return retVal;
+            } catch (SQLException e) {
+                Log.d("BBC", "Could not retrieve full user list");
+            }
+            return new HashSet<User>();
+        }
     }
 }

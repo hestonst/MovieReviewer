@@ -20,7 +20,6 @@ public class User {
 	 */
 	public User(String email, String password) {
 		this(email, "", "", "", "");
-
 	}
 
     public User(String email, String firstname, String lastname, String major, String gender) {

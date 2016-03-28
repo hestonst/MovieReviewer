@@ -19,7 +19,7 @@ import java.util.InvalidPropertiesFormatException;
  * Documentation:
  * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
-public class DBConnector  {
+public abstract class DBConnector  {
 
     Connection connection;
     Statement statement;
