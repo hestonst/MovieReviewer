@@ -108,7 +108,7 @@ public class StatusActivity extends AppCompatActivity {
                 String email = manager.getCurrentMember().getEmail();
 
                 retVal = bbc.setBanned(email, true);
-                Log.d("DB setRating Finished", "doInBackground method returned: "
+                Log.d("DB setBanned Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 bbc.disconnect();
                 return retVal;
@@ -180,7 +180,7 @@ public class StatusActivity extends AppCompatActivity {
                 String email = manager.getCurrentMember().getEmail();
 
                 retVal = bbc.resetLoginAttempts(email);
-                Log.d("DB setRating Finished", "doInBackground method returned: "
+                Log.d("DB reset Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 bbc.disconnect();
                 return retVal;
@@ -250,7 +250,7 @@ public class StatusActivity extends AppCompatActivity {
                 String email = manager.getCurrentMember().getEmail();
 
                 retVal = bbc.setBanned(email, false);
-                Log.d("DB setRating Finished", "doInBackground method returned: "
+                Log.d("DB setBanned Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 bbc.disconnect();
                 return retVal;
