@@ -2,13 +2,19 @@
     <string name="app_name">MovieReviewer</string>
     <string name="title_activity_login">Sign in</string>
     <string name="no_internet">Please confirm your internet connection</string>
-
+    <!-- Strings related to navigation -->
+    <string name="update_profile">Update Profile</string>
+    <string name="cancel">Cancel</string>
     <!-- Strings related to userdata -->
     <string name="last_name">Last Name</string>
     <string name="first_name">First Name</string>
     <string name="email">Email</string>
     <string name="major">Major</string>
     <string name="gender">Gender</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="verify_new_password">Verify New Password</string>
+    <string name="passwords_dont_match">Passwords must match.</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -33,6 +39,7 @@
     <!-- Strings related to searching -->
     <string name="search_hint">Start typing your search..</string>
     <string name="search_return" formatted="false">Displaying 10 of %d results for %s</string>
+<<<<<<< HEAD
     <string name="title_activity_recommendation_activity">Recommendation_activity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
@@ -124,6 +131,9 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+=======
+    <string name="update_info">Update Info</string>
+>>>>>>> 38e07379994a6eb7611e1bdff42725ee4c04056a
 
 
 </resources>
