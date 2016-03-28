@@ -12,23 +12,32 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lock"
-        android:id="@+id/lock"
-        android:layout_marginTop="146dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="44dp"
+        android:text="Unban"
+        android:id="@+id/unban"
+        android:layout_marginTop="147dp"
         android:clickable="true"
-        android:onClick="lockUser()" />
+        android:onClick="unbanUser()"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Unlock"
         android:id="@+id/unlock"
-        android:layout_alignTop="@+id/lock"
-        android:layout_toEndOf="@+id/lock"
-        android:layout_marginStart="46dp"
         android:onClick="unlockUser()"
+        android:clickable="true"
+        android:layout_alignTop="@+id/unban"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ban"
+        android:id="@+id/ban"
+        android:layout_alignTop="@+id/unlock"
+        android:layout_alignParentEnd="true"
+        android:onClick="banUser()"
         android:clickable="true" />
+
 </RelativeLayout>
