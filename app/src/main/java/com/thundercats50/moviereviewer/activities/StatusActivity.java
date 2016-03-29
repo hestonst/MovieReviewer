@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
@@ -31,6 +32,36 @@ public class StatusActivity extends AppCompatActivity {
         User user = UserManager.currentMember;
         manager = (UserManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());
+
+        mReviewFormView = findViewById(R.id.status_form);
+        mProgressView = findViewById(R.id.status_progress);
+
+        Button mBanButton = (Button) findViewById(R.id.ban);
+        mBanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                banUser();
+            }
+        });
+
+        Button mUnbanButton = (Button) findViewById(R.id.unban);
+        mUnbanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                unbanUser();
+            }
+        });
+
+        Button mUnlockButton = (Button) findViewById(R.id.unlock);
+        mUnlockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                unlockUser();
+            }
+        });
+
+
+
     }
 
     /**
@@ -69,7 +100,7 @@ public class StatusActivity extends AppCompatActivity {
         }
     }
 
-    public void banUser(View view) {
+    public void banUser() {
         showProgress(true);
         BanUserTask banTask = new BanUserTask(manager);
         try {
@@ -141,7 +172,7 @@ public class StatusActivity extends AppCompatActivity {
 
     }
 
-    public void unlockUser(View view) {
+    public void unlockUser() {
         showProgress(true);
         UnlockUserTask unlockTask = new UnlockUserTask(manager);
         try {
@@ -211,7 +242,7 @@ public class StatusActivity extends AppCompatActivity {
         }
     }
 
-    public void unbanUser(View view) {
+    public void unbanUser() {
         showProgress(true);
         UnbanUserTask unbanTask = new UnbanUserTask(manager);
         try {

@@ -112,16 +112,17 @@ public class BlackBoardConnector extends DBConnector {
     }
 
     /**
-     * Checks whether user already exists. Only for use when creating a new user,
-     * to make sure a user is not overwritten. To verify login, use verifyUser method
-     * @param user
+     * Checks whether user already exists. For use
+     * when creating a new user, to make sure a user is not
+     * overwritten. To verify login, use verifyUser method
+     * @param user to check
      * @return isValid
      * @throws SQLException
      */
-    public boolean checkIfUser(String user) throws ClassNotFoundException, SQLException {
+    public boolean checkIfUser(String user)
+            throws ClassNotFoundException, SQLException {
         ResultSet resultSet = getUserPass(user);
         if (resultSet.next()) {
-            resultSet.close();
             return true;
         }
         return false;
@@ -132,8 +133,8 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * Verifies user/pass combinations for login
-     * @param user
-     * @param pass
+     * @param user to check
+     * @param pass to check
      * @return boolean true if valid
      * @throws SQLException
      */
@@ -143,11 +144,11 @@ public class BlackBoardConnector extends DBConnector {
         if (resultSet.next()) {
             if (resultSet.getInt("Banned") == 1) {
                 return UserStatus.BANNED;
-            } else if (resultSet.getInt("LoginAttempts") > 3) {
+            } else if (resultSet.getInt("LoginAttempts") >= 3) {
                 return UserStatus.LOCKED;
             } else if (resultSet.getString("Password").equals(pass)) {
-                //there is only 1 entry because there is only one Email selected from DB at
-                // a time
+                //there is only 1 entry because there is only
+                // one Email selected from DB at a time
                 return UserStatus.VERIFIED;
             }
             resultSet.close();
