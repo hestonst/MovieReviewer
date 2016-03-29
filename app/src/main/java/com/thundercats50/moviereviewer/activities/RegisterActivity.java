@@ -220,6 +220,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 if (!cancel) {
                     startActivity(new Intent(this, LoggedInActivity.class));
                     setContentView(R.layout.activity_loggedin);
+                    finish();
+
                 }
             } catch (Exception e) {
                 Log.d("RegisterActivity", "Thread Error");
@@ -388,9 +390,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 return retVal;
             } catch(InputMismatchException imee) {
                 error = imee;
-                return false;
-            } catch (ClassNotFoundException cnfe) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
                 return false;
             } catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());

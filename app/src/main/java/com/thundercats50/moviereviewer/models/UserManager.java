@@ -9,7 +9,8 @@ import java.util.HashMap;
  */
 public class UserManager extends Application {
 
-    private User currentMember;
+    public static User currentMember = new User("","","","","");
+    //so app does not crash if DB connection unavailable
 
     /**
      * adds a member to the backing hashMap

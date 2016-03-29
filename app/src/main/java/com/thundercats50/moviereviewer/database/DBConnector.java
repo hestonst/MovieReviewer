@@ -19,7 +19,7 @@ import java.util.InvalidPropertiesFormatException;
  * Documentation:
  * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
-public class DBConnector  {
+public abstract class DBConnector  {
 
     Connection connection;
     Statement statement;
@@ -74,10 +74,6 @@ public class DBConnector  {
                 }
             }
             throw sqle;
-        }
-        catch (InstantiationException ie) {
-            Log.d("DBC InstantException",
-                    "No access database user/pass. Check Driver.");
         }
         catch (Exception e) {
             throw new SQLException("Unknown connection error: assume no internet.", e);

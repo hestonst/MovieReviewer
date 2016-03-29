@@ -314,12 +314,12 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 Log.d("Test", "Reached -1.");
                 bbc = new BlackBoardConnector();
                 Log.d("Test", "Reached 0.");
-                boolean retVal = bbc.verifyUser(mEmail, mOldPassword);
-                if (!retVal) {
+                BlackBoardConnector.UserStatus check = bbc.verifyUser(mEmail, mOldPassword);
+                if (!check.equals(BlackBoardConnector.UserStatus.VERIFIED)) {
                     return false; //old password was not correct
                 }
                 Log.d("Test", "Reached 1.");
-                retVal = bbc.setUserData(mFirstName, mLastName, mMajor, mGender, mEmail);
+                boolean retVal = bbc.setUserData(mFirstName, mLastName, mMajor, mGender, mEmail);
                 Log.d("Test", "Reached 2.");
                 boolean retVal2 = true;
                 if (!mOldPassword.equals(mPassword) && !mPassword.equals("")) {
@@ -332,13 +332,10 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 manager.getCurrentMember().setLastname(mLastName);
                 manager.getCurrentMember().setGender(mGender);
                 return retVal && retVal2;
-            } catch (ClassNotFoundException cnfe) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
-                cancel(false);
-            } catch (SQLException sqle) {
+            }  catch (SQLException sqle) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 internetAccessExists = false;
-                cancel(false);
+                cancel(true);
             } finally {
                 bbc.disconnect();
             }

@@ -3,43 +3,24 @@ package com.thundercats50.moviereviewer.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
-import com.thundercats50.moviereviewer.database.RepositoryConnector;
 import com.thundercats50.moviereviewer.models.UserManager;
-import com.thundercats50.moviereviewer.models.MovieManager;
-import com.thundercats50.moviereviewer.models.SingleMovie;
 import com.thundercats50.moviereviewer.models.User;
-
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.InputMismatchException;
-import java.util.Iterator;
-import java.util.List;
 
-public class ReviewActivity extends AppCompatActivity {
-    private static final String TAG = "RecyclerViewExample";
-    private static final String apiKey = "?apikey=yedukp76ffytfuy24zsqk7f5";
-    private static final String baseURL = "http://api.rottentomatoes.com/api/public/v1.0/movies/";
-    private final String jsonEnd = ".json?apikey=";
-    private SingleMovie movie = MovieManager.movie;
-    private List<SingleMovie> ratedMovies;
-    private List<Integer> ratings;
-    private List<String> reviews;
-    private TextView name;
-    private EditText mReviewView;
-    private EditText mRatingView;
+public class StatusActivity extends AppCompatActivity {
+
+    private User user = UserManager.currentMember;
     private View mReviewFormView;
     private View mProgressView;
     private UserManager manager;
@@ -47,19 +28,39 @@ public class ReviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_review);
-        name = (TextView) findViewById(R.id.movie_title);
-        mReviewView = (EditText) findViewById(R.id.movie_review);
-        mRatingView = (EditText) findViewById(R.id.movie_rating);
-        mReviewFormView = findViewById(R.id.rating_form);
-        mProgressView = findViewById(R.id.rating_progress);
-        SingleMovie movie = MovieManager.movie;
-        name.setText(movie.getTitle());
+        setContentView(R.layout.activity_status);
+        User user = UserManager.currentMember;
         manager = (UserManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());
-        UserReviewTask reviewTask = new UserReviewTask(null, 0, movie.getId(), mReviewView, mRatingView);
-        reviewTask.execute();
-        //getRating(movie.getId(), manager.getCurrentMember().getEmail());
+
+        mReviewFormView = findViewById(R.id.status_form);
+        mProgressView = findViewById(R.id.status_progress);
+
+        Button mBanButton = (Button) findViewById(R.id.ban);
+        mBanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                banUser();
+            }
+        });
+
+        Button mUnbanButton = (Button) findViewById(R.id.unban);
+        mUnbanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                unbanUser();
+            }
+        });
+
+        Button mUnlockButton = (Button) findViewById(R.id.unlock);
+        mUnlockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                unlockUser();
+            }
+        });
+
+
 
     }
 
@@ -99,68 +100,51 @@ public class ReviewActivity extends AppCompatActivity {
         }
     }
 
-
-    public void addRating(View view) {
+    public void banUser() {
         showProgress(true);
-        AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
+        BanUserTask banTask = new BanUserTask(manager);
         try {
-            boolean successfulFinish = ratingTask.execute().get();
+            boolean successfulFinish = banTask.execute().get();
             Log.d("Returned:", Boolean.toString(successfulFinish));
             if (successfulFinish) {
                 finish();
             } else {
                 showProgress(false);
-                mRatingView.setError(getString(R.string.rating_range));
-                mRatingView.requestFocus();
             }
         } catch (Exception e) {
             Log.d("Write to DB", "Concurrent exception in ReviewAct");
         }
     }
 
-
-    public class AddReviewTask extends AsyncTask<Void, Void, Boolean> {
+    public class BanUserTask extends AsyncTask<Void, Void, Boolean> {
         private UserManager manager;
-        private EditText review;
-        private EditText rating;
         private Exception error;
 
-        AddReviewTask(UserManager manager, EditText review, EditText rating) {
+        BanUserTask(UserManager manager) {
             this.manager = manager;
-            this.review = review;
-            this.rating = rating;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             error = null;
-            return addRating();
+            return banUser();
         }
 
-        public Boolean addRating() {
-            RepositoryConnector rpc;
+        public Boolean banUser() {
+            BlackBoardConnector bbc;
             boolean retVal = false;
             try {
-//                if (rating.getText().toString().equals("")) {
-//                    throw new InputMismatchException("Ratings are required.");
-//                }
-                rpc = new RepositoryConnector();
+                bbc = new BlackBoardConnector();
                 UserManager manager = (UserManager) getApplicationContext();
                 String email = manager.getCurrentMember().getEmail();
-                EditText review = (EditText) findViewById(R.id.movie_review);
-                EditText rating = (EditText) findViewById(R.id.movie_rating);
-                Log.d("Int Passed to DB:", rating.getText().toString());
-                retVal = rpc.setRating(email, movie, Integer
-                        .parseInt(rating.getText().toString()), review.getText().toString());
-                Log.d("DB setRating Finished", "doInBackground method returned: "
+
+                retVal = bbc.setBanned(email, true);
+                Log.d("DB setBanned Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
-                rpc.disconnect();
+                bbc.disconnect();
                 return retVal;
             } catch (InputMismatchException imee) {
                 error = imee;
-            } catch (ClassNotFoundException cnfe) {
-                error = cnfe;
-                Log.d("Dependency Error", "Check if MySQL library is present.");
             } catch (SQLException sqle) {
                 error = sqle;
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
@@ -188,47 +172,53 @@ public class ReviewActivity extends AppCompatActivity {
 
     }
 
+    public void unlockUser() {
+        showProgress(true);
+        UnlockUserTask unlockTask = new UnlockUserTask(manager);
+        try {
+            boolean successfulFinish = unlockTask.execute().get();
+            Log.d("Returned:", Boolean.toString(successfulFinish));
+            if (successfulFinish) {
+                finish();
+            } else {
+                showProgress(false);
+            }
+        } catch (Exception e) {
+            Log.d("Write to DB", "Concurrent exception in ReviewAct");
+        }
+    }
 
-    public class UserReviewTask extends AsyncTask<Void, Void, Boolean> {
+    public class UnlockUserTask extends AsyncTask<Void, Void, Boolean> {
+        private UserManager manager;
+        private Exception error;
 
-        private String mReview;
-        private int mRating;
-        private long mId;
-        private final UserManager manager = (UserManager) getApplicationContext();
-        private boolean internetAccessExists = true;
-        private SingleMovie movie;
-
-        private EditText mReviewView;
-        private EditText mRatingView;
-
-
-        UserReviewTask(String mReview, int mRating, long mId, EditText mReviewView,
-                       EditText mRatingView) {
-            this.mReview = mReview;
-            this.mRating = mRating;
-            this.mId = mId;
-            this.mReviewView = mReviewView;
-            this.mRatingView = mRatingView;
+        UnlockUserTask(UserManager manager) {
+            this.manager = manager;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Exception error;
-            long movieID = mId;
-            String email = manager.getCurrentMember().getEmail();
+            error = null;
+            return unlockUser();
+        }
 
+        public Boolean unlockUser() {
+            BlackBoardConnector bbc;
+            boolean retVal = false;
             try {
-                RepositoryConnector rpc = new RepositoryConnector();
-                movie = rpc.getRating(email, movieID);
-                //Log.d("Contains Tag", Boolean.toString(movie.hasRatingByUser(email)));
-                rpc.disconnect();
+                bbc = new BlackBoardConnector();
+                UserManager manager = (UserManager) getApplicationContext();
+                String email = manager.getCurrentMember().getEmail();
+
+                retVal = bbc.resetLoginAttempts(email);
+                Log.d("DB reset Finished", "doInBackground method returned: "
+                        + Boolean.toString(retVal));
+                bbc.disconnect();
+                return retVal;
             } catch (InputMismatchException imee) {
                 error = imee;
-                return false;
-            } catch (ClassNotFoundException cnfe) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
-                return false;
             } catch (SQLException sqle) {
+                error = sqle;
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 for (Throwable e : sqle) {
                     e.printStackTrace(System.err);
@@ -246,20 +236,80 @@ public class ReviewActivity extends AppCompatActivity {
                         t = t.getCause();
                     }
                 }
-                return false;
+            } finally {
+                return retVal;
             }
-            return false;
+        }
+    }
+
+    public void unbanUser() {
+        showProgress(true);
+        UnbanUserTask unbanTask = new UnbanUserTask(manager);
+        try {
+            boolean successfulFinish = unbanTask.execute().get();
+            Log.d("Returned:", Boolean.toString(successfulFinish));
+            if (successfulFinish) {
+                finish();
+            } else {
+                showProgress(false);
+            }
+        } catch (Exception e) {
+            Log.d("Write to DB", "Concurrent exception in ReviewAct");
+        }
+    }
+
+    public class UnbanUserTask extends AsyncTask<Void, Void, Boolean> {
+        private UserManager manager;
+        private Exception error;
+
+        UnbanUserTask(UserManager manager) {
+            this.manager = manager;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
-            String email = manager.getCurrentMember().getEmail();
-            if (movie != null && movie.hasRatingByUser(email)) {
-                mReviewView.setText(movie.getUserReview(email));
-                mRatingView.setText(Integer.toString(movie.getUserRating(email)));
-            }
+        protected Boolean doInBackground(Void... params) {
+            error = null;
+            return unbanUser();
         }
 
+        public Boolean unbanUser() {
+            BlackBoardConnector bbc;
+            boolean retVal = false;
+            try {
+                bbc = new BlackBoardConnector();
+                UserManager manager = (UserManager) getApplicationContext();
+                String email = manager.getCurrentMember().getEmail();
+
+                retVal = bbc.setBanned(email, false);
+                Log.d("DB setBanned Finished", "doInBackground method returned: "
+                        + Boolean.toString(retVal));
+                bbc.disconnect();
+                return retVal;
+            } catch (InputMismatchException imee) {
+                error = imee;
+            } catch (SQLException sqle) {
+                error = sqle;
+                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
+                for (Throwable e : sqle) {
+                    e.printStackTrace(System.err);
+                    Log.d("Connection Error", "SQLState: " +
+                            ((SQLException) e).getSQLState());
+
+                    Log.d("Connection Error", "Error Code: " +
+                            ((SQLException) e).getErrorCode());
+
+                    Log.d("Connection Error", "Message: " + e.getMessage());
+
+                    Throwable t = sqle.getCause();
+                    while (t != null) {
+                        Log.d("Connection Error", "Cause: " + t);
+                        t = t.getCause();
+                    }
+                }
+            } finally {
+                return retVal;
+            }
+        }
 
     }
 }

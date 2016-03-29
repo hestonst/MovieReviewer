@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.thundercats50.moviereviewer">
 
+    <!--to user internet-->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!--to check if there is internet-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -52,7 +56,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.SearchResultsActivity" />
         android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.SearchActivity">
+        <activity
+            android:name=".activities.SearchActivity"
+            android:label="Search For Movies">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -61,7 +67,15 @@
                 android:name="android.app.searchable"
                 android:resource="@layout/searchable" />
         </activity>
-        <activity android:name=".activities.ReviewActivity"></activity>
+        <activity android:name=".activities.ReviewActivity" />
+        <activity
+            android:name=".activities.RecommendationActivity"
+            android:label="Recommendations" />
+        <activity
+            android:name=".activities.AdminActivity"
+            android:label="Admin"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.StatusActivity"></activity>
     </application>
 
 </manifest>
