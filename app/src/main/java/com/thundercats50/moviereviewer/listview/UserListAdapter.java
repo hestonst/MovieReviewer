@@ -72,7 +72,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserViewHolder>{
             userViewHolder.itemView.setSelected(focusedItem == position);
 
             userViewHolder.getLayoutPosition();
-            userViewHolder.title.setText(user.getFirstname());
+            userViewHolder.title.setText(user.getEmail());
         }
 
         public void clearAdapter() {
