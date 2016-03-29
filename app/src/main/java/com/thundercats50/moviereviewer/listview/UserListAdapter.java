@@ -73,6 +73,13 @@ public class UserListAdapter extends RecyclerView.Adapter<UserViewHolder>{
 
             userViewHolder.getLayoutPosition();
             userViewHolder.title.setText(user.getEmail());
+            if (user.getBanned()) {
+                userViewHolder.status.setText("Banned");
+            } else if (user.getLogIns() >= 3) {
+                userViewHolder.status.setText("Locked");
+            } else {
+                userViewHolder.status.setText("Unlocked");
+            }
         }
 
         public void clearAdapter() {

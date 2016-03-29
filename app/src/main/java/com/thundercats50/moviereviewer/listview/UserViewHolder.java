@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.thundercats50.moviereviewer.R;
 
+import org.w3c.dom.Text;
+
 import java.io.InputStream;
 
 
@@ -24,12 +26,14 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     protected ImageView thumbnail;
     protected TextView title;
     protected RelativeLayout recLayout;
+    protected TextView status;
 
 
     public UserViewHolder(View view) {
         super(view);
         this.title = (TextView) view.findViewById(R.id.title);
         this.recLayout = (RelativeLayout) view.findViewById(R.id.recLayout);
+        this.status = (TextView) view.findViewById(R.id.status);
 
         view.setClickable(true);
     }

@@ -204,6 +204,8 @@ public class BlackBoardConnector extends DBConnector {
                 User currentUser = new User();
                 currentUser.setFirstname(resultSet.getString("FirstName"));
                 currentUser.setEmail(resultSet.getString("Email"));
+                if (resultSet.getInt("Banned") == 1) currentUser.setBanned(true);
+                currentUser.setLogIns(resultSet.getInt("LoginAttempts"));
                 retVal.add(currentUser);
             }
         } catch (SQLException sqle) {

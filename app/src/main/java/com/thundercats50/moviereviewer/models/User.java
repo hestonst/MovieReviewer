@@ -12,6 +12,8 @@ public class User {
 	private String major = "";
 	private String gender = "";
     private String email = "";
+    private boolean banned = false;
+    private int logIns = 0;
 
 	/**
 	 *
@@ -135,6 +137,16 @@ public class User {
     public void setMajor(String major) {
         this.major = major;
     }
+
+    public boolean getBanned() { return banned; }
+
+    public void setBanned(boolean flag) { banned = flag; }
+
+    public int getLogIns() { return logIns; }
+
+    public void addLogIn() { logIns++; }
+
+    public void setLogIns(int i) { logIns = i; }
 
 
 }
