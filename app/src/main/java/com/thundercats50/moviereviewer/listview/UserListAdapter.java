@@ -78,7 +78,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserViewHolder>{
             } else if (user.getLogIns() >= 3) {
                 userViewHolder.status.setText("Locked");
             } else {
-                userViewHolder.status.setText("Unlocked");
+                userViewHolder.status.setText("Normal");
             }
         }
 
