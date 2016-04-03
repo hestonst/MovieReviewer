@@ -72,6 +72,9 @@
             android:name=".activities.RecommendationActivity"
             android:label="Recommendations" />
         <activity
+            android:name=".activities.RecommendationResultsActivity"
+            android:label="Recommendation Results" />
+        <activity
             android:name=".activities.AdminActivity"
             android:label="Admin"
             android:theme="@style/AppTheme.NoActionBar" />

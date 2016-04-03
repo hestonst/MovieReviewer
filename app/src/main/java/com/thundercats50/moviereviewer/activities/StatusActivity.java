@@ -14,13 +14,11 @@ import android.widget.Button;
 import com.thundercats50.moviereviewer.R;
 import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.models.UserManager;
-import com.thundercats50.moviereviewer.models.User;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 
 public class StatusActivity extends AppCompatActivity {
 
-    private User user = UserManager.currentMember;
     private View mReviewFormView;
     private View mProgressView;
     private UserManager manager;
@@ -29,14 +27,13 @@ public class StatusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
-        User user = UserManager.currentMember;
         manager = (UserManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());
 
         mReviewFormView = findViewById(R.id.status_form);
         mProgressView = findViewById(R.id.status_progress);
 
-        Button mBanButton = (Button) findViewById(R.id.ban);
+        final Button mBanButton = (Button) findViewById(R.id.ban);
         mBanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,7 +41,7 @@ public class StatusActivity extends AppCompatActivity {
             }
         });
 
-        Button mUnbanButton = (Button) findViewById(R.id.unban);
+        final Button mUnbanButton = (Button) findViewById(R.id.unban);
         mUnbanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,7 +49,7 @@ public class StatusActivity extends AppCompatActivity {
             }
         });
 
-        Button mUnlockButton = (Button) findViewById(R.id.unlock);
+        final Button mUnlockButton = (Button) findViewById(R.id.unlock);
         mUnlockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,6 +63,7 @@ public class StatusActivity extends AppCompatActivity {
 
     /**
      * Shows the progress UI and hides the login form.
+     * @param show android show
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -73,7 +71,7 @@ public class StatusActivity extends AppCompatActivity {
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mReviewFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mReviewFormView.animate().setDuration(shortAnimTime).alpha(
@@ -100,11 +98,14 @@ public class StatusActivity extends AppCompatActivity {
         }
     }
 
-    public void banUser() {
+    /**
+     * method to ban user
+     */
+    private void banUser() {
         showProgress(true);
-        BanUserTask banTask = new BanUserTask(manager);
+        final BanUserTask banTask = new BanUserTask(manager);
         try {
-            boolean successfulFinish = banTask.execute().get();
+            final boolean successfulFinish = banTask.execute().get();
             Log.d("Returned:", Boolean.toString(successfulFinish));
             if (successfulFinish) {
                 finish();
@@ -117,26 +118,32 @@ public class StatusActivity extends AppCompatActivity {
     }
 
     public class BanUserTask extends AsyncTask<Void, Void, Boolean> {
-        private UserManager manager;
-        private Exception error;
+        private final UserManager manager;
 
+        /**
+         * ban user task
+         * @param manager user manager
+         */
         BanUserTask(UserManager manager) {
             this.manager = manager;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            error = null;
             return banUser();
         }
 
+        /**
+         * ban user
+         * @return boolean for success
+         */
         public Boolean banUser() {
             BlackBoardConnector bbc;
             boolean retVal = false;
             try {
                 bbc = new BlackBoardConnector();
-                UserManager manager = (UserManager) getApplicationContext();
-                String email = manager.getCurrentMember().getEmail();
+                final UserManager manager = (UserManager) getApplicationContext();
+                final String email = manager.getCurrentMember().getEmail();
 
                 retVal = bbc.setBanned(email, true);
                 Log.d("DB setBanned Finished", "doInBackground method returned: "
@@ -144,9 +151,8 @@ public class StatusActivity extends AppCompatActivity {
                 bbc.disconnect();
                 return retVal;
             } catch (InputMismatchException imee) {
-                error = imee;
+                Log.d("Input Mismatch Error", "check message:" + imee.getMessage());
             } catch (SQLException sqle) {
-                error = sqle;
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 for (Throwable e : sqle) {
                     e.printStackTrace(System.err);
@@ -164,19 +170,23 @@ public class StatusActivity extends AppCompatActivity {
                         t = t.getCause();
                     }
                 }
-            } finally {
-                return retVal;
-            }
+            } // finally {
+            //    return retVal;
+            //}
+            return retVal;
         }
 
 
     }
 
-    public void unlockUser() {
+    /**
+     * unlock user
+     */
+    private void unlockUser() {
         showProgress(true);
-        UnlockUserTask unlockTask = new UnlockUserTask(manager);
+        final UnlockUserTask unlockTask = new UnlockUserTask(manager);
         try {
-            boolean successfulFinish = unlockTask.execute().get();
+            final boolean successfulFinish = unlockTask.execute().get();
             Log.d("Returned:", Boolean.toString(successfulFinish));
             if (successfulFinish) {
                 finish();
@@ -189,26 +199,32 @@ public class StatusActivity extends AppCompatActivity {
     }
 
     public class UnlockUserTask extends AsyncTask<Void, Void, Boolean> {
-        private UserManager manager;
-        private Exception error;
+        private final UserManager manager;
 
+        /**
+         * unlock user task
+         * @param manager user manager
+         */
         UnlockUserTask(UserManager manager) {
             this.manager = manager;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            error = null;
             return unlockUser();
         }
 
+        /**
+         * unlock user
+         * @return boolean success code
+         */
         public Boolean unlockUser() {
             BlackBoardConnector bbc;
             boolean retVal = false;
             try {
                 bbc = new BlackBoardConnector();
-                UserManager manager = (UserManager) getApplicationContext();
-                String email = manager.getCurrentMember().getEmail();
+                final UserManager manager = (UserManager) getApplicationContext();
+                final String email = manager.getCurrentMember().getEmail();
 
                 retVal = bbc.resetLoginAttempts(email);
                 Log.d("DB reset Finished", "doInBackground method returned: "
@@ -216,9 +232,8 @@ public class StatusActivity extends AppCompatActivity {
                 bbc.disconnect();
                 return retVal;
             } catch (InputMismatchException imee) {
-                error = imee;
+                Log.d("Input Mismatch Error", "check message:" + imee.getMessage());
             } catch (SQLException sqle) {
-                error = sqle;
                 Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
                 for (Throwable e : sqle) {
                     e.printStackTrace(System.err);
@@ -236,17 +251,21 @@ public class StatusActivity extends AppCompatActivity {
                         t = t.getCause();
                     }
                 }
-            } finally {
-                return retVal;
-            }
+            } // finally {
+            //    return retVal;
+            //}
+            return retVal;
         }
     }
 
-    public void unbanUser() {
+    /**
+     * unban user
+     */
+    private void unbanUser() {
         showProgress(true);
-        UnbanUserTask unbanTask = new UnbanUserTask(manager);
+        final UnbanUserTask unbanTask = new UnbanUserTask(manager);
         try {
-            boolean successfulFinish = unbanTask.execute().get();
+            final boolean successfulFinish = unbanTask.execute().get();
             Log.d("Returned:", Boolean.toString(successfulFinish));
             if (successfulFinish) {
                 finish();
@@ -259,9 +278,13 @@ public class StatusActivity extends AppCompatActivity {
     }
 
     public class UnbanUserTask extends AsyncTask<Void, Void, Boolean> {
-        private UserManager manager;
+        private final UserManager manager;
         private Exception error;
 
+        /**
+         * unban user task
+         * @param manager user manager
+         */
         UnbanUserTask(UserManager manager) {
             this.manager = manager;
         }
@@ -272,13 +295,17 @@ public class StatusActivity extends AppCompatActivity {
             return unbanUser();
         }
 
+        /**
+         * unban user
+         * @return boolean for success
+         */
         public Boolean unbanUser() {
             BlackBoardConnector bbc;
             boolean retVal = false;
             try {
                 bbc = new BlackBoardConnector();
-                UserManager manager = (UserManager) getApplicationContext();
-                String email = manager.getCurrentMember().getEmail();
+                final UserManager manager = (UserManager) getApplicationContext();
+                final String email = manager.getCurrentMember().getEmail();
 
                 retVal = bbc.setBanned(email, false);
                 Log.d("DB setBanned Finished", "doInBackground method returned: "
@@ -306,9 +333,10 @@ public class StatusActivity extends AppCompatActivity {
                         t = t.getCause();
                     }
                 }
-            } finally {
-                return retVal;
-            }
+            } // finally {
+            //    return retVal;
+            //}
+            return retVal;
         }
 
     }

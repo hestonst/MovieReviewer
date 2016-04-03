@@ -59,7 +59,7 @@ public class WelcomeActivity extends AppCompatActivity {
         @Override
         public void run() {
             // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
+            final ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
             }
@@ -123,6 +123,9 @@ public class WelcomeActivity extends AppCompatActivity {
         delayedHide(100);
     }
 
+    /**
+     * method to toggle
+     */
     private void toggle() {
         if (mVisible) {
             hide();
@@ -131,9 +134,12 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * method to hide
+     */
     private void hide() {
         // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
@@ -145,6 +151,9 @@ public class WelcomeActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
+    /**
+     * method to show
+     */
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
@@ -160,6 +169,7 @@ public class WelcomeActivity extends AppCompatActivity {
     /**
      * Schedules a call to hide() in [delay] milliseconds, canceling any
      * previously scheduled calls.
+     * @param delayMillis an android int code
      */
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
@@ -171,6 +181,16 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param view not currently used, but required
      */
     public void login(View view) {startActivity(new Intent(this, LoginActivity.class));}
+
+    /**
+     * Handles register button presses. Starts the LoginActivity activity.
+     * @param view not currently used, but required
+     */
     public void register(View view) {startActivity(new Intent(this, RegisterActivity.class));}
+
+    /**
+     * Handles rate button presses. Starts the LoginActivity activity.
+     * @param view not currently used, but required
+     */
     public void rate(View view) {startActivity(new Intent(this, ReviewActivity.class));}
 }

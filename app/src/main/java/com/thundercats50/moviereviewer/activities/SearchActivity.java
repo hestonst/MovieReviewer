@@ -1,13 +1,11 @@
 package com.thundercats50.moviereviewer.activities;
 
 import android.app.SearchManager;
-import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.widget.TextView;
 import android.view.View;
-import android.support.v4.app.Fragment;
 
 import com.thundercats50.moviereviewer.listview.MovieFragment;
 
@@ -17,14 +15,14 @@ public class SearchActivity extends AppCompatActivity {
     // holds the query the user enters
     private String searchQuery;
     private MovieFragment movieFragment;
-    private String newDVDSubkey = "lists/dvds/new_releases.json";
-    private String newReleasesSubkey = "lists/movies/in_theaters.json";
+    private static final String newDVDSubkey = "lists/dvds/new_releases.json";
+    private static final String newReleasesSubkey = "lists/movies/in_theaters.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        TextView searchDialogue = (TextView) findViewById(R.id.searchPrompt);
+        final TextView searchDialogue = (TextView) findViewById(R.id.searchPrompt);
         searchDialogue.setText(getString(R.string.search_hint));
         setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
@@ -33,7 +31,7 @@ public class SearchActivity extends AppCompatActivity {
 
         // Get the intent, verify the action and get the query
         // TODO Have the query show up dynamically in the searchDialogue rather than widget
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
             searchQuery = searchQuery.replace(" ", "+");
@@ -41,14 +39,26 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * search for new released
+     * @param view search view
+     */
     public void searchNewReleases(View view) {
         movieFragment.updateList(1, newReleasesSubkey);
     }
 
+    /**
+     * search for new dvds
+     * @param view search view
+     */
     public void searchNewDVD(View view) {
         movieFragment.updateList(1, newDVDSubkey);
     }
 
+    /**
+     * go to homepage
+     * @param view search view
+     */
     public void goHome(View view){
         startActivity(new Intent(this, WelcomeActivity.class));
     }

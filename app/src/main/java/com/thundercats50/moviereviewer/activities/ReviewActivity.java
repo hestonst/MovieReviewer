@@ -3,7 +3,6 @@ package com.thundercats50.moviereviewer.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -14,30 +13,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.thundercats50.moviereviewer.R;
-import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.database.RepositoryConnector;
 import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.MovieManager;
 import com.thundercats50.moviereviewer.models.SingleMovie;
-import com.thundercats50.moviereviewer.models.User;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.InputMismatchException;
-import java.util.Iterator;
-import java.util.List;
 
 public class ReviewActivity extends AppCompatActivity {
-    private static final String TAG = "RecyclerViewExample";
-    private static final String apiKey = "?apikey=yedukp76ffytfuy24zsqk7f5";
-    private static final String baseURL = "http://api.rottentomatoes.com/api/public/v1.0/movies/";
-    private final String jsonEnd = ".json?apikey=";
-    private SingleMovie movie = MovieManager.movie;
-    private List<SingleMovie> ratedMovies;
-    private List<Integer> ratings;
-    private List<String> reviews;
-    private TextView name;
+
+    private final SingleMovie movie = MovieManager.movie;
     private EditText mReviewView;
     private EditText mRatingView;
     private View mReviewFormView;
@@ -48,16 +34,16 @@ public class ReviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
-        name = (TextView) findViewById(R.id.movie_title);
+        final TextView name = (TextView) findViewById(R.id.movie_title);
         mReviewView = (EditText) findViewById(R.id.movie_review);
         mRatingView = (EditText) findViewById(R.id.movie_rating);
         mReviewFormView = findViewById(R.id.rating_form);
         mProgressView = findViewById(R.id.rating_progress);
-        SingleMovie movie = MovieManager.movie;
+        final SingleMovie movie = MovieManager.movie;
         name.setText(movie.getTitle());
         manager = (UserManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());
-        UserReviewTask reviewTask = new UserReviewTask(null, 0, movie.getId(), mReviewView, mRatingView);
+        final UserReviewTask reviewTask = new UserReviewTask(null, 0, movie.getId(), mReviewView, mRatingView);
         reviewTask.execute();
         //getRating(movie.getId(), manager.getCurrentMember().getEmail());
 
@@ -65,6 +51,7 @@ public class ReviewActivity extends AppCompatActivity {
 
     /**
      * Shows the progress UI and hides the login form.
+     * @param show android show
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -72,7 +59,7 @@ public class ReviewActivity extends AppCompatActivity {
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mReviewFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mReviewFormView.animate().setDuration(shortAnimTime).alpha(
@@ -99,12 +86,15 @@ public class ReviewActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * method to add rating to movie
+     * @param view review page
+     */
     public void addRating(View view) {
         showProgress(true);
-        AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
+        final AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
         try {
-            boolean successfulFinish = ratingTask.execute().get();
+            final boolean successfulFinish = ratingTask.execute().get();
             Log.d("Returned:", Boolean.toString(successfulFinish));
             if (successfulFinish) {
                 finish();
@@ -120,11 +110,17 @@ public class ReviewActivity extends AppCompatActivity {
 
 
     public class AddReviewTask extends AsyncTask<Void, Void, Boolean> {
-        private UserManager manager;
-        private EditText review;
-        private EditText rating;
-        private Exception error;
 
+        private final UserManager manager;
+        private final EditText review;
+        private final EditText rating;
+
+        /**
+         * review task
+         * @param manager user manager
+         * @param review review written
+         * @param rating rating given
+         */
         AddReviewTask(UserManager manager, EditText review, EditText rating) {
             this.manager = manager;
             this.review = review;
@@ -133,22 +129,26 @@ public class ReviewActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            error = null;
             return addRating();
         }
 
+        /**
+         * add rating to movie
+         * @return boolean for success
+         */
         public Boolean addRating() {
             RepositoryConnector rpc;
             boolean retVal = false;
+            Exception error;
             try {
 //                if (rating.getText().toString().equals("")) {
 //                    throw new InputMismatchException("Ratings are required.");
 //                }
                 rpc = new RepositoryConnector();
-                UserManager manager = (UserManager) getApplicationContext();
-                String email = manager.getCurrentMember().getEmail();
-                EditText review = (EditText) findViewById(R.id.movie_review);
-                EditText rating = (EditText) findViewById(R.id.movie_rating);
+                final UserManager manager = (UserManager) getApplicationContext();
+                final String email = manager.getCurrentMember().getEmail();
+                final EditText review = (EditText) findViewById(R.id.movie_review);
+                final EditText rating = (EditText) findViewById(R.id.movie_rating);
                 Log.d("Int Passed to DB:", rating.getText().toString());
                 retVal = rpc.setRating(email, movie, Integer
                         .parseInt(rating.getText().toString()), review.getText().toString());
@@ -180,9 +180,10 @@ public class ReviewActivity extends AppCompatActivity {
                         t = t.getCause();
                     }
                 }
-            } finally {
-                return retVal;
-            }
+            }// finally {
+            //    return retVal;
+            //}
+            return retVal;
         }
 
 
@@ -191,17 +192,24 @@ public class ReviewActivity extends AppCompatActivity {
 
     public class UserReviewTask extends AsyncTask<Void, Void, Boolean> {
 
-        private String mReview;
-        private int mRating;
-        private long mId;
+        private final String mReview;
+        private final int mRating;
+        private final long mId;
         private final UserManager manager = (UserManager) getApplicationContext();
         private boolean internetAccessExists = true;
         private SingleMovie movie;
 
-        private EditText mReviewView;
-        private EditText mRatingView;
+        private final EditText mReviewView;
+        private final EditText mRatingView;
 
-
+        /**
+         * user review task
+         * @param mReview user review
+         * @param mRating user rating
+         * @param mId movie id
+         * @param mReviewView view of review
+         * @param mRatingView view of rating
+         */
         UserReviewTask(String mReview, int mRating, long mId, EditText mReviewView,
                        EditText mRatingView) {
             this.mReview = mReview;
@@ -213,17 +221,15 @@ public class ReviewActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Exception error;
-            long movieID = mId;
-            String email = manager.getCurrentMember().getEmail();
+            final long movieID = mId;
+            final String email = manager.getCurrentMember().getEmail();
 
             try {
-                RepositoryConnector rpc = new RepositoryConnector();
+                final RepositoryConnector rpc = new RepositoryConnector();
                 movie = rpc.getRating(email, movieID);
                 //Log.d("Contains Tag", Boolean.toString(movie.hasRatingByUser(email)));
                 rpc.disconnect();
             } catch (InputMismatchException imee) {
-                error = imee;
                 return false;
             } catch (ClassNotFoundException cnfe) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
@@ -253,7 +259,7 @@ public class ReviewActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            String email = manager.getCurrentMember().getEmail();
+            final String email = manager.getCurrentMember().getEmail();
             if (movie != null && movie.hasRatingByUser(email)) {
                 mReviewView.setText(movie.getUserReview(email));
                 mRatingView.setText(Integer.toString(movie.getUserRating(email)));

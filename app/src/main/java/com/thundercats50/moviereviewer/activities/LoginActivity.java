@@ -49,10 +49,6 @@ import java.sql.SQLException;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -64,7 +60,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private boolean b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +80,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,8 +107,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -158,23 +153,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute();
             try {
-                UserStatus s = mAuthTask.get();
+                final UserStatus s = mAuthTask.get();
                 if (!s.equals(UserStatus.VERIFIED)) {
                     if (s.equals(UserStatus.INTERRUPTED_BY_INTERNET)) {
                         mEmailView.setError(getString(R.string.no_internet));
-                        focusView = mEmailView;
                     } else if (s.equals(UserStatus.BANNED)) {
                         mEmailView.setError(getString(R.string.account_banned));
-                        focusView = mEmailView;
                     } else if (s.equals(UserStatus.BAD_USER)) {
                         mEmailView.setError(getString(R.string.no_user));
-                        focusView = mEmailView;
                     } else if (s.equals(UserStatus.LOCKED)) {
                         mEmailView.setError(getString(R.string.account_locked));
-                        focusView = mEmailView;
                     } else {
                         mEmailView.setError(getString(R.string.no_internet));
-                        focusView = mEmailView;
                     }
                     cancel = true;
                 }
@@ -192,38 +182,57 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    /**
+     * cancel to return to previous page
+     * @param view login screen
+     */
     public void cancel(View view) {
         startActivity(new Intent(this, WelcomeActivity.class));
     }
 
+    /**
+     * check if email is in correct format
+     * @param email email entered by user
+     * @return boolean if its true
+     */
     private boolean isEmailValid(String email) {
         return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
                 && email.length() >= 6);
     }
 
+    /**
+     * check if password is in correct format
+     * @param password password entered by user
+     * @return boolean if its true
+     */
     private boolean isPasswordValid(String password) {
         return (password.matches("[a-zA-Z0-9]+") && password.length() >= 6);
     }
 
+    /**
+     * check if network connection available
+     * @return boolean
+     */
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
+            if ((ni.getTypeName().equalsIgnoreCase("WIFI")) && (ni.isConnected())) {
+                haveConnectedWifi = true;
+            }
+            if ((ni.getTypeName().equalsIgnoreCase("MOBILE")) && (ni.isConnected())) {
+                haveConnectedMobile = true;
+            }
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
 
     /**
      * Shows the progress UI and hides the login form.
+     * @param show android boolean
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -231,7 +240,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
@@ -277,7 +286,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
+        final List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(ProfileQuery.ADDRESS));
@@ -292,9 +301,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    /**
+     * method to get emails
+     * @param emailAddressCollection list of emails
+     */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
@@ -302,14 +315,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
-    private interface ProfileQuery {
-        String[] PROJECTION = {
+    private class ProfileQuery {
+        private String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
         };
 
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
+        private int ADDRESS = 0;
     }
 
     /**
@@ -325,20 +337,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private String mLastName;
         private String mMajor;
         private final UserManager manager = (UserManager) getApplicationContext();
-        private boolean internetAccessExists = true;
-        private boolean userVerified;
 
+        /**
+         * method to login
+         * @param email email of user
+         * @param password password of user
+         */
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
-            userVerified = false;
-            internetAccessExists = true;
         }
 
         @Override
         protected UserStatus doInBackground(Void...params) {
-            BlackBoardConnector bbc = null;
             UserStatus retVal = UserStatus.INTERRUPTED_BY_INTERNET;
+            BlackBoardConnector bbc;
             try {
                 bbc = new BlackBoardConnector();
                 retVal = bbc.verifyUser(mEmail, mPassword);
@@ -349,7 +362,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return retVal;
                 }
                 bbc.resetLoginAttempts(mEmail);
-                ResultSet userInfo = bbc.getUserData(mEmail);
+                final ResultSet userInfo = bbc.getUserData(mEmail);
                 userInfo.next(); //must call next to move to first entry
                 mFirstName = userInfo.getString(1);
                 mLastName = userInfo.getString(2);
@@ -357,14 +370,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mGender = userInfo.getString(4);
                 manager.setCurrentMember(new User(mEmail, mFirstName, mLastName,
                             mMajor, mGender));
-            } catch (SQLException sqle) {
-                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
+            } catch (SQLException sql) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sql.getMessage() + sql.getSQLState());
                 cancel(true);
                 return UserStatus.INTERRUPTED_BY_INTERNET;
-            } finally {
-                bbc.disconnect();
-                return retVal;
-            }
+            } catch (Exception e) {
+                Log.d("Other Error", "Check message." + e.getMessage());
+                cancel(true);
+                return UserStatus.INTERRUPTED_BY_INTERNET;
+            } // finally {
+            //    return retVal;
+            //}
+            bbc.disconnect();
+            return retVal;
         }
 
         @Override
