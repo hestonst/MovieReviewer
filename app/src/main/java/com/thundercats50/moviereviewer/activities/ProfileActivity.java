@@ -27,6 +27,7 @@ import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 public class ProfileActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -35,19 +36,54 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
      */
     private UserDataWriteTask mWriteTask = null;
 
+    /**
+     * user manager
+     */
     private UserManager manager;
+    /**
+     * user
+     */
+    private User member;
 
-    // UI references.
+    /**
+     * UI reference
+     */
     private View mProgressView;
+    /**
+     * UI reference
+     */
     private View mLoginFormView;
-
+    /**
+     * first name text box
+     */
     private EditText mFirstNameView;
+    /**
+     * last name text box
+     */
     private EditText mLastNameView;
+    /**
+     * email text box
+     */
     private EditText mEmailView;
+    /**
+     * gender text box
+     */
     private EditText mGenderView;
+    /**
+     * major text box
+     */
     private EditText mMajorView;
+    /**
+     * password view
+     */
     private EditText mPasswordView;
+    /**
+     * verify password text box
+     */
     private EditText mVerifyPasswordView;
+    /**
+     * old password text box
+     */
     private EditText mOldPasswordView;
 
     @Override
@@ -55,7 +91,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
 
         manager = (UserManager) getApplicationContext();
-        final User member = manager.getCurrentMember();
+        member = manager.getCurrentMember();
 
         setContentView(R.layout.activity_profile);
 
@@ -101,7 +137,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-        final Button mWriteDataButton = (Button) findViewById(R.id.update_info_button);
+        Button mWriteDataButton = (Button) findViewById(R.id.update_info_button);
         mWriteDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,8 +172,8 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
 
         // Store values at the time of the login attempt.
-        final String firstname = mFirstNameView.getText().toString();
-        final String lastname = mLastNameView.getText().toString();
+        final String firstName = mFirstNameView.getText().toString();
+        final String lastName = mLastNameView.getText().toString();
         final String email = manager.getCurrentMember().getEmail();
         final String gender = mGenderView.getText().toString();
         final String major = mMajorView.getText().toString();
@@ -166,7 +202,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
             focusView.requestFocus();
         } else {
             showProgress(true);
-            mWriteTask = new UserDataWriteTask(firstname, lastname, email, gender, major, password,
+            mWriteTask = new UserDataWriteTask(firstName, lastName, email, gender, major, password,
                     verifyPassword, oldPassword);
             mWriteTask.execute();
 
@@ -176,8 +212,10 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                     cancel = true;
                     mOldPasswordView.setError(getString(R.string.error_incorrect_password));
                 }
-            } catch (Exception e) {
-                Log.d("Task Error", "Cannot create logged in view.");
+            } catch (ExecutionException exception) {
+                Log.d("Execution Exception", "Error thrown");
+            } catch (InterruptedException exception) {
+                Log.d("Interrupted Exception", "Error thrown");
             }
 
             if (!cancel) {
@@ -187,16 +225,16 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
     }
 
     /**
-     * finish activity
-     * @param view profile screen of app
+     * cancel button
+     * @param view profile screen
      */
     public void cancel(View view) {
         finish();
     }
 
     /**
-     * check is password is valid
-     * @param password entered password
+     * checks if password entered is valid
+     * @param password password entered
      * @return boolean
      */
     private boolean isPasswordValid(String password) {
@@ -205,7 +243,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
     /**
      * Shows the progress UI and hides the login form.
-     * @param show android boolean
+     * @param show android show
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -213,7 +251,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
@@ -249,8 +287,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
+                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
@@ -259,10 +296,8 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        //List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            //emails.add(cursor.getString(ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
 
@@ -275,12 +310,11 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
 
 
-    private class ProfileQuery {
-        private String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
+    private interface ProfileQuery {
+        /**
+         * array projection
+         */
+        String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS, ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
     }
 
     /**
@@ -289,31 +323,58 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
      */
     public class UserDataWriteTask extends AsyncTask<Void, Void, Boolean> {
 
+        /**
+         * email
+         */
         private final String mEmail;
+        /**
+         * password
+         */
         private final String mPassword;
+        /**
+         * old password
+         */
         private final String mOldPassword;
-        private final String mGender;
-        private final String mFirstName;
-        private final String mLastName;
-        private final String mMajor;
+        /**
+         * gender
+         */
+        private String mGender;
+        /**
+         * first name
+         */
+        private String mFirstName;
+        /**
+         * last name
+         */
+        private String mLastName;
+        /**
+         * major
+         */
+        private String mMajor;
+        /**
+         * user manager
+         */
         private final UserManager manager = (UserManager) getApplicationContext();
+        /**
+         * internet access
+         */
         private boolean internetAccessExists = true;
 
         /**
          * write user data
-         * @param firstname of user
-         * @param lastname of user
-         * @param email of user
-         * @param gender of user
-         * @param major of user
-         * @param password of user
-         * @param verifyPassword of user
-         * @param oldPassword of user
+         * @param firstName first name
+         * @param lastName last name
+         * @param email email
+         * @param gender gender
+         * @param major major
+         * @param password password
+         * @param verifyPassword verify password
+         * @param oldPassword old password
          */
-        UserDataWriteTask(String firstname, String lastname, String email, String gender,
+        UserDataWriteTask(String firstName, String lastName, String email, String gender,
                           String major, String password, String verifyPassword, String oldPassword) {
-            mFirstName = firstname;
-            mLastName = lastname;
+            mFirstName = firstName;
+            mLastName = lastName;
             mMajor = major;
             mGender = gender;
             mEmail = email;
@@ -325,21 +386,20 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         protected Boolean doInBackground(Void...params) {
             BlackBoardConnector bbc = null;
             try {
-                final String test = "Test";
-                Log.d(test, "Reached -1.");
+                Log.d("Test", "Reached -1.");
                 bbc = new BlackBoardConnector();
-                Log.d(test, "Reached 0.");
+                Log.d("Test", "Reached 0.");
                 BlackBoardConnector.UserStatus check = bbc.verifyUser(mEmail, mOldPassword);
                 if (!check.equals(BlackBoardConnector.UserStatus.VERIFIED)) {
                     return false; //old password was not correct
                 }
-                Log.d(test, "Reached 1.");
-                final boolean retVal = bbc.setUserData(mFirstName, mLastName, mMajor, mGender, mEmail);
-                Log.d(test, "Reached 2.");
+                Log.d("Test", "Reached 1.");
+                boolean retVal = bbc.setUserData(mFirstName, mLastName, mMajor, mGender, mEmail);
+                Log.d("Test", "Reached 2.");
                 boolean retVal2 = true;
                 if (!mOldPassword.equals(mPassword) && !mPassword.equals("")) {
                     retVal2 = bbc.changePass(mEmail, mPassword, mOldPassword);
-                    Log.d(test, "Reached 3.");
+                    Log.d("Test", "Reached 3.");
                 }
                 bbc.disconnect();
                 manager.getCurrentMember().setMajor(mMajor);
@@ -347,15 +407,19 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 manager.getCurrentMember().setLastname(mLastName);
                 manager.getCurrentMember().setGender(mGender);
                 return retVal && retVal2;
-            }  catch (SQLException sql) {
-                Log.d("Connection Error", "Check internet for MySQL access." + sql.getMessage() + sql.getSQLState());
+            }  catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
                 internetAccessExists = false;
                 cancel(true);
-            } catch (Exception e) {
-                    Log.d("Other Error", "Check message." + e.getMessage());
-                    cancel(true);
             } finally {
                 bbc.disconnect();
+                /*
+                try {
+                    bbc.disconnect();
+                } catch (NullPointerException exception) {
+                    Log.d("Null Pointer Exception", "Thrown null pointer exception");
+                }
+                */
             }
             return false;
         }

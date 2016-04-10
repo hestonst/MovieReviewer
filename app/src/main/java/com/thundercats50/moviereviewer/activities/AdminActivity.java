@@ -9,6 +9,9 @@ import com.thundercats50.moviereviewer.listview.UserFragment;
 
 public class AdminActivity extends AppCompatActivity {
 
+    /**
+     * user fragment for user list
+     */
     private UserFragment userFrag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

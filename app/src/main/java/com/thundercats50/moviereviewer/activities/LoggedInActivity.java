@@ -29,22 +29,22 @@ public class LoggedInActivity extends AppCompatActivity {
      * Fill up the form
      */
     private void refillForms() {
-        final EditText firstname = (EditText) findViewById(R.id.profileFirstName);
-        final EditText lastname = (EditText) findViewById(R.id.profileLastName);
+        final EditText firstName = (EditText) findViewById(R.id.profileFirstName);
+        final EditText lastName = (EditText) findViewById(R.id.profileLastName);
         final EditText email = (EditText) findViewById(R.id.profileEmail);
         final EditText gender = (EditText) findViewById(R.id.profileGender);
         final EditText major = (EditText) findViewById(R.id.profileMajor);
 
         final UserManager manager = (UserManager) getApplicationContext();
         final User user = manager.getCurrentMember();
-        firstname.setText(user.getFirstname());
-        lastname.setText(user.getLastname());
+        firstName.setText(user.getFirstname());
+        lastName.setText(user.getLastname());
         email.setText(user.getEmail());
         gender.setText(user.getGender());
         major.setText(user.getMajor());
 
-        firstname.setKeyListener(null);
-        lastname.setKeyListener(null);
+        firstName.setKeyListener(null);
+        lastName.setKeyListener(null);
         email.setKeyListener(null);
         gender.setKeyListener(null);
         major.setKeyListener(null);

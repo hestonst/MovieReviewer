@@ -23,11 +23,29 @@ import java.util.InputMismatchException;
 
 public class ReviewActivity extends AppCompatActivity {
 
+    /**
+     * current movie
+     */
     private final SingleMovie movie = MovieManager.movie;
+    /**
+     * review text box
+     */
     private EditText mReviewView;
+    /**
+     * rating text box
+     */
     private EditText mRatingView;
+    /**
+     * view review
+     */
     private View mReviewFormView;
+    /**
+     * progress view
+     */
     private View mProgressView;
+    /**
+     * user manager
+     */
     private UserManager manager;
 
     @Override
@@ -86,33 +104,20 @@ public class ReviewActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * method to add rating to movie
-     * @param view review page
-     */
-    public void addRating(View view) {
-        showProgress(true);
-        final AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
-        try {
-            final boolean successfulFinish = ratingTask.execute().get();
-            Log.d("Returned:", Boolean.toString(successfulFinish));
-            if (successfulFinish) {
-                finish();
-            } else {
-                showProgress(false);
-                mRatingView.setError(getString(R.string.rating_range));
-                mRatingView.requestFocus();
-            }
-        } catch (Exception e) {
-            Log.d("Write to DB", "Concurrent exception in ReviewAct");
-        }
-    }
-
 
     public class AddReviewTask extends AsyncTask<Void, Void, Boolean> {
 
+        /**
+         * user manager
+         */
         private final UserManager manager;
+        /**
+         * review text box
+         */
         private final EditText review;
+        /**
+         * rating text box
+         */
         private final EditText rating;
 
         /**
@@ -139,7 +144,6 @@ public class ReviewActivity extends AppCompatActivity {
         public Boolean addRating() {
             RepositoryConnector rpc;
             boolean retVal = false;
-            Exception error;
             try {
 //                if (rating.getText().toString().equals("")) {
 //                    throw new InputMismatchException("Ratings are required.");
@@ -156,15 +160,13 @@ public class ReviewActivity extends AppCompatActivity {
                         + Boolean.toString(retVal));
                 rpc.disconnect();
                 return retVal;
-            } catch (InputMismatchException imee) {
-                error = imee;
-            } catch (ClassNotFoundException cnfe) {
-                error = cnfe;
+            } catch (InputMismatchException exception) {
+                Log.d("Input Mismatch Error", "Error thrown");
+            } catch (ClassNotFoundException exception) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
-            } catch (SQLException sqle) {
-                error = sqle;
-                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                for (Throwable e : sqle) {
+            } catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
+                for (Throwable e : sqlException) {
                     e.printStackTrace(System.err);
                     Log.d("Connection Error", "SQLState: " +
                             ((SQLException) e).getSQLState());
@@ -174,7 +176,7 @@ public class ReviewActivity extends AppCompatActivity {
 
                     Log.d("Connection Error", "Message: " + e.getMessage());
 
-                    Throwable t = sqle.getCause();
+                    Throwable t = sqlException.getCause();
                     while (t != null) {
                         Log.d("Connection Error", "Cause: " + t);
                         t = t.getCause();
@@ -192,14 +194,33 @@ public class ReviewActivity extends AppCompatActivity {
 
     public class UserReviewTask extends AsyncTask<Void, Void, Boolean> {
 
+        /**
+         * review
+         */
         private final String mReview;
+        /**
+         * rating of movie
+         */
         private final int mRating;
+        /**
+         * id of movie
+         */
         private final long mId;
+        /**
+         * user manager
+         */
         private final UserManager manager = (UserManager) getApplicationContext();
-        private boolean internetAccessExists = true;
+        /**
+         * movie
+         */
         private SingleMovie movie;
-
+        /**
+         * review text box
+         */
         private final EditText mReviewView;
+        /**
+         * rating text box
+         */
         private final EditText mRatingView;
 
         /**
@@ -229,14 +250,14 @@ public class ReviewActivity extends AppCompatActivity {
                 movie = rpc.getRating(email, movieID);
                 //Log.d("Contains Tag", Boolean.toString(movie.hasRatingByUser(email)));
                 rpc.disconnect();
-            } catch (InputMismatchException imee) {
+            } catch (InputMismatchException exception) {
                 return false;
-            } catch (ClassNotFoundException cnfe) {
+            } catch (ClassNotFoundException exception) {
                 Log.d("Dependency Error", "Check if MySQL library is present.");
                 return false;
-            } catch (SQLException sqle) {
-                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                for (Throwable e : sqle) {
+            } catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
+                for (Throwable e : sqlException) {
                     e.printStackTrace(System.err);
                     Log.d("Connection Error", "SQLState: " +
                             ((SQLException) e).getSQLState());
@@ -246,7 +267,7 @@ public class ReviewActivity extends AppCompatActivity {
 
                     Log.d("Connection Error", "Message: " + e.getMessage());
 
-                    Throwable t = sqle.getCause();
+                    Throwable t = sqlException.getCause();
                     while (t != null) {
                         Log.d("Connection Error", "Cause: " + t);
                         t = t.getCause();

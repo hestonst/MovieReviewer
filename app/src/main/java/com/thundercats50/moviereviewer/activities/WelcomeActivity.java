@@ -35,8 +35,17 @@ public class WelcomeActivity extends AppCompatActivity {
      * and a change of the status and navigation bar.
      */
     private static final int UI_ANIMATION_DELAY = 300;
+    /**
+     * UI reference
+     */
     private final Handler mHideHandler = new Handler();
+    /**
+     * UI reference
+     */
     private View mContentView;
+    /**
+     * UI reference
+     */
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -54,7 +63,13 @@ public class WelcomeActivity extends AppCompatActivity {
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
+    /**
+     * UI reference
+     */
     private View mControlsView;
+    /**
+     * UI reference
+     */
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
@@ -66,7 +81,13 @@ public class WelcomeActivity extends AppCompatActivity {
             mControlsView.setVisibility(View.VISIBLE);
         }
     };
+    /**
+     * boolean visible
+     */
     private boolean mVisible;
+    /**
+     * hide runnable
+     */
     private final Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
@@ -188,9 +209,4 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     public void register(View view) {startActivity(new Intent(this, RegisterActivity.class));}
 
-    /**
-     * Handles rate button presses. Starts the LoginActivity activity.
-     * @param view not currently used, but required
-     */
-    public void rate(View view) {startActivity(new Intent(this, ReviewActivity.class));}
 }

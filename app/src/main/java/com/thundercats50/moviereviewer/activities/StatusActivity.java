@@ -16,11 +16,21 @@ import com.thundercats50.moviereviewer.database.BlackBoardConnector;
 import com.thundercats50.moviereviewer.models.UserManager;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
+import java.util.concurrent.ExecutionException;
 
 public class StatusActivity extends AppCompatActivity {
 
+    /** UI reference
+     *
+     */
     private View mReviewFormView;
+    /** UI reference
+     *
+     */
     private View mProgressView;
+    /** UI reference
+     *
+     */
     private UserManager manager;
 
     @Override
@@ -112,12 +122,17 @@ public class StatusActivity extends AppCompatActivity {
             } else {
                 showProgress(false);
             }
-        } catch (Exception e) {
-            Log.d("Write to DB", "Concurrent exception in ReviewAct");
+        } catch (ExecutionException except) {
+            Log.d("Task Error", "Cannot create logged in view.");
+        } catch (InterruptedException except) {
+            Log.d("Task Error", "Cannot create logged in view.");
         }
     }
 
     public class BanUserTask extends AsyncTask<Void, Void, Boolean> {
+        /**
+         * user manager
+         */
         private final UserManager manager;
 
         /**
@@ -150,11 +165,11 @@ public class StatusActivity extends AppCompatActivity {
                         + Boolean.toString(retVal));
                 bbc.disconnect();
                 return retVal;
-            } catch (InputMismatchException imee) {
-                Log.d("Input Mismatch Error", "check message:" + imee.getMessage());
-            } catch (SQLException sqle) {
-                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                for (Throwable e : sqle) {
+            } catch (InputMismatchException exception) {
+                Log.d("Input Mismatch Error", "check message:" + exception.getMessage());
+            } catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
+                for (Throwable e : sqlException) {
                     e.printStackTrace(System.err);
                     Log.d("Connection Error", "SQLState: " +
                             ((SQLException) e).getSQLState());
@@ -164,7 +179,7 @@ public class StatusActivity extends AppCompatActivity {
 
                     Log.d("Connection Error", "Message: " + e.getMessage());
 
-                    Throwable t = sqle.getCause();
+                    Throwable t = sqlException.getCause();
                     while (t != null) {
                         Log.d("Connection Error", "Cause: " + t);
                         t = t.getCause();
@@ -193,12 +208,17 @@ public class StatusActivity extends AppCompatActivity {
             } else {
                 showProgress(false);
             }
-        } catch (Exception e) {
-            Log.d("Write to DB", "Concurrent exception in ReviewAct");
+        } catch (ExecutionException except) {
+            Log.d("Task Error", "Cannot create logged in view.");
+        } catch (InterruptedException except) {
+            Log.d("Task Error", "Cannot create logged in view.");
         }
     }
 
     public class UnlockUserTask extends AsyncTask<Void, Void, Boolean> {
+        /**
+         * user manager
+         */
         private final UserManager manager;
 
         /**
@@ -231,11 +251,11 @@ public class StatusActivity extends AppCompatActivity {
                         + Boolean.toString(retVal));
                 bbc.disconnect();
                 return retVal;
-            } catch (InputMismatchException imee) {
-                Log.d("Input Mismatch Error", "check message:" + imee.getMessage());
-            } catch (SQLException sqle) {
-                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                for (Throwable e : sqle) {
+            } catch (InputMismatchException exception) {
+                Log.d("Input Mismatch Error", "check message:" + exception.getMessage());
+            } catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
+                for (Throwable e : sqlException) {
                     e.printStackTrace(System.err);
                     Log.d("Connection Error", "SQLState: " +
                             ((SQLException) e).getSQLState());
@@ -245,7 +265,7 @@ public class StatusActivity extends AppCompatActivity {
 
                     Log.d("Connection Error", "Message: " + e.getMessage());
 
-                    Throwable t = sqle.getCause();
+                    Throwable t = sqlException.getCause();
                     while (t != null) {
                         Log.d("Connection Error", "Cause: " + t);
                         t = t.getCause();
@@ -272,14 +292,18 @@ public class StatusActivity extends AppCompatActivity {
             } else {
                 showProgress(false);
             }
-        } catch (Exception e) {
-            Log.d("Write to DB", "Concurrent exception in ReviewAct");
+        } catch (ExecutionException except) {
+            Log.d("Task Error", "Cannot create logged in view.");
+        } catch (InterruptedException except) {
+            Log.d("Task Error", "Cannot create logged in view.");
         }
     }
 
     public class UnbanUserTask extends AsyncTask<Void, Void, Boolean> {
+        /**
+         * user manager
+         */
         private final UserManager manager;
-        private Exception error;
 
         /**
          * unban user task
@@ -291,7 +315,6 @@ public class StatusActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            error = null;
             return unbanUser();
         }
 
@@ -312,12 +335,11 @@ public class StatusActivity extends AppCompatActivity {
                         + Boolean.toString(retVal));
                 bbc.disconnect();
                 return retVal;
-            } catch (InputMismatchException imee) {
-                error = imee;
-            } catch (SQLException sqle) {
-                error = sqle;
-                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                for (Throwable e : sqle) {
+            } catch (InputMismatchException exception) {
+                Log.d("Input Mismatch Error", "error thrown");
+            } catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
+                for (Throwable e : sqlException) {
                     e.printStackTrace(System.err);
                     Log.d("Connection Error", "SQLState: " +
                             ((SQLException) e).getSQLState());
@@ -327,7 +349,7 @@ public class StatusActivity extends AppCompatActivity {
 
                     Log.d("Connection Error", "Message: " + e.getMessage());
 
-                    Throwable t = sqle.getCause();
+                    Throwable t = sqlException.getCause();
                     while (t != null) {
                         Log.d("Connection Error", "Cause: " + t);
                         t = t.getCause();

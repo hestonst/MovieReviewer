@@ -12,11 +12,22 @@ import com.thundercats50.moviereviewer.listview.MovieFragment;
 import com.thundercats50.moviereviewer.R;
 
 public class SearchActivity extends AppCompatActivity {
-    // holds the query the user enters
+    /**
+     * search query
+     */
     private String searchQuery;
+    /**
+     * movie fragment
+     */
     private MovieFragment movieFragment;
-    private static final String newDVDSubkey = "lists/dvds/new_releases.json";
-    private static final String newReleasesSubkey = "lists/movies/in_theaters.json";
+    /**
+     * new DVD RT key
+     */
+    private static final String newDVDSubKey = "lists/dvds/new_releases.json";
+    /**
+     *  new releases RT key
+     */
+    private static final String newReleasesSubKey = "lists/movies/in_theaters.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +41,6 @@ public class SearchActivity extends AppCompatActivity {
         movieFragment = (MovieFragment) getSupportFragmentManager().findFragmentById(R.id.fragment2);
 
         // Get the intent, verify the action and get the query
-        // TODO Have the query show up dynamically in the searchDialogue rather than widget
         final Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
@@ -44,7 +54,7 @@ public class SearchActivity extends AppCompatActivity {
      * @param view search view
      */
     public void searchNewReleases(View view) {
-        movieFragment.updateList(1, newReleasesSubkey);
+        movieFragment.updateList(1, newReleasesSubKey);
     }
 
     /**
@@ -52,7 +62,7 @@ public class SearchActivity extends AppCompatActivity {
      * @param view search view
      */
     public void searchNewDVD(View view) {
-        movieFragment.updateList(1, newDVDSubkey);
+        movieFragment.updateList(1, newDVDSubKey);
     }
 
     /**

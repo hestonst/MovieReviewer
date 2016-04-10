@@ -15,8 +15,17 @@ import com.thundercats50.moviereviewer.models.User;
 
 public class RecommendationActivity extends AppCompatActivity {
 
+    /**
+     * movie fragment
+     */
     private MovieFragment movieFragment;
+    /**
+     * genre
+     */
     private String genre;
+    /**
+     * major
+     */
     private String major;
 
     @Override
@@ -24,9 +33,7 @@ public class RecommendationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommendation);
         final Spinner dropdown = (Spinner)findViewById(R.id.genre);
-        final String[] items = new String[]{"Action & Adventure", "Animation", "Art House & International", "Classics",
-                "Comedy", "Drama", "Horror", "Kids & Family", "Mystery & Suspense", "Romance", "Science Fiction & Fantasy",
-                "Documentary", "Musical & Performing Arts", "Special Interest", "Sports & Fitness", "Television", "Western"};
+        final String[] items = new String[]{"Action & Adventure", "Animation", "Art House & International", "Classics", "Comedy", "Drama", "Horror", "Kids & Family", "Mystery & Suspense", "Romance", "Science Fiction & Fantasy", "Documentary", "Musical & Performing Arts", "Special Interest", "Sports & Fitness", "Television", "Western"};
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(adapter);
         this.genre = dropdown.getSelectedItem().toString();
@@ -43,9 +50,11 @@ public class RecommendationActivity extends AppCompatActivity {
      * search movies by genre
      * @param view recommendation view
      */
+    /*
     public void searchByGenre(View view) {
         movieFragment.searchByGenre(genre);
     }
+    */
 
     /**
      * search movies by major

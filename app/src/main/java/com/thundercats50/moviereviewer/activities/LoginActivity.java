@@ -40,10 +40,12 @@ import com.thundercats50.moviereviewer.database.BlackBoardConnector.UserStatus;
 
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * A login screen that offers login via email/password.
@@ -55,10 +57,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private UserLoginTask mAuthTask = null;
 
-    // UI references.
+    /**
+     * UI references
+     */
     private AutoCompleteTextView mEmailView;
+    /**
+     * UI references
+     */
     private EditText mPasswordView;
+    /**
+     * UI references
+     */
     private View mProgressView;
+    /**
+     * UI references
+     */
     private View mLoginFormView;
 
     @Override
@@ -80,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,8 +120,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        final String email = mEmailView.getText().toString();
-        final String password = mPasswordView.getText().toString();
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -153,24 +166,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute();
             try {
-                final UserStatus s = mAuthTask.get();
+                UserStatus s = mAuthTask.get();
                 if (!s.equals(UserStatus.VERIFIED)) {
                     if (s.equals(UserStatus.INTERRUPTED_BY_INTERNET)) {
                         mEmailView.setError(getString(R.string.no_internet));
+                        //focusView = mEmailView;
                     } else if (s.equals(UserStatus.BANNED)) {
                         mEmailView.setError(getString(R.string.account_banned));
+                        //focusView = mEmailView;
                     } else if (s.equals(UserStatus.BAD_USER)) {
                         mEmailView.setError(getString(R.string.no_user));
+                        //focusView = mEmailView;
                     } else if (s.equals(UserStatus.LOCKED)) {
                         mEmailView.setError(getString(R.string.account_locked));
+                        //focusView = mEmailView;
                     } else {
                         mEmailView.setError(getString(R.string.no_internet));
+                        //focusView = mEmailView;
                     }
                     cancel = true;
                 }
-            } catch (Exception e) {
+            } catch (ExecutionException except) {
+                Log.d("Task Error", "Cannot create logged in view.");
+            } catch (InterruptedException except) {
                 Log.d("Task Error", "Cannot create logged in view.");
             }
+
 
             if (!cancel) {
 
@@ -183,47 +204,50 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     /**
-     * cancel to return to previous page
-     * @param view login screen
+     * return to welcome screen
+     * @param view view of login screen
      */
     public void cancel(View view) {
         startActivity(new Intent(this, WelcomeActivity.class));
     }
 
     /**
-     * check if email is in correct format
-     * @param email email entered by user
-     * @return boolean if its true
+     * checks if email is in valid format
+     * @param email user entered email
+     * @return boolean
      */
     private boolean isEmailValid(String email) {
-        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-                && email.length() >= 6);
+        Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
+        Matcher match = pattern.matcher(email);
+        return match.matches();
+        //return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+        //        && email.length() >= 6);
     }
 
     /**
-     * check if password is in correct format
-     * @param password password entered by user
-     * @return boolean if its true
+     * checks is password is valid
+     * @param password user entered password
+     * @return boolean
      */
     private boolean isPasswordValid(String password) {
         return (password.matches("[a-zA-Z0-9]+") && password.length() >= 6);
     }
 
     /**
-     * check if network connection available
+     * checks if network connection exists
      * @return boolean
      */
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
-        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
-            if ((ni.getTypeName().equalsIgnoreCase("WIFI")) && (ni.isConnected())) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI") && ni.isConnected()) {
                 haveConnectedWifi = true;
             }
-            if ((ni.getTypeName().equalsIgnoreCase("MOBILE")) && (ni.isConnected())) {
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE") && ni.isConnected()) {
                 haveConnectedMobile = true;
             }
         }
@@ -232,7 +256,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     /**
      * Shows the progress UI and hides the login form.
-     * @param show android boolean
+     * @param show boolean
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -240,7 +264,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
@@ -252,8 +276,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            mProgressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -276,8 +299,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
+                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
@@ -286,7 +308,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        final List<String> emails = new ArrayList<>();
+        List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(ProfileQuery.ADDRESS));
@@ -302,12 +324,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     /**
-     * method to get emails
+     * android methods for email auto complete
      * @param emailAddressCollection list of emails
      */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        final ArrayAdapter<String> adapter =
+        ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
@@ -315,13 +337,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
-    private class ProfileQuery {
-        private String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        private int ADDRESS = 0;
+    private interface ProfileQuery {
+        /**
+         * projection array
+         */
+        String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS, ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
+        /**
+         * address int
+         */
+        int ADDRESS = 0;
     }
 
     /**
@@ -330,16 +354,37 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, UserStatus> {
 
+        /**
+         * email id
+         */
         private final String mEmail;
+        /**
+         * password
+         */
         private final String mPassword;
+        /**
+         * gender
+         */
         private String mGender;
+        /**
+         * first name
+         */
         private String mFirstName;
+        /**
+         * last name
+         */
         private String mLastName;
+        /**
+         * major
+         */
         private String mMajor;
+        /**
+         * user manager
+         */
         private final UserManager manager = (UserManager) getApplicationContext();
 
         /**
-         * method to login
+         * user login task
          * @param email email of user
          * @param password password of user
          */
@@ -350,8 +395,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected UserStatus doInBackground(Void...params) {
+            BlackBoardConnector bbc = null;
             UserStatus retVal = UserStatus.INTERRUPTED_BY_INTERNET;
-            BlackBoardConnector bbc;
             try {
                 bbc = new BlackBoardConnector();
                 retVal = bbc.verifyUser(mEmail, mPassword);
@@ -362,27 +407,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return retVal;
                 }
                 bbc.resetLoginAttempts(mEmail);
-                final ResultSet userInfo = bbc.getUserData(mEmail);
-                userInfo.next(); //must call next to move to first entry
-                mFirstName = userInfo.getString(1);
-                mLastName = userInfo.getString(2);
-                mMajor = userInfo.getString(3);
-                mGender = userInfo.getString(4);
-                manager.setCurrentMember(new User(mEmail, mFirstName, mLastName,
+                ResultSet userInfo = bbc.getUserData(mEmail);
+                try {
+                    userInfo.next(); //must call next to move to first entry
+                    mFirstName = userInfo.getString(1);
+                    mLastName = userInfo.getString(2);
+                    mMajor = userInfo.getString(3);
+                    mGender = userInfo.getString(4);
+                    manager.setCurrentMember(new User(mEmail, mFirstName, mLastName,
                             mMajor, mGender));
-            } catch (SQLException sql) {
-                Log.d("Connection Error", "Check internet for MySQL access." + sql.getMessage() + sql.getSQLState());
+                } finally {
+                    userInfo.close();
+                }
+            } catch (SQLException sqlError) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlError.getMessage() + sqlError.getSQLState());
                 cancel(true);
                 return UserStatus.INTERRUPTED_BY_INTERNET;
-            } catch (Exception e) {
-                Log.d("Other Error", "Check message." + e.getMessage());
-                cancel(true);
-                return UserStatus.INTERRUPTED_BY_INTERNET;
-            } // finally {
-            //    return retVal;
-            //}
-            bbc.disconnect();
-            return retVal;
+            } finally {
+                bbc.disconnect();
+                return retVal;
+            }
         }
 
         @Override
@@ -398,4 +442,3 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
-

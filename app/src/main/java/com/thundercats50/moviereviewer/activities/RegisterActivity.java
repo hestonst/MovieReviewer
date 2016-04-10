@@ -42,6 +42,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.InputMismatchException;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -60,20 +63,31 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
      */
     private UserRegisterTask mAuthTask = null;
 
-    // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
     /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     * UI reference
      */
+    private AutoCompleteTextView mEmailView;
+    /**
+     * UI reference
+     */
+    private EditText mPasswordView;
+    /**
+     * UI reference
+     */
+    private View mProgressView;
+    /**
+     * UI reference
+     */
+    private View mLoginFormView;
 
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /**
+         * ATTENTION: This was auto-generated to implement the App Indexing API.
+         * See https://g.co/AppIndexing/AndroidStudio for more information.
+         */
+        GoogleApiClient client;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         // Set up the login form.
@@ -92,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             }
         });
 
-        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     /**
      * Part of autocomplete implementation
-     * @return boolean for permission
+     * @return boolean
      */
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -153,8 +167,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if ((requestCode == REQUEST_READ_CONTACTS) && (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                populateAutoComplete();
+        if (requestCode == REQUEST_READ_CONTACTS && (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            populateAutoComplete();
         }
     }
 
@@ -174,8 +188,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        final String email = mEmailView.getText().toString();
-        final String password = mPasswordView.getText().toString();
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -211,7 +225,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 if (!mAuthTask.get()) {
                     cancel = true;
                 }
-                final Exception error = mAuthTask.getError();
+                Exception error = mAuthTask.getError();
                 if (error != null) {
                     if (error.getMessage().contains("already registered")) {
                         mEmailView.setError(getString(R.string.user_already_exists));
@@ -228,25 +242,30 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                     finish();
 
                 }
-            } catch (Exception e) {
-                Log.d("RegisterActivity", "Thread Error");
+            } catch (ExecutionException except) {
+                Log.d("Task Error", "Cannot create logged in view.");
+            } catch (InterruptedException except) {
+                Log.d("Task Error", "Cannot create logged in view.");
             }
         }
     }
 
     /**
      * Uses RegEx to verify emails
-     * @param email entered email by user
+     * @param email email entered
      * @return ifValid
      */
     private boolean isEmailValid(String email) {
-        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-                && email.length() >= 6);
+        //return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+        //        && email.length() >= 6);
+        Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
+        Matcher match = pattern.matcher(email);
+        return match.matches();
     }
 
     /**
      * Uses RegEx to verify pass; must be more than 6 chars and alphanumeric
-     * @param password entered password by user
+     * @param password password entered
      * @return ifValid
      */
     private boolean isPasswordValid(String password) {
@@ -263,7 +282,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
@@ -298,9 +317,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                         ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
                 // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
+                ContactsContract.Contacts.Data.MIMETYPE + " = ?", new String[]{ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
@@ -309,7 +326,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        final List<String> emails = new ArrayList<>();
+        List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(ProfileQuery.ADDRESS));
@@ -326,11 +343,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     /**
      * Generated autocomplete
-     * @param emailAddressCollection list of email addresses
+     * @param emailAddressCollection list of emails
      */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        final ArrayAdapter<String> adapter =
+        ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(RegisterActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
@@ -348,18 +365,20 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     }
 
 
-    private class ProfileQuery {
-        private String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        private int ADDRESS = 0;
+    private interface ProfileQuery {
+        /**
+         * projection
+         */
+        String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS, ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
+        /**
+         * address
+         */
+        int ADDRESS = 0;
     }
 
     /**
      * Return to previous view
-     * @param view view of the app
+     * @param view view of the registration screen
      */
     public void cancel(View view) {
         startActivity(new Intent(this, WelcomeActivity.class));
@@ -372,15 +391,27 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
      */
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
+        /**
+         * UI reference
+         */
         private final String mEmail;
+        /**
+         * UI reference
+         */
         private final String mPassword;
+        /**
+         * user manager
+         */
         private final UserManager manager = (UserManager) getApplicationContext();
+        /**
+         * exception
+         */
         private Exception error;
 
         /**
-         * Registration task
-         * @param email email of user
-         * @param password password of user
+         * user register task
+         * @param email email entered
+         * @param password user password
          */
         UserRegisterTask(String email, String password) {
             mEmail = email;
@@ -391,35 +422,34 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         protected Boolean doInBackground(Void... params) {
 
             try {
-                final BlackBoardConnector bbc = new BlackBoardConnector();
-                final boolean retVal = bbc.setNewUser(mEmail, mPassword);
+                BlackBoardConnector bbc = new BlackBoardConnector();
+                boolean retVal = bbc.setNewUser(mEmail, mPassword);
                 Log.d("DB setNewUser Finished", "doInBackground method returned: "
                         + Boolean.toString(retVal));
                 bbc.disconnect();
                 manager.setCurrentMember(new User(mEmail, mPassword));
                 return retVal;
-            } catch(InputMismatchException imee) {
-                error = imee;
+            } catch(InputMismatchException inputMismatchException) {
+                error = inputMismatchException;
                 return false;
-            } catch (SQLException sqle) {
-                final String error = "Connection Error";
-                Log.d(error, "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-                for (Throwable e : sqle) {
-                            e.printStackTrace(System.err);
-                    Log.d(error, "SQLState: " +
-                                    ((SQLException) e).getSQLState());
+            } catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
+                for (Throwable e : sqlException) {
+                    e.printStackTrace(System.err);
+                    Log.d("Connection Error", "SQLState: " +
+                            ((SQLException) e).getSQLState());
 
-                    Log.d(error, "Error Code: " +
-                                    ((SQLException) e).getErrorCode());
+                    Log.d("Connection Error", "Error Code: " +
+                            ((SQLException) e).getErrorCode());
 
-                    Log.d(error, "Message: " + e.getMessage());
+                    Log.d("Connection Error", "Message: " + e.getMessage());
 
-                            Throwable t = sqle.getCause();
-                            while(t != null) {
-                                Log.d(error, "Cause: " + t);
-                                t = t.getCause();
-                            }
-                        }
+                    Throwable t = sqlException.getCause();
+                    while(t != null) {
+                        Log.d("Connection Error", "Cause: " + t);
+                        t = t.getCause();
+                    }
+                }
 
                 return false;
             }
@@ -427,7 +457,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         /**
          * get the error
-         * @return exception occured
+         * @return exception occurred
          */
         public Exception getError() {
             return error;
@@ -450,7 +480,4 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         }
     }
 
-
-
 }
-
