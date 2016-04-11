@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.InputMismatchException;
 
 /**
- * Created by scottheston on 28/02/16.
+ * Created by Scott Heston on 28/02/16.
  */
 public class RepositoryConnector extends DBConnector {
 
@@ -38,10 +38,10 @@ public class RepositoryConnector extends DBConnector {
                     "TextReview, PhotoURL FROM sql5107476.RatingInfo WHERE Email="
                     + "'" + email +"' ORDER BY NumericalRating";
             resultSet = statement.executeQuery(request);
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+        } catch (SQLException SQL_Exception) {
+            Log.e("Database SQLException", SQL_Exception.getMessage());
+            Log.e("Database SQLState", SQL_Exception.getSQLState());
+            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
         }
         return resultSet;
     }
@@ -94,10 +94,10 @@ public class RepositoryConnector extends DBConnector {
                 }
             }
 
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+        } catch (SQLException SQL_Exception) {
+            Log.e("Database SQLException", SQL_Exception.getMessage());
+            Log.e("Database SQLState", SQL_Exception.getSQLState());
+            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
         }
         return retVal;
     }
@@ -135,10 +135,10 @@ public class RepositoryConnector extends DBConnector {
                 currentMovie.addUserRating(current.getString("Email"), currentRating);
                 retVal.add(currentMovie);
             }
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+        } catch (SQLException SQL_Exception) {
+            Log.e("Database SQLException", SQL_Exception.getMessage());
+            Log.e("Database SQLState", SQL_Exception.getSQLState());
+            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
         }
         return retVal;
     }
@@ -175,10 +175,10 @@ public class RepositoryConnector extends DBConnector {
                 currentRating.setTextReview(current.getString("TextReview"));
                 currentMovie.addUserRating(current.getString("Email"), currentRating);
             }
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
+        } catch (SQLException SQL_Exception) {
+            Log.e("Database SQLException", SQL_Exception.getMessage());
+            Log.e("Database SQLState", SQL_Exception.getSQLState());
+            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
         }
         return currentMovie;
     }
@@ -219,7 +219,8 @@ public class RepositoryConnector extends DBConnector {
             } else {
                 request = "INSERT INTO sql5107476.RatingInfo (MovieID, MovieName, Synopsis, " +
                         "PhotoURL, Email, NumericalRating, TextReview) VALUES ("
-                        + movieID + ",'" + movieName + "','" + synopsis.replaceAll("'","''")
+                        + movieID + ",'" + movieName.replaceAll("'","''") + "','"
+                        + synopsis.replaceAll("'","''")
                         + "','" + photoURL + "','" + email + "'," + numericalRating + ",'"
                         + textReview.replaceAll("'","''") + "')";
                 Log.d("SQL STRING", request);

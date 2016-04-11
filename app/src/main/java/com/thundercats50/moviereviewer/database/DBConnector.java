@@ -13,11 +13,9 @@ import java.util.InputMismatchException;
 import java.util.InvalidPropertiesFormatException;
 
 /**
- * TODO: Encrypt passwords
+ * TODO: Extra Credit, Encrypt passwords
  * @author Scott Heston
  * @version 2.0.0
- * Documentation:
- * https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
  */
 public abstract class DBConnector  {
 
@@ -48,16 +46,16 @@ public abstract class DBConnector  {
             String user = "sql5107476";
             String pass = "YMVSuA8eWm";
             connection = DriverManager.getConnection(url, user, pass);
-        } catch (ClassNotFoundException drivExc) {
+        } catch (ClassNotFoundException e) {
             Log.e("DBError", "The database driver has failed.");
             Log.d("DBC ClassNtFndException",
                     "Could not access database username/password. Check DB Driver.");
         } catch (IllegalAccessException iae) {
             Log.d("ClassNotFoundException", "Could not access database username/password. "
                     + "Check DB Driver.");
-        } catch (SQLException sqle) {
-            Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
-            for (Throwable e : sqle) {
+        } catch (SQLException SQL_Exception) {
+            Log.d("Connection Error", "Check internet for MySQL access." + SQL_Exception.getMessage() + SQL_Exception.getSQLState());
+            for (Throwable e : SQL_Exception) {
                 e.printStackTrace(System.err);
                 Log.d("Connection Error", "SQLState: " +
                         ((SQLException) e).getSQLState());
@@ -67,13 +65,13 @@ public abstract class DBConnector  {
 
                 Log.d("Connection Error", "Message: " + e.getMessage());
 
-                Throwable t = sqle.getCause();
+                Throwable t = SQL_Exception.getCause();
                 while(t != null) {
                     Log.d("Connection Error", "Cause: " + t);
                     t = t.getCause();
                 }
             }
-            throw sqle;
+            throw SQL_Exception;
         }
         catch (Exception e) {
             throw new SQLException("Unknown connection error: assume no internet.", e);
