@@ -423,12 +423,10 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
             try {
                 BlackBoardConnector bbc = new BlackBoardConnector();
-                boolean retVal = bbc.setNewUser(mEmail, mPassword);
-                Log.d("DB setNewUser Finished", "doInBackground method returned: "
-                        + Boolean.toString(retVal));
+                bbc.setNewUser(mEmail, mPassword);
                 bbc.disconnect();
                 manager.setCurrentMember(new User(mEmail, mPassword));
-                return retVal;
+                return true;
             } catch(InputMismatchException inputMismatchException) {
                 error = inputMismatchException;
                 return false;

@@ -4,36 +4,29 @@ import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.ResultSet;
-
-import java.util.InputMismatchException;
-import java.util.InvalidPropertiesFormatException;
 
 /**
  * TODO: Extra Credit, Encrypt passwords
  * @author Scott Heston
  * @version 2.0.0
  */
-public abstract class DBConnector  {
+abstract class DBConnector  {
 
     Connection connection;
     Statement statement;
 
 
-    public DBConnector() throws SQLException {
+    DBConnector() throws SQLException {
         connect();
     }
 
     /**
      * Creates connection to mySQL database on connection.
-     * @return Connection
-     * @throws ClassNotFoundException if Driver lib dependency not found
      * @throws SQLException if authentication issues with DB
      */
-    public void connect() throws SQLException {
+    void connect() throws SQLException {
         //the implementation should notify the user of these errors if there is no internet access
         //i.e if the database cannot be reached
         try {

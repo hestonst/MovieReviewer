@@ -167,7 +167,6 @@ public class ReviewActivity extends AppCompatActivity {
          */
         public Boolean addRating() {
             RepositoryConnector rpc;
-            boolean retVal = false;
             try {
 //                if (rating.getText().toString().equals("")) {
 //                    throw new InputMismatchException("Ratings are required.");
@@ -178,16 +177,11 @@ public class ReviewActivity extends AppCompatActivity {
                 final EditText review = (EditText) findViewById(R.id.movie_review);
                 final EditText rating = (EditText) findViewById(R.id.movie_rating);
                 Log.d("Int Passed to DB:", rating.getText().toString());
-                retVal = rpc.setRating(email, movie, Integer
+                rpc.setRating(email, movie, Integer
                         .parseInt(rating.getText().toString()), review.getText().toString());
-                Log.d("DB setRating Finished", "doInBackground method returned: "
-                        + Boolean.toString(retVal));
                 rpc.disconnect();
-                return retVal;
             } catch (InputMismatchException exception) {
                 Log.d("Input Mismatch Error", "Error thrown");
-            } catch (ClassNotFoundException exception) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
             } catch (SQLException sqlException) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
                 for (Throwable e : sqlException) {
@@ -206,10 +200,8 @@ public class ReviewActivity extends AppCompatActivity {
                         t = t.getCause();
                     }
                 }
-            }// finally {
-            //    return retVal;
-            //}
-            return retVal;
+            }
+            return true;
         }
 
 
@@ -275,9 +267,6 @@ public class ReviewActivity extends AppCompatActivity {
                 //Log.d("Contains Tag", Boolean.toString(movie.hasRatingByUser(email)));
                 rpc.disconnect();
             } catch (InputMismatchException exception) {
-                return false;
-            } catch (ClassNotFoundException exception) {
-                Log.d("Dependency Error", "Check if MySQL library is present.");
                 return false;
             } catch (SQLException sqlException) {
                 Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());

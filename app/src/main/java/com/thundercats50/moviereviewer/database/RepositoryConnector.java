@@ -11,51 +11,51 @@ import java.util.HashSet;
 import java.util.InputMismatchException;
 
 /**
+ * Class to review information from DB
  * Created by Scott Heston on 28/02/16.
  */
 public class RepositoryConnector extends DBConnector {
 
-    public RepositoryConnector() throws ClassNotFoundException, SQLException {
+    public RepositoryConnector() throws SQLException {
         super();
     }
 
-    /**
-     * method to query DB for ratings matching username
-     * @param email to search for ratings
-     * @return ResultSet (which can be accessed through a for-while loop)
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     */
-    public ResultSet getUserRatings(String email)
-            throws ClassNotFoundException, SQLException {
-        ResultSet resultSet = null;
-        try {
-            if (connection == null) connect();
-            statement = connection.createStatement();
-            //keep making new statements as security method to keep buggy code from accessing
-            // old data
-            String request = "SELECT MovieID,NumericalRating," +
-                    "TextReview, PhotoURL FROM sql5107476.RatingInfo WHERE Email="
-                    + "'" + email +"' ORDER BY NumericalRating";
-            resultSet = statement.executeQuery(request);
-        } catch (SQLException SQL_Exception) {
-            Log.e("Database SQLException", SQL_Exception.getMessage());
-            Log.e("Database SQLState", SQL_Exception.getSQLState());
-            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
-        }
-        return resultSet;
-    }
+// --Commented out by Inspection START (11/04/2016 02:15):
+//    /**
+//     * method to query DB for ratings matching username
+//     * @param email to search for ratings
+//     * @return ResultSet (which can be accessed through a for-while loop)
+//     * @throws SQLException
+//     */
+//    public ResultSet getUserRatings(String email)
+//            throws SQLException {
+//        ResultSet resultSet;
+//        try {
+//            if (connection == null) connect();
+//            statement = connection.createStatement();
+//            //keep making new statements as security method to keep buggy code from accessing
+//            // old data
+//            String request = "SELECT MovieID,NumericalRating," +
+//                    "TextReview, PhotoURL FROM sql5107476.RatingInfo WHERE Email="
+//                    + "'" + email +"' ORDER BY NumericalRating";
+//            resultSet = statement.executeQuery(request);
+//        } catch (SQLException SQL_Exception) {
+//            Log.e("Database SQLException", SQL_Exception.getMessage());
+//            Log.e("Database SQLState", SQL_Exception.getSQLState());
+//            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
+//            throw SQL_Exception;
+//        }
+//        return resultSet;
+//    }
+// --Commented out by Inspection STOP (11/04/2016 02:15)
 
 
     /**
      * method to query DB for ratings matching major
      * @param major to search for ratings
      * @return ResultSet (which can be accessed through a for-while loop)
-     * @throws ClassNotFoundException
-     * @throws SQLException
      */
-    public HashSet<SingleMovie> getAllByMajor(String major)
-            throws ClassNotFoundException, SQLException {
+    public HashSet<SingleMovie> getAllByMajor(String major) {
         HashSet<SingleMovie> retVal = new HashSet<>();
         try {
             if (connection == null) connect();
@@ -64,7 +64,7 @@ public class RepositoryConnector extends DBConnector {
 
             BlackBoardConnector bbc = new BlackBoardConnector();
             ResultSet users = bbc.getUsersWithMajor(major);
-            ResultSet current = null;
+            ResultSet current;
             while (users.next()) {
                 String request = "SELECT MovieID, MovieName, NumericalRating," +
                         "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE Email="
@@ -103,45 +103,47 @@ public class RepositoryConnector extends DBConnector {
     }
 
 
-    /**
-     * method to query DB for rating information matching movie's name
-     * @param movieID to search for ratings
-     * @return ResultSet (which can be accessed through a for-while loop)
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     */
-    public HashSet<SingleMovie> getMovieRatings(long movieID)
-            throws ClassNotFoundException, SQLException {
-        HashSet<SingleMovie> retVal = new HashSet<>();
-        try {
-            if (connection == null) connect();
-            statement = connection.createStatement();
-            //keep making new statements as security method to keep buggy code from accessing
-            // old data
-            String request = "SELECT MovieID, MovieName, NumericalRating,"+
-                    "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE MovieID="
-                    + "" + movieID +"";
-            ResultSet current = statement.executeQuery(request);
-            SingleMovie currentMovie = new SingleMovie();
-            Rating currentRating = new Rating();
-            while (current.next() && !(current.isAfterLast())) {
-                currentMovie.setId((long) current.getDouble("MovieID"));
-                currentMovie.setTitle(current.getString("MovieName"));
-                currentMovie.setThumbnailURL(current.getString("PhotoURL"));
-                currentMovie.setSynopsis(current.getString("Synopsis"));
-                currentRating.setUser(current.getString("Email"));
-                currentRating.setNumericalRating(current.getInt("NumericalRating"));
-                currentRating.setTextReview(current.getString("TextReview"));
-                currentMovie.addUserRating(current.getString("Email"), currentRating);
-                retVal.add(currentMovie);
-            }
-        } catch (SQLException SQL_Exception) {
-            Log.e("Database SQLException", SQL_Exception.getMessage());
-            Log.e("Database SQLState", SQL_Exception.getSQLState());
-            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
-        }
-        return retVal;
-    }
+// --Commented out by Inspection START (11/04/2016 02:15):
+//    /**
+//     * method to query DB for rating information matching movie's name
+//     * @param movieID to search for ratings
+//     * @return ResultSet (which can be accessed through a for-while loop)
+//     * @throws SQLException
+//     */
+//    public HashSet<SingleMovie> getMovieRatings(long movieID)
+//            throws SQLException {
+//        HashSet<SingleMovie> retVal = new HashSet<>();
+//        try {
+//            if (connection == null) connect();
+//            statement = connection.createStatement();
+//            //keep making new statements as security method to keep buggy code from accessing
+//            // old data
+//            String request = "SELECT MovieID, MovieName, NumericalRating,"+
+//                    "TextReview, PhotoURL, Email, Synopsis FROM sql5107476.RatingInfo WHERE MovieID="
+//                    + "" + movieID +"";
+//            ResultSet current = statement.executeQuery(request);
+//            SingleMovie currentMovie = new SingleMovie();
+//            Rating currentRating = new Rating();
+//            while (current.next() && !(current.isAfterLast())) {
+//                currentMovie.setId((long) current.getDouble("MovieID"));
+//                currentMovie.setTitle(current.getString("MovieName"));
+//                currentMovie.setThumbnailURL(current.getString("PhotoURL"));
+//                currentMovie.setSynopsis(current.getString("Synopsis"));
+//                currentRating.setUser(current.getString("Email"));
+//                currentRating.setNumericalRating(current.getInt("NumericalRating"));
+//                currentRating.setTextReview(current.getString("TextReview"));
+//                currentMovie.addUserRating(current.getString("Email"), currentRating);
+//                retVal.add(currentMovie);
+//            }
+//        } catch (SQLException SQL_Exception) {
+//            Log.e("Database SQLException", SQL_Exception.getMessage());
+//            Log.e("Database SQLState", SQL_Exception.getSQLState());
+//            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
+//            throw SQL_Exception;
+//        }
+//        return retVal;
+//    }
+// --Commented out by Inspection STOP (11/04/2016 02:15)
 
 
 
@@ -191,13 +193,11 @@ public class RepositoryConnector extends DBConnector {
     /**
      * Method to add review to database. Screens info to prevent duplicates.
      * @param email email of current user
-     * @return boolean true if successfully created
      * @throws SQLException see error message
      */
-    public boolean setRating(String email, SingleMovie movie, int numericalRating,
+    public void setRating(String email, SingleMovie movie, int numericalRating,
                              String textReview)
             throws SQLException, InputMismatchException {
-        ResultSet resultSet = null;
         String request = "";
         String photoURL = movie.getThumbnailURL();
         String movieName = movie.getTitle();
@@ -232,6 +232,5 @@ public class RepositoryConnector extends DBConnector {
             Log.d("DB Write error", e.getMessage());
             throw e;
         }
-        return true;
     }
 }
