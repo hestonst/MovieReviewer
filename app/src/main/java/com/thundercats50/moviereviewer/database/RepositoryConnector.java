@@ -219,7 +219,7 @@ public class RepositoryConnector extends DBConnector {
             } else {
                 request = "INSERT INTO sql5107476.RatingInfo (MovieID, MovieName, Synopsis, " +
                         "PhotoURL, Email, NumericalRating, TextReview) VALUES ("
-                        + movieID + ",'" + movieName + "','" + synopsis.replaceAll("'","''")
+                        + movieID + ",'" + movieName.replaceAll("'","''") + "','" + synopsis.replaceAll("'","''")
                         + "','" + photoURL + "','" + email + "'," + numericalRating + ",'"
                         + textReview.replaceAll("'","''") + "')";
                 Log.d("SQL STRING", request);

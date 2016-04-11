@@ -71,6 +71,8 @@ public class MovieFragment extends Fragment{
 
     private ProgressDialog progressDialog;
 
+    private boolean endOfResuls = false;
+
     public MovieFragment() {
 
     }
@@ -105,7 +107,7 @@ public class MovieFragment extends Fragment{
                 int lastFirstVisiblePosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
                 ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(lastFirstVisiblePosition);
                 pageCount++;
-                loadMore(nearCompleteCall + jsonEnd + pageCount);
+                if(!endOfResuls) loadMore(nearCompleteCall + jsonEnd + pageCount);
             }
         });
 
@@ -148,6 +150,7 @@ public class MovieFragment extends Fragment{
     public void searchByMajor(String major) {
         GetReviewsTask task = new GetReviewsTask(mRecyclerView, adapter, major);
         task.execute();
+        endOfResuls = true;
     }
 
 
