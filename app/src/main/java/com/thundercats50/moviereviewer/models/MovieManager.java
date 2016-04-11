@@ -2,16 +2,14 @@ package com.thundercats50.moviereviewer.models;
 
 import android.app.Application;
 
-/**
- * Created by Tom on 3/6/2016.
- */
+
 public class MovieManager extends Application{
     public static SingleMovie movie;
     public SingleMovie getCurrentMovie() {
         return movie;
     }
-    public void setCurrentMovie(SingleMovie movie) {
-        this.movie = movie;
+    public void setCurrentMovie(SingleMovie currentMovie) {
+        movie = currentMovie;
     }
 
 }
