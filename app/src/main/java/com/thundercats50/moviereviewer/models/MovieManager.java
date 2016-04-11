@@ -4,11 +4,21 @@ import android.app.Application;
 
 
 public class MovieManager extends Application{
-    public static SingleMovie movie;
-    public SingleMovie getCurrentMovie() {
+    private static SingleMovie movie;
+
+    /**
+     * get the current movie object being modified
+     * @return the current movie object
+     */
+    public static SingleMovie getCurrentMovie() {
         return movie;
     }
-    public void setCurrentMovie(SingleMovie currentMovie) {
+
+    /**
+     * set the current movie object to be modified
+     * @param currentMovie the movie to be modified
+     */
+    public static void setCurrentMovie(SingleMovie currentMovie) {
         movie = currentMovie;
     }
 

@@ -55,7 +55,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserViewHolder>{
                     int click = holder.getAdapterPosition();
                     User user = userList.get(click);
 
-                    UserManager.currentMember = user;
+                    UserManager.setCurrentMember(user);
 
                     Intent intent = new Intent(mContext, StatusActivity.class);
                     mContext.startActivity(intent);

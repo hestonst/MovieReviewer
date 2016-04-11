@@ -25,23 +25,26 @@ public class LoggedInActivity extends AppCompatActivity {
         refillForms();
     }
 
+    /**
+     * Fill up the form
+     */
     private void refillForms() {
-        EditText firstname = (EditText) findViewById(R.id.profileFirstName);
-        EditText lastname = (EditText) findViewById(R.id.profileLastName);
-        EditText email = (EditText) findViewById(R.id.profileEmail);
-        EditText gender = (EditText) findViewById(R.id.profileGender);
-        EditText major = (EditText) findViewById(R.id.profileMajor);
+        final EditText firstName = (EditText) findViewById(R.id.profileFirstName);
+        final EditText lastName = (EditText) findViewById(R.id.profileLastName);
+        final EditText email = (EditText) findViewById(R.id.profileEmail);
+        final EditText gender = (EditText) findViewById(R.id.profileGender);
+        final EditText major = (EditText) findViewById(R.id.profileMajor);
 
-        UserManager manager = (UserManager) getApplicationContext();
-        User user = manager.getCurrentMember();
-        firstname.setText(user.getFirstname());
-        lastname.setText(user.getLastname());
+        final UserManager manager = (UserManager) getApplicationContext();
+        final User user = manager.getCurrentMember();
+        firstName.setText(user.getFirstname());
+        lastName.setText(user.getLastname());
         email.setText(user.getEmail());
         gender.setText(user.getGender());
         major.setText(user.getMajor());
 
-        firstname.setKeyListener(null);
-        lastname.setKeyListener(null);
+        firstName.setKeyListener(null);
+        lastName.setKeyListener(null);
         email.setKeyListener(null);
         gender.setKeyListener(null);
         major.setKeyListener(null);
@@ -57,24 +60,39 @@ public class LoggedInActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         UserManager manager = (UserManager) getApplicationContext();
-        manager.setCurrentMember(new User("",""));
+        manager.setCurrentMember(new User(""));
         //delete the current users info as you move up stack
         //as security measure
     }
 
 
-
+    /**
+     * method to logout
+     * @param view view of the profile page
+     */
     public void logout(View view) {
         startActivity(new Intent(this, WelcomeActivity.class));
     }
 
+    /**
+     * method to edit profile
+     * @param view view of the profile page
+     */
     public void editProfile(View view) {
         startActivity(new Intent(this, ProfileActivity.class));
     }
 
+    /**
+     * method to search for movies
+     * @param view view of the profile page
+     */
     public void goToSearch(View view) {
         startActivity(new Intent(this, SearchActivity.class));
     }
 
+    /**
+     * method to get recommendations
+     * @param view view of the profile page
+     */
     public void getRecommendation(View view) { startActivity(new Intent(this, RecommendationActivity.class)); }
 }

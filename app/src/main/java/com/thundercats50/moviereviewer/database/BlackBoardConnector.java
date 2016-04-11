@@ -3,7 +3,6 @@ package com.thundercats50.moviereviewer.database;
 import android.util.Log;
 
 import com.thundercats50.moviereviewer.models.User;
-import com.thundercats50.moviereviewer.models.ValidMajors;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +11,8 @@ import java.util.HashSet;
 import java.util.InputMismatchException;
 
 /**
- * Created by scottheston on 28/02/16.
+ * Class to read user information from DB
+ * Created by Scott Heston on 28/02/16.
  */
 public class BlackBoardConnector extends DBConnector {
 
@@ -22,14 +22,12 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * Method to add user to database. Screens info to prevent duplicates.
-     * @param Email
-     * @param password
-     * @return boolean true if succesfully created
+     * @param Email to check
+     * @param password to check
      * @throws SQLException
      */
-    public boolean setNewUser(String Email, String password) throws SQLException,
+    public void setNewUser(String Email, String password) throws SQLException,
             InputMismatchException {
-        ResultSet resultSet = null;
         try {
             if (!isEmailValid(Email)) {
                 throw new InputMismatchException("Incorrectly formatted email.");
@@ -39,7 +37,7 @@ public class BlackBoardConnector extends DBConnector {
                 throw new InputMismatchException("User email is already registered.");
                 //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
             }
-            if (!isPasswordValid(password)) {
+            if (isPasswordValid(password)) {
                 throw new InputMismatchException("Password must be alphanumeric and longer than six"
                         + "characters.");
                 //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
@@ -48,18 +46,12 @@ public class BlackBoardConnector extends DBConnector {
             String request = "INSERT INTO sql5107476.UserInfo (Email, Password) VALUES ('"
                     + Email + "','" + password + "')";
 
-            int didSucceed = statement.executeUpdate(request);
+            statement.executeUpdate(request);
 
-        }
-        catch (ClassNotFoundException cnfe) {
-            Log.d("DB Driver Error", cnfe.getMessage());
-            return false;
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());
             throw e;
         }
-        return true;
     }
 
     /**
@@ -67,18 +59,19 @@ public class BlackBoardConnector extends DBConnector {
      * @param email to check
      * @return ifValid
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    //to be valid it must return true/false as such
     private boolean isEmailValid(String email) {
-        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-                && email.length() >= 6);
+        return (email.contains("@") && email.length() >= 6);
     }
 
     /**
-     * Uses RegEx to verify pass; must be more than 6 chars and alphnumeric
-     * @param password
-     * @return ifValid
+     * Uses RegEx to verify pass; must be more than 6 chars and alphanumeric
+     * @param password to check
+     * @return ifValid boolean
      */
     private boolean isPasswordValid(String password) {
-        return (password.matches("[a-zA-Z0-9]{6,30}") && password.length() > 6);
+        return (password.matches("[a-zA-Z0-9]{6,30}"));
     }
 
 
@@ -88,9 +81,8 @@ public class BlackBoardConnector extends DBConnector {
      */
     public boolean changePass(String user, String pass, String oldPass)
             throws NullPointerException {
-        ResultSet resultSet = null;
         try {
-            if (!isEmailValid(user) || !isPasswordValid(pass) || !isPasswordValid(oldPass)) {
+            if (!isEmailValid(user) || isPasswordValid(pass) || isPasswordValid(oldPass)) {
                 throw new InputMismatchException("The given user or pass is formatted incorrectly.");
             }
             if (!verifyUser(user, pass).equals(UserStatus.VERIFIED)) {
@@ -102,7 +94,7 @@ public class BlackBoardConnector extends DBConnector {
                     + pass + "' WHERE Email = '" + user + "'";
             PreparedStatement aStatement = connection.prepareStatement(request);
             aStatement.executeUpdate();
-            int didSucceed = statement.executeUpdate(request);
+            statement.executeUpdate(request);
 
             return true;
         } catch (Exception e) {
@@ -119,13 +111,10 @@ public class BlackBoardConnector extends DBConnector {
      * @return isValid
      * @throws SQLException
      */
-    public boolean checkIfUser(String user)
-            throws ClassNotFoundException, SQLException {
+    private boolean checkIfUser(String user)
+            throws  SQLException {
         ResultSet resultSet = getUserPass(user);
-        if (resultSet.next()) {
-            return true;
-        }
-        return false;
+        return resultSet.next();
     }
 
 
@@ -159,13 +148,13 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * method to query DB for user information matching Email
-     * @param email
-     * @return ResultSet
-     * @throws SQLException
+     * @param email to check
+     * @return ResultSet of results
+     * @throws SQLException on connection error
      */
-    public ResultSet getUserPass(String email)
+    private ResultSet getUserPass(String email)
             throws SQLException {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             if (connection == null) connect();
             statement = connection.createStatement();
@@ -174,11 +163,11 @@ public class BlackBoardConnector extends DBConnector {
             String request = "SELECT Password, Banned, LoginAttempts FROM " +
                     "sql5107476.UserInfo WHERE Email=" + "'" + email +"'";
             resultSet = statement.executeQuery(request);
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
-            throw sqle;
+        } catch (SQLException e) {
+            Log.e("Database SQLException", e.getMessage());
+            Log.e("Database SQLState", e.getSQLState());
+            Log.e("Database VendorError", Integer.toString(e.getErrorCode()));
+            throw e;
         }
         return resultSet;
     }
@@ -190,7 +179,7 @@ public class BlackBoardConnector extends DBConnector {
      */
     public HashSet<User> getAllUsers()
             throws SQLException {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         HashSet<User> retVal = new HashSet<>();
         try {
             if (connection == null) connect();
@@ -206,11 +195,11 @@ public class BlackBoardConnector extends DBConnector {
                 currentUser.setEmail(resultSet.getString("Email"));
                 retVal.add(currentUser);
             }
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
-            throw sqle;
+        } catch (SQLException SQL_Exception) {
+            Log.e("Database SQLException", SQL_Exception.getMessage());
+            Log.e("Database SQLState", SQL_Exception.getSQLState());
+            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
+            throw SQL_Exception;
         }
         return retVal;
     }
@@ -219,13 +208,13 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * method to query DB for user information matching Email
-     * @param email
-     * @return ResultSet
-     * @throws SQLException
+     * @param email to query
+     * @return ResultSet of results
+     * @throws SQLException on connection error
      */
     public ResultSet getUserData(String email)
             throws SQLException {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             if (connection == null) connect();
             statement = connection.createStatement();
@@ -234,11 +223,11 @@ public class BlackBoardConnector extends DBConnector {
             String request = "SELECT FirstName, LastName, Major, Gender, LoginAttempts, Banned" +
                     " FROM sql5107476.UserInfo WHERE Email='" + email +"'";
             resultSet = statement.executeQuery(request);
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
-            throw sqle;
+        } catch (SQLException SQL_Exception) {
+            Log.e("Database SQLException", SQL_Exception.getMessage());
+            Log.e("Database SQLState", SQL_Exception.getSQLState());
+            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
+            throw SQL_Exception;
         }
         return resultSet;
     }
@@ -252,7 +241,7 @@ public class BlackBoardConnector extends DBConnector {
      */
     public ResultSet getUsersWithMajor(String major)
             throws SQLException {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             if (connection == null) connect();
             statement = connection.createStatement();
@@ -261,11 +250,11 @@ public class BlackBoardConnector extends DBConnector {
             String request = "SELECT Email FROM sql5107476.UserInfo WHERE Major="
                     + "'" + major +"'";
             resultSet = statement.executeQuery(request);
-        } catch (SQLException sqle) {
-            Log.e("Database SQLException", sqle.getMessage());
-            Log.e("Database SQLState", sqle.getSQLState());
-            Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
-            throw sqle;
+        } catch (SQLException SQL_Exception) {
+            Log.e("Database SQLException", SQL_Exception.getMessage());
+            Log.e("Database SQLState", SQL_Exception.getSQLState());
+            Log.e("Database VendorError", Integer.toString(SQL_Exception.getErrorCode()));
+            throw SQL_Exception;
         }
         return resultSet;
     }
@@ -277,7 +266,6 @@ public class BlackBoardConnector extends DBConnector {
      */
     public boolean setUserData(String firstName, String lastName, String major, String gender,
                                String email) {
-        ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
             String request = "UPDATE sql5107476.UserInfo SET " +
@@ -300,18 +288,15 @@ public class BlackBoardConnector extends DBConnector {
      * Method to be run on incorrect login. Updates the Email's incorrect login number on the DB.
      * @param user Email to be incremented
      */
-    public boolean incrementLoginAttempts(String user) {
-        ResultSet resultSet = null;
+    private void incrementLoginAttempts(String user) {
         try {
             statement = connection.createStatement();
             int newVal = 1 + getLoginAttempts(user);
             String request = "UPDATE sql5107476.UserInfo SET LoginAttempts ="
                     + newVal + " WHERE Email = '" + user + "'";
-            int didSucceed = statement.executeUpdate(request);
-            return true;
+            statement.executeUpdate(request);
         } catch (Exception e) {
             Log.d("DB Write error", e.getMessage());
-            return false;
         }
     }
 
@@ -321,12 +306,11 @@ public class BlackBoardConnector extends DBConnector {
      * @param user Email to be incremented
      */
     public boolean resetLoginAttempts(String user) {
-        ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
             String request = "UPDATE sql5107476.UserInfo SET LoginAttempts ="
                     + 0 + " WHERE Email = '" + user + "'";
-            int didSucceed = statement.executeUpdate(request);
+            statement.executeUpdate(request);
             return true;
         } catch (Exception e) {
             Log.d("DB Write error", e.getMessage());
@@ -341,13 +325,12 @@ public class BlackBoardConnector extends DBConnector {
      * @param isBanned value to update
      */
     public boolean setBanned(String user, boolean isBanned) {
-        ResultSet resultSet = null;
         int isBannedInt = (isBanned ? 1 : 0);
         try {
             statement = connection.createStatement();
             String request = "UPDATE sql5107476.UserInfo SET Banned ="
                     + isBannedInt + " WHERE Email = '" + user + "'";
-            int didSucceed = statement.executeUpdate(request);
+            statement.executeUpdate(request);
             return true;
         } catch (Exception e) {
             Log.d("DB Write error", e.getMessage());
@@ -358,14 +341,13 @@ public class BlackBoardConnector extends DBConnector {
 
     /**
      * Returns 1000 if user not found.
-     * @param user
-     * @return
-     * @throws ClassNotFoundException
-     * @throws SQLException
+     * @param user to query
+     * @return boolean
+     * @throws SQLException on connection failure
      */
-    public int getLoginAttempts(String user) throws ClassNotFoundException, SQLException {
+    private int getLoginAttempts(String user) throws SQLException {
         int retVal = 1000;
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         resultSet = getUserData(user);
         if (resultSet.next()) {
             retVal = resultSet.getInt("LoginAttempts");

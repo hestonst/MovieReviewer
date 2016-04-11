@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.content.Intent;
 import android.widget.TextView;
 
 import com.thundercats50.moviereviewer.R;
@@ -28,8 +27,7 @@ import com.thundercats50.moviereviewer.models.UserManager;
 import com.thundercats50.moviereviewer.models.User;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ProfileActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -38,20 +36,54 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
      */
     private UserDataWriteTask mWriteTask = null;
 
+    /**
+     * user manager
+     */
     private UserManager manager;
+    /**
+     * user
+     */
     private User member;
 
-    // UI references.
+    /**
+     * UI reference
+     */
     private View mProgressView;
+    /**
+     * UI reference
+     */
     private View mLoginFormView;
-
+    /**
+     * first name text box
+     */
     private EditText mFirstNameView;
+    /**
+     * last name text box
+     */
     private EditText mLastNameView;
+    /**
+     * email text box
+     */
     private EditText mEmailView;
+    /**
+     * gender text box
+     */
     private EditText mGenderView;
+    /**
+     * major text box
+     */
     private EditText mMajorView;
+    /**
+     * password view
+     */
     private EditText mPasswordView;
+    /**
+     * verify password text box
+     */
     private EditText mVerifyPasswordView;
+    /**
+     * old password text box
+     */
     private EditText mOldPasswordView;
 
     @Override
@@ -59,7 +91,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
 
         manager = (UserManager) getApplicationContext();
-        member = (User) manager.getCurrentMember();
+        member = manager.getCurrentMember();
 
         setContentView(R.layout.activity_profile);
 
@@ -74,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         mOldPasswordView = (EditText) findViewById(R.id.editOldPassword);
 
         //set the user's email for them; is not changeable
-        mEmailView.setText(((User) manager.getCurrentMember()).getEmail(), TextView.BufferType.NORMAL);
+        mEmailView.setText((manager.getCurrentMember()).getEmail(), TextView.BufferType.NORMAL);
 
         //set other data, if it exists
         if (!member.getFirstname().equals("")) {
@@ -140,8 +172,8 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
 
         // Store values at the time of the login attempt.
-        final String firstname = mFirstNameView.getText().toString();
-        final String lastname = mLastNameView.getText().toString();
+        final String firstName = mFirstNameView.getText().toString();
+        final String lastName = mLastNameView.getText().toString();
         final String email = manager.getCurrentMember().getEmail();
         final String gender = mGenderView.getText().toString();
         final String major = mMajorView.getText().toString();
@@ -170,7 +202,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
             focusView.requestFocus();
         } else {
             showProgress(true);
-            mWriteTask = new UserDataWriteTask(firstname, lastname, email, gender, major, password,
+            mWriteTask = new UserDataWriteTask(firstName, lastName, email, gender, major, password,
                     verifyPassword, oldPassword);
             mWriteTask.execute();
 
@@ -179,10 +211,11 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 if (!mWriteTask.get()) {
                     cancel = true;
                     mOldPasswordView.setError(getString(R.string.error_incorrect_password));
-                    focusView = mOldPasswordView;
                 }
-            } catch (Exception e) {
-                Log.d("Task Error", "Cannot create logged in view.");
+            } catch (ExecutionException exception) {
+                Log.d("Execution Exception", "Error thrown");
+            } catch (InterruptedException exception) {
+                Log.d("Interrupted Exception", "Error thrown");
             }
 
             if (!cancel) {
@@ -191,16 +224,26 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         }
     }
 
+    /**
+     * cancel button
+     * @param view profile screen
+     */
     public void cancel(View view) {
         finish();
     }
 
+    /**
+     * checks if password entered is valid
+     * @param password password entered
+     * @return boolean
+     */
     private boolean isPasswordValid(String password) {
         return (password.matches("[a-zA-Z0-9]+") && password.length() >= 6);
     }
 
     /**
      * Shows the progress UI and hides the login form.
+     * @param show android show
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -244,8 +287,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
+                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
@@ -254,10 +296,8 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
 
@@ -271,13 +311,10 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
 
 
     private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
+        /**
+         * array projection
+         */
+        String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS, ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
     }
 
     /**
@@ -286,20 +323,58 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
      */
     public class UserDataWriteTask extends AsyncTask<Void, Void, Boolean> {
 
+        /**
+         * email
+         */
         private final String mEmail;
+        /**
+         * password
+         */
         private final String mPassword;
+        /**
+         * old password
+         */
         private final String mOldPassword;
+        /**
+         * gender
+         */
         private String mGender;
+        /**
+         * first name
+         */
         private String mFirstName;
+        /**
+         * last name
+         */
         private String mLastName;
+        /**
+         * major
+         */
         private String mMajor;
+        /**
+         * user manager
+         */
         private final UserManager manager = (UserManager) getApplicationContext();
+        /**
+         * internet access
+         */
         private boolean internetAccessExists = true;
 
-        UserDataWriteTask(String firstname, String lastname, String email, String gender,
+        /**
+         * write user data
+         * @param firstName first name
+         * @param lastName last name
+         * @param email email
+         * @param gender gender
+         * @param major major
+         * @param password password
+         * @param verifyPassword verify password
+         * @param oldPassword old password
+         */
+        UserDataWriteTask(String firstName, String lastName, String email, String gender,
                           String major, String password, String verifyPassword, String oldPassword) {
-            mFirstName = firstname;
-            mLastName = lastname;
+            mFirstName = firstName;
+            mLastName = lastName;
             mMajor = major;
             mGender = gender;
             mEmail = email;
@@ -332,12 +407,19 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 manager.getCurrentMember().setLastname(mLastName);
                 manager.getCurrentMember().setGender(mGender);
                 return retVal && retVal2;
-            }  catch (SQLException sqle) {
-                Log.d("Connection Error", "Check internet for MySQL access." + sqle.getMessage() + sqle.getSQLState());
+            }  catch (SQLException sqlException) {
+                Log.d("Connection Error", "Check internet for MySQL access." + sqlException.getMessage() + sqlException.getSQLState());
                 internetAccessExists = false;
                 cancel(true);
             } finally {
                 bbc.disconnect();
+                /*
+                try {
+                    bbc.disconnect();
+                } catch (NullPointerException exception) {
+                    Log.d("Null Pointer Exception", "Thrown null pointer exception");
+                }
+                */
             }
             return false;
         }
@@ -352,7 +434,6 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
                 finish();
             } else {
                 if (internetAccessExists) {
-                    //TODO: change to OldPasswordView
                     mOldPasswordView.setError(getString(R.string.error_incorrect_password));
                     mOldPasswordView.requestFocus();
                 } else {
