@@ -425,7 +425,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 BlackBoardConnector bbc = new BlackBoardConnector();
                 bbc.setNewUser(mEmail, mPassword);
                 bbc.disconnect();
-                manager.setCurrentMember(new User(mEmail, mPassword));
+                manager.setCurrentMember(new User(mEmail));
                 return true;
             } catch(InputMismatchException inputMismatchException) {
                 error = inputMismatchException;

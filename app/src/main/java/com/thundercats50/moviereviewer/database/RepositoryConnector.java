@@ -76,7 +76,7 @@ public class RepositoryConnector extends DBConnector {
                     SingleMovie currentMovie = new SingleMovie();
                     Log.d("getAllByMajor", "1");
                     currentMovie.setId((long) current.getDouble("MovieID"));
-                    currentRating.setUser(current.getString("Email"));
+//                    currentRating.setUser(current.getString("Email"));
                     currentRating.setNumericalRating(current.getInt("NumericalRating"));
                     currentRating.setTextReview(current.getString("TextReview"));
                     if (retVal.contains(currentMovie)) {
@@ -174,7 +174,7 @@ public class RepositoryConnector extends DBConnector {
                 currentMovie.setTitle(current.getString("MovieName"));
                 currentMovie.setThumbnailURL(current.getString("PhotoURL"));
                 currentMovie.setSynopsis(current.getString("Synopsis"));
-                currentRating.setUser(current.getString("Email"));
+//                currentRating.setUser(current.getString("Email"));
                 currentRating.setNumericalRating(current.getInt("NumericalRating"));
                 currentRating.setTextReview(current.getString("TextReview"));
                 currentMovie.addUserRating(current.getString("Email"), currentRating);
