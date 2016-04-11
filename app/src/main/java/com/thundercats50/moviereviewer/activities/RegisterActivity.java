@@ -43,8 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.InputMismatchException;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -256,11 +255,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
      * @return ifValid
      */
     private boolean isEmailValid(String email) {
-        //return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
-        //        && email.length() >= 6);
-        Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
-        Matcher match = pattern.matcher(email);
-        return match.matches();
+        return (email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")
+                && email.length() >= 6);
+//        Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
+//        Matcher match = pattern.matcher(email);
+//        return match.matches();
     }
 
     /**

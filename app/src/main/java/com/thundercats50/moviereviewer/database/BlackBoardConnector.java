@@ -37,11 +37,6 @@ public class BlackBoardConnector extends DBConnector {
                 throw new InputMismatchException("User email is already registered.");
                 //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
             }
-            if (isPasswordValid(password)) {
-                throw new InputMismatchException("Password must be alphanumeric and longer than six"
-                        + "characters.");
-                //DO NOT CHANGE MESSAGE: USED IN REGISTER-ACTIVITY LOGIC
-            }
             statement = connection.createStatement();
             String request = "INSERT INTO sql5107476.UserInfo (Email, Password) VALUES ('"
                     + Email + "','" + password + "')";
@@ -97,7 +92,7 @@ public class BlackBoardConnector extends DBConnector {
             statement.executeUpdate(request);
 
             return true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());
             return false;
         }
@@ -164,8 +159,8 @@ public class BlackBoardConnector extends DBConnector {
                     "sql5107476.UserInfo WHERE Email=" + "'" + email +"'";
             resultSet = statement.executeQuery(request);
         } catch (SQLException e) {
-            Log.e("Database SQLException", e.getMessage());
-            Log.e("Database SQLState", e.getSQLState());
+            Log.e("SQLExcept, GetUserPass", e.getMessage());
+            Log.e("SQLState, GetUserPass", e.getSQLState());
             Log.e("Database VendorError", Integer.toString(e.getErrorCode()));
             throw e;
         }
@@ -277,7 +272,7 @@ public class BlackBoardConnector extends DBConnector {
             aStatement.executeUpdate();
             statement.executeUpdate(request);
             return true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());
             return false;
         }
@@ -295,7 +290,7 @@ public class BlackBoardConnector extends DBConnector {
             String request = "UPDATE sql5107476.UserInfo SET LoginAttempts ="
                     + newVal + " WHERE Email = '" + user + "'";
             statement.executeUpdate(request);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());
         }
     }
@@ -312,7 +307,7 @@ public class BlackBoardConnector extends DBConnector {
                     + 0 + " WHERE Email = '" + user + "'";
             statement.executeUpdate(request);
             return true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Log.d("DB Write error", e.getMessage());
             return false;
         }
@@ -358,6 +353,10 @@ public class BlackBoardConnector extends DBConnector {
         return retVal;
     }
 
+
+    /**
+     * Enum to describe possible user states
+     */
     public enum UserStatus {
         VERIFIED, BANNED, LOCKED, BAD_USER, INTERRUPTED_BY_INTERNET
     }

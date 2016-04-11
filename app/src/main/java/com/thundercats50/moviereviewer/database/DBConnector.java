@@ -16,10 +16,12 @@ abstract class DBConnector  {
 
     Connection connection;
     Statement statement;
+    private String connectionError;
 
 
     DBConnector() throws SQLException {
         connect();
+        connectionError = "Connection Error";
     }
 
     /**
@@ -47,20 +49,20 @@ abstract class DBConnector  {
             Log.d("ClassNotFoundException", "Could not access database username/password. "
                     + "Check DB Driver.");
         } catch (SQLException SQL_Exception) {
-            Log.d("Connection Error", "Check internet for MySQL access." + SQL_Exception.getMessage() + SQL_Exception.getSQLState());
+            Log.d(connectionError, "Check internet for MySQL access." + SQL_Exception.getMessage() + SQL_Exception.getSQLState());
             for (Throwable e : SQL_Exception) {
                 e.printStackTrace(System.err);
-                Log.d("Connection Error", "SQLState: " +
+                Log.d(connectionError, "SQLState: " +
                         ((SQLException) e).getSQLState());
 
-                Log.d("Connection Error", "Error Code: " +
+                Log.d(connectionError, "Error Code: " +
                         ((SQLException) e).getErrorCode());
 
-                Log.d("Connection Error", "Message: " + e.getMessage());
+                Log.d(connectionError, "Message: " + e.getMessage());
 
                 Throwable t = SQL_Exception.getCause();
                 while(t != null) {
-                    Log.d("Connection Error", "Cause: " + t);
+                    Log.d(connectionError, "Cause: " + t);
                     t = t.getCause();
                 }
             }
