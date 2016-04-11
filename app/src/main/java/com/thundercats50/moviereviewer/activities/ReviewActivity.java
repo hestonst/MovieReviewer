@@ -20,6 +20,7 @@ import com.thundercats50.moviereviewer.models.SingleMovie;
 
 import java.sql.SQLException;
 import java.util.InputMismatchException;
+import java.util.concurrent.ExecutionException;
 
 public class ReviewActivity extends AppCompatActivity {
 
@@ -104,6 +105,29 @@ public class ReviewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * add a rating
+     * @param view of the rating screen
+     */
+    public void addRating(View view) {
+        showProgress(true);
+        AddReviewTask ratingTask = new AddReviewTask(manager, mReviewView, mRatingView);
+        try {
+            boolean successfulFinish = ratingTask.execute().get();
+            Log.d("Returned:", Boolean.toString(successfulFinish));
+            if (successfulFinish) {
+                finish();
+            } else {
+                showProgress(false);
+                mRatingView.setError(getString(R.string.rating_range));
+                mRatingView.requestFocus();
+            }
+        } catch (ExecutionException exception) {
+            Log.d("Execution Exception", "Error thrown");
+        } catch (InterruptedException exception) {
+            Log.d("Interrupted Exception", "Error thrown");
+        }
+    }
 
     public class AddReviewTask extends AsyncTask<Void, Void, Boolean> {
 
