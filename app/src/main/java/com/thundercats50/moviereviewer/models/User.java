@@ -16,9 +16,8 @@ public class User {
 	/**
 	 *
 	 * @param email
-	 * @param password
 	 */
-	public User(String email, String password) {
+	public User(String email) {
 		this(email, "", "", "", "");
 	}
 
@@ -104,20 +103,6 @@ public class User {
      */
     public void setGender(String gender) {
         this.gender = gender;
-    }
-    
-    /**
-     * Control the gender display
-     * @return String gender
-     */
-    public String genderCtrl() {
-        if ("M".equals(gender) || "m".equals(gender)) {
-            return "Male";
-        }
-        if ("F".equals(gender) || "f".equals(gender)) {
-            return "Female";
-        }
-        return "Unknown";
     }
 
 	/**
