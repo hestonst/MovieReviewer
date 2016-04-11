@@ -71,9 +71,10 @@ public class RepositoryConnector extends DBConnector {
                         + "'" + users.getString("Email") +"' ORDER BY NumericalRating";
                 Log.d("DB_QUERY", request);
                 current = statement.executeQuery(request);
-                SingleMovie currentMovie = new SingleMovie();
                 Rating currentRating = new Rating();
                 while (current.next() && !(current.isAfterLast())) {
+                    SingleMovie currentMovie = new SingleMovie();
+                    Log.d("getAllByMajor", "1");
                     currentMovie.setId((long) current.getDouble("MovieID"));
                     currentRating.setUser(current.getString("Email"));
                     currentRating.setNumericalRating(current.getInt("NumericalRating"));
@@ -99,6 +100,7 @@ public class RepositoryConnector extends DBConnector {
             Log.e("Database SQLState", sqle.getSQLState());
             Log.e("Database VendorError", Integer.toString(sqle.getErrorCode()));
         }
+        Log.d("getAllByMajor", "Length: " + retVal.size());
         return retVal;
     }
 

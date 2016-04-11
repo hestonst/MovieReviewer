@@ -362,7 +362,7 @@ public class MovieFragment extends Fragment{
             Iterator<SingleMovie> iterator = result.iterator();
             while(iterator.hasNext()) {
                 SingleMovie item = iterator.next();
-                //new ImageDownloader(item).execute(item.getThumbnailURL());
+                new ImageDownloader(item).execute(item.getThumbnailURL());
                 movieList.add(item);
             }
             adapter.notifyDataSetChanged();
@@ -373,6 +373,7 @@ public class MovieFragment extends Fragment{
                 RepositoryConnector rpc = new RepositoryConnector();
                 HashSet<SingleMovie> result = rpc.getAllByMajor(major);
                 rpc.disconnect();
+                Log.d("ReviewsByMajor", "Number: " + result.size());
                 return result;
             } catch(Exception e) {
                 Log.d("DB_Exception", e.getMessage());
