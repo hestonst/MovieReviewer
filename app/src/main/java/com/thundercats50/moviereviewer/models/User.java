@@ -14,46 +14,64 @@ public class User {
     private String email = "";
 
 	/**
-	 *
-	 * @param email
-	 * @param password
+	 * create empty base user
+	 * @param mEmail optional email
 	 */
-	public User(String email, String password) {
-		this(email, "", "", "", "");
+	public User(String mEmail) {
+		this(mEmail, "", "", "", "");
 	}
 
-    public User(String email, String firstname, String lastname, String major, String gender) {
-        this.email = email;
+    /**
+     * full fledged user creation
+     * @param mEmail email
+     * @param mFirstname firstname
+     * @param mLastname lastname
+     * @param mMajor major
+     * @param mGender gender
+     */
+    public User(String mEmail, String mFirstname, String mLastname, String mMajor, String mGender) {
+        this.email = mEmail;
         if (firstname == null) {
             this.firstname = "";
         } else {
-            this.firstname = firstname;
+            this.firstname = mFirstname;
         }
         if (lastname == null) {
             this.lastname = "";
         } else {
-            this.lastname = lastname;
+            this.lastname = mLastname;
         }
         if (major == null) {
             this.major = "Other";
         } else {
-            this.major = major;
+            this.major = mMajor;
         }
         if (gender == null) {
             this.gender = "";
         } else {
-            this.gender = gender;
+            this.gender = mGender;
         }
     }
 
+    /**
+     * empty constructor
+     */
     public User() {
         super();
     }
 
+    /**
+     * set this users email
+     * @param newEmail the email
+     */
     public void setEmail(String newEmail) {
         email = newEmail;
     }
 
+    /**
+     * get the users email
+     * @return the users email
+     */
     public String getEmail() {
         return email;
     }
@@ -68,10 +86,10 @@ public class User {
 
 	/**
 	 * Set the first name of the user
-	 * @param firstname
+	 * @param mFirstname the firstname
 	 */
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setFirstname(String mFirstname) {
+		this.firstname = mFirstname;
 	}
 
 	/**
@@ -84,10 +102,10 @@ public class User {
 
 	/**
 	 * Set the last name of the user
-	 * @param lastname
+	 * @param mLastname
 	 */
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setLastname(String mLastname) {
+		this.lastname = mLastname;
 	}
 
     /**
@@ -100,24 +118,10 @@ public class User {
 
     /**
      * Set the gender of the user
-     * @param gender
+     * @param mGender
      */
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-    
-    /**
-     * Control the gender display
-     * @return String gender
-     */
-    public String genderCtrl() {
-        if ("M".equals(gender) || "m".equals(gender)) {
-            return "Male";
-        }
-        if ("F".equals(gender) || "f".equals(gender)) {
-            return "Female";
-        }
-        return "Unknown";
+    public void setGender(String mGender) {
+        this.gender = mGender;
     }
 
 	/**
@@ -130,10 +134,10 @@ public class User {
 
     /**
      * Set major of the user
-     * @param major
+     * @param mMajor
      */
-    public void setMajor(String major) {
-        this.major = major;
+    public void setMajor(String mMajor) {
+        this.major = mMajor;
     }
 
 

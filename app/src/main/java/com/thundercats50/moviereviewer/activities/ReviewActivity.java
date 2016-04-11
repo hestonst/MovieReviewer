@@ -27,7 +27,7 @@ public class ReviewActivity extends AppCompatActivity {
     /**
      * current movie
      */
-    private final SingleMovie movie = MovieManager.movie;
+    private final SingleMovie movie = MovieManager.getCurrentMovie();
     /**
      * review text box
      */
@@ -58,7 +58,7 @@ public class ReviewActivity extends AppCompatActivity {
         mRatingView = (EditText) findViewById(R.id.movie_rating);
         mReviewFormView = findViewById(R.id.rating_form);
         mProgressView = findViewById(R.id.rating_progress);
-        final SingleMovie movie = MovieManager.movie;
+        final SingleMovie movie = MovieManager.getCurrentMovie();
         name.setText(movie.getTitle());
         manager = (UserManager) getApplicationContext();
         //getRating((int) movie.getId(), manager.getCurrentEmail());

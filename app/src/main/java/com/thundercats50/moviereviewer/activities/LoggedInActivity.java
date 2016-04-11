@@ -60,7 +60,7 @@ public class LoggedInActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         UserManager manager = (UserManager) getApplicationContext();
-        manager.setCurrentMember(new User("",""));
+        manager.setCurrentMember(new User(""));
         //delete the current users info as you move up stack
         //as security measure
     }

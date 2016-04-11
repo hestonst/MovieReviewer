@@ -56,7 +56,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
                 int click = holder.getAdapterPosition();
                 SingleMovie movie = movieList.get(click);
 
-                MovieManager.movie = movie;
+                MovieManager.setCurrentMovie(movie);
 
                 Intent intent = new Intent(mContext, ReviewActivity.class);
                 mContext.startActivity(intent);

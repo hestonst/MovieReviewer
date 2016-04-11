@@ -1,19 +1,24 @@
 package com.thundercats50.moviereviewer.models;
 
-/**
- * Created by sheston on 13/03/2016.
- */
 public class Rating {
     private String user, textReview;
     private int numericalRating;
     private long movieId;
 
+    /**
+     * get the user who wrote this rating
+     * @return the users email
+     */
     public String getUser() {
         return user;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    /**
+     * set the user for this rating
+     * @param mUser
+     */
+    public void setUser(String mUser) {
+        this.user = mUser;
     }
 
     /**
@@ -27,10 +32,10 @@ public class Rating {
 
     /**
      * sets the text review for the current movie
-     * @param textReview the review
+     * @param mTextReview the review
      */
-    public void setTextReview(String textReview) {
-        this.textReview = textReview;
+    public void setTextReview(String mTextReview) {
+        this.textReview = mTextReview;
     }
 
 
@@ -48,14 +53,6 @@ public class Rating {
      */
     public void setNumericalRating(int numericalRating) {
         this.numericalRating = numericalRating;
-    }
-
-    public void setMovieId(long id) {
-        movieId = id;
-    }
-
-    public long getMovieId() {
-        return movieId;
     }
 
 }
