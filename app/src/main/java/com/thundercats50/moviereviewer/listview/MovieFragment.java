@@ -71,6 +71,8 @@ public class MovieFragment extends Fragment{
 
     private ProgressDialog progressDialog;
 
+    private boolean endOfResuls = false;
+
     public MovieFragment() {
 
     }
@@ -105,7 +107,7 @@ public class MovieFragment extends Fragment{
                 int lastFirstVisiblePosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
                 ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(lastFirstVisiblePosition);
                 pageCount++;
-                loadMore(nearCompleteCall + jsonEnd + pageCount);
+                if(!endOfResuls) loadMore(nearCompleteCall + jsonEnd + pageCount);
             }
         });
 
@@ -148,6 +150,7 @@ public class MovieFragment extends Fragment{
     public void searchByMajor(String major) {
         GetReviewsTask task = new GetReviewsTask(mRecyclerView, adapter, major);
         task.execute();
+        endOfResuls = true;
     }
 
 
@@ -359,7 +362,7 @@ public class MovieFragment extends Fragment{
             Iterator<SingleMovie> iterator = result.iterator();
             while(iterator.hasNext()) {
                 SingleMovie item = iterator.next();
-                //new ImageDownloader(item).execute(item.getThumbnailURL());
+                new ImageDownloader(item).execute(item.getThumbnailURL());
                 movieList.add(item);
             }
             adapter.notifyDataSetChanged();
@@ -370,6 +373,7 @@ public class MovieFragment extends Fragment{
                 RepositoryConnector rpc = new RepositoryConnector();
                 HashSet<SingleMovie> result = rpc.getAllByMajor(major);
                 rpc.disconnect();
+                Log.d("ReviewsByMajor", "Number: " + result.size());
                 return result;
             } catch(Exception e) {
                 Log.d("DB_Exception", e.getMessage());
