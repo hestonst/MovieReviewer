@@ -3,26 +3,12 @@ package com.thundercats50.moviereviewer.models;
 import android.graphics.Bitmap;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.ImageView;
-import java.io.InputStream;
-import java.util.Set;
 
-/**
- * Created by scottheston on 23/02/16.
- */
 public class SingleMovie {
 
-    private String title, mpaaRating, synopsis, criticReview, imageURL;
-    private List<String> genres, cast;
+    private String title, synopsis, imageURL;
     private long id;
-    private Integer year, runtime;
-    private HashMap<String, Rating> userRatings;
+    private final HashMap<String, Rating> userRatings;
 
     public SingleMovie() {
         userRatings = new HashMap<>();
@@ -44,7 +30,7 @@ public class SingleMovie {
     }
 
     // holds ImageView for thumbnail
-    protected Bitmap thumbnail;
+    private Bitmap thumbnail;
 
     public String getTitle() { return title; }
 
@@ -63,11 +49,6 @@ public class SingleMovie {
         thumbnail = image;
     }
 
-    public String getMpaaRating() { return mpaaRating; }
-
-    public void setMpaaRating(String mpaaRating) {
-        this.mpaaRating = mpaaRating;
-    }
 
     public String getSynopsis() {
         return synopsis;
@@ -77,33 +58,6 @@ public class SingleMovie {
         this.synopsis = synopsis;
     }
 
-    public void setGenres(List<String> list) {
-        for (String genre : list) {
-            genres.add(genre);
-        }
-    }
-
-    public List<String> getGenres() {
-        return genres;
-    }
-
-    public void setCast(List<String> list) {
-        for (String actor : list) {
-            cast.add(actor);
-        }
-    }
-
-    public List<String> getCast() {
-        return cast;
-    }
-
-    public void setCriticReview(String criticReview) {
-        this.criticReview = criticReview;
-    }
-
-    public String getCriticReview() {
-        return criticReview;
-    }
 
     public void setId(long id) { this.id = id; }
 
@@ -116,10 +70,7 @@ public class SingleMovie {
             return false;
         }
         SingleMovie movie = (SingleMovie) object;
-        if (movie.getId() == id) {
-            return true;
-        }
-        return false;
+        return movie.getId() == id;
     }
 
 }

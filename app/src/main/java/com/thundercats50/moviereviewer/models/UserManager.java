@@ -2,11 +2,6 @@ package com.thundercats50.moviereviewer.models;
 
 import android.app.Application;
 
-import java.util.HashMap;
-
-/**
- * @author Forester Vosburgh
- */
 public class UserManager extends Application {
 
     public static User currentMember = new User("","","","","");
